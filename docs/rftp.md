@@ -9,18 +9,18 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 - **R01F01T01P01** Probar acceso válido e inválido, recuperación docente y bloqueo de una cuenta desactivada con sesión previa. Estado: ejecutada y superada con Pest.
 
 - **R01F02** Aplicar roles y propiedad.
-- **R01F02T01** Crear Policies y validación de campos para impedir elevación de rol y acceso a recursos ajenos. Estado: parcial; aplicadas a la administracion de docentes, pendiente la propiedad de clases y demas recursos futuros.
-- **R01F02T01P01** Comprobar que un alumno no entra en docencia y que un docente no modifica una clase ajena. Estado: parcial; probado el bloqueo de paneles y acciones por rol, pendiente la prueba de clase ajena hasta R02.
+- **R01F02T01** Crear Policies y validación de campos para impedir elevación de rol y acceso a recursos ajenos. Estado: parcial; aplicadas a docentes, clases y matriculas, pendiente extenderlas a los recursos futuros.
+- **R01F02T01P01** Comprobar que un alumno no entra en docencia y que un docente no modifica una clase ajena. Estado: ejecutada y superada con Pest para roles y clases.
 
 ## R02 El profesor debe organizar a sus alumnos en clases.
 
 - **R02F01** Gestionar clases y alumnos.
-- **R02F01T01** Crear formularios y relaciones para clases propias, cuentas de alumnos y matrículas activas.
-- **R02F01T01P01** Crear dos clases con propietarios distintos y verificar separación de sus alumnos. Estado: planificada.
+- **R02F01T01** Crear formularios y relaciones para clases propias, cuentas de alumnos y matrículas activas. Estado: ejecutada; incluye cuentas compartidas por `username` exacto sin duplicarlas.
+- **R02F01T01P01** Crear dos clases con propietarios distintos y verificar separación de sus alumnos. Estado: ejecutada y superada con Pest, incluidos ID ajeno, campos manipulados y matricula duplicada.
 
 - **R02F02** Gestionar altas y bajas.
-- **R02F02T01** Sincronizar matrículas con inscripciones en asignaciones abiertas, conservando historial al desactivar.
-- **R02F02T01P01** Comprobar que una baja bloquea el acceso y que una reincorporación conserva el avance previo. Estado: planificada.
+- **R02F02T01** Sincronizar matrículas con inscripciones en asignaciones abiertas, conservando historial al desactivar. Estado: parcial; la baja y reincorporacion conservan la misma matricula, pero no existen aun asignaciones que sincronizar.
+- **R02F02T01P01** Comprobar que una baja bloquea el acceso y que una reincorporación conserva el avance previo. Estado: parcial; probado el cambio reversible de matricula y su independencia de la cuenta global, pendiente probar acceso a asignaciones y avance cuando existan.
 
 ## R03 El profesor debe poder preparar y distribuir una misión.
 

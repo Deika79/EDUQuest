@@ -2,7 +2,7 @@
 
 EDUQuest es una aplicacion web educativa para que el profesorado convierta repasos en misiones visuales, las asigne a clases y consulte el avance del alumnado.
 
-El desarrollo del hito del 50 % esta en curso. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado y R01 esta parcialmente implementado.
+El desarrollo del hito del 50 % esta en curso. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; R01 y R02 siguen su desarrollo por tareas verificables.
 
 ## Entorno local
 
@@ -38,12 +38,25 @@ Con los contenedores arrancados, el administrador inicial se crea mediante un as
 docker compose exec laravel.test php artisan eduquest:create-admin
 ```
 
-El administrador puede crear y desactivar docentes desde su panel. Las altas de docentes reciben una contrasena temporal y deben cambiarla al iniciar sesion. La gestion de alumnos se incorporara con R02.
+El administrador puede crear y desactivar docentes desde su panel. Las altas de docentes reciben una contrasena temporal y deben cambiarla al iniciar sesion.
 
 Los accesos de administrador, docente y alumno se comprueban sin publicar credenciales mediante las factories y pruebas automatizadas:
 
 ```powershell
 docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
+```
+
+## Clases y alumnos
+
+Un docente gestiona unicamente sus clases desde `/teacher/classes`. Puede crear una cuenta de alumno con email opcional y contrasena temporal, que debe cambiarse en el primer acceso. La contrasena solo se introduce en el formulario de alta, se transmite a Laravel y se guarda con hash; no se muestra despues ni se registra en Git.
+
+Si la cuenta ya existe, se incorpora mediante su `username` exacto en lugar de crear otra. No existe busqueda global, autocompletado ni vista previa de cuentas ajenas. El docente que incorpora una cuenta compartida solo gestiona su matricula en esa clase; no puede modificar la cuenta ni sus credenciales. La regeneracion de contrasenas de alumnos por su docente creador queda pendiente.
+
+Una baja desactiva la matricula sin borrar su registro ni desactivar la cuenta global. La reincorporacion reactiva esa misma matricula. La sincronizacion con asignaciones y la conservacion del avance se implementaran cuando existan esas entidades en R03-R05.
+
+```powershell
+# Pruebas focalizadas de clases, alumnos y matriculas
+docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/ClassroomManagementTest.php
 ```
 
 ## Documentacion

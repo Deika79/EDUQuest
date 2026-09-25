@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -75,5 +77,25 @@ class User extends Authenticatable implements PasskeyUser
     public function creator(): BelongsTo
     {
         return $this->belongsTo(self::class, 'created_by');
+    }
+
+    /** @return HasMany<Classroom, $this> */
+    public function ownedClassrooms(): HasMany
+    {
+        return $this->hasMany(Classroom::class, 'teacher_id');
+    }
+
+    /** @return HasMany<ClassroomMembership, $this> */
+    public function classroomMemberships(): HasMany
+    {
+        return $this->hasMany(ClassroomMembership::class, 'student_id');
+    }
+
+    /** @return BelongsToMany<Classroom, $this> */
+    public function classrooms(): BelongsToMany
+    {
+        return $this->belongsToMany(Classroom::class, 'classroom_memberships', 'student_id', 'classroom_id')
+            ->withPivot(['id', 'active', 'activated_at', 'deactivated_at'])
+            ->withTimestamps();
     }
 }

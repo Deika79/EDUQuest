@@ -19,6 +19,15 @@
 - IA solo para generar borradores revisables, nunca publicación automática.
 - Docker Compose será opción preferida si Docker funciona en el entorno local.
 
+## Tomadas durante R01 y R02
+
+- Una cuenta de alumno es global y puede tener matriculas en varias clases mediante `classroom_memberships`.
+- La cuenta mantiene un unico docente creador en `users.created_by`; otro docente que matricule al alumno no puede cambiar su rol, contrasena ni estado global. La interfaz para regenerar una contrasena por el creador queda pendiente.
+- Una cuenta existente se incorpora escribiendo su `username` exacto. No hay buscador, autocompletado ni vista previa global de alumnado; los datos se muestran al segundo docente solo despues de crear la matricula en una clase propia.
+- La pareja clase-alumno es unica. Dar de baja cambia el estado de la matricula y conserva el registro; reincorporar reactiva la misma fila.
+- `activated_at` y `deactivated_at` dejan el modelo preparado para sincronizar en el futuro las inscripciones de asignaciones, sin simularlas antes de R03-R05.
+- El estado de una matricula y el estado global de la cuenta son independientes.
+
 ## Cuestiones abiertas
 
 - Fechas oficiales de propuesta, 50 %, 80 % y entrega final.

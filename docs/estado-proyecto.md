@@ -7,7 +7,8 @@ Fecha de revision: 2026-09-25.
 - Hito autorizado por David: entrega del 50 %.
 - Desarrollo iniciado con la instalacion de la base tecnica.
 - Base tecnica instalada, configurada, arrancada y verificada.
-- Primera parte de R01 implementada y probada; R01 permanece parcial hasta poder aplicar propiedad sobre clases y recursos de hitos posteriores.
+- Primera parte de R01 implementada y probada; sus controles de propiedad ya cubren tambien las clases de R02.
+- R02F01 implementada y probada. R02F02 permanece parcial hasta que existan asignaciones y progreso.
 
 ## Existe realmente
 
@@ -28,22 +29,29 @@ Fecha de revision: 2026-09-25.
 - Panel de administrador para crear, activar y desactivar docentes, protegido por Policy y validacion cerrada.
 - Paneles basicos separados para administrador, docente y alumno.
 - Cambio obligatorio de la contrasena temporal antes de acceder al panel del rol.
+- Clases con un unico docente propietario, listado y edicion restringidos mediante Policy y consultas por propietario.
+- Cuentas de alumno creadas por docentes con `username` unico, email opcional, contrasena temporal y rol fijado en servidor.
+- Incorporacion de una cuenta existente por `username` exacto, sin busqueda ni vista previa global y sin duplicar usuarios.
+- Matriculas unicas por clase y alumno, con estado, fecha de activacion y fecha de baja independientes del estado global de la cuenta.
+- Baja y reincorporacion sobre el mismo registro de matricula, sin borrado.
+- Pantallas docentes de listado de clases y detalle con edicion, alumnado y estado de matriculas.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 
 ## Verificaciones realizadas
 
-| Verificacion            | Resultado real                                                                                                  |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Contenedores            | `laravel.test` y `mysql` arrancados; MySQL saludable.                                                           |
-| Migraciones             | Ejecutadas correctamente con `php artisan migrate --force`.                                                     |
-| Pruebas focalizadas R01 | `23 passed`, `76 assertions`.                                                                                   |
-| Suite Pest completa     | `47 passed`, `177 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.          |
-| PHPStan                 | Sin errores en 51 archivos analizados.                                                                          |
-| TypeScript              | `vue-tsc --noEmit` correcto.                                                                                    |
-| Frontend                | `npm run check` correcto en 77 archivos de formato y 64 de lint; build correcto con `3377 modules transformed`. |
-| Login                   | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                                 |
-| Registro publico        | Sin enlace visible y `GET /register` devuelve `404`.                                                            |
+| Verificacion            | Resultado real                                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Contenedores            | `laravel.test` y `mysql` arrancados; MySQL saludable.                                                      |
+| Migraciones             | Ejecutadas correctamente con `php artisan migrate --force`.                                                |
+| Pruebas focalizadas R01 | `23 passed`, `76 assertions`.                                                                              |
+| Pruebas focalizadas R02 | `10 passed`, `70 assertions`.                                                                              |
+| Suite Pest completa     | `57 passed`, `247 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.     |
+| PHPStan                 | Sin errores en 65 archivos analizados.                                                                     |
+| TypeScript              | `vue-tsc --noEmit` correcto.                                                                               |
+| Frontend                | TypeScript correcto; formato en 79 archivos y lint en 66 sin avisos; build con `3383 modules transformed`. |
+| Login                   | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                            |
+| Registro publico        | Sin enlace visible y `GET /register` devuelve `404`.                                                       |
 
 La primera pasada de pruebas fallo porque aun no existia `public/build/manifest.json`. Tras compilar el frontend, toda la suite paso. La ejecucion inicial como `root` dejo la cache de vistas sin escritura para el servidor `sail`; se corrigieron los permisos de `storage/` y `bootstrap/cache/` y se limpiaron las caches.
 
@@ -74,10 +82,19 @@ El comando solicita los datos y la contrasena de forma interactiva. Los tres pan
 docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 ```
 
+## Operacion de clases y alumnos
+
+- El docente accede a `/teacher/classes`; todas las consultas y escrituras comprueban rol y propietario en servidor.
+- Una cuenta nueva recibe una contrasena temporal introducida en un campo protegido y almacenada con hash. El alumno debe cambiarla al iniciar sesion.
+- Para una cuenta ya existente se exige el `username` exacto entregado por el alumno o su responsable. No se exponen listados, busquedas ni datos previos de cuentas gestionadas por otros docentes.
+- Un docente que incorpora una cuenta compartida solo controla su matricula y no puede modificar la cuenta ni sus credenciales. La regeneracion de contrasena por el docente creador queda pendiente.
+- La baja no borra la matricula ni desactiva la cuenta; la reincorporacion reutiliza el mismo registro.
+
 ## Pendiente funcional
 
-- Completar R01F02 al existir clases y otros recursos con propietario en R02 y siguientes.
-- Implementar clases, misiones, actividades, intentos, informes y el resto de R02-R08.
+- Completar R01F02 al existir misiones y los demas recursos con propietario de hitos posteriores.
+- Completar R02F02 al existir asignaciones y avance: sincronizar sus inscripciones al dar de alta o baja una matricula y probar que el historial se conserva.
+- Implementar misiones, actividades, intentos, informes y el resto de R03-R08.
 - Decidir mas adelante el alcance autorizado de IA y cualquier integracion externa.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - El repositorio remoto `origin/main` esta configurado; no hay entrega academica marcada como realizada.
