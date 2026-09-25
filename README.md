@@ -2,7 +2,7 @@
 
 EDUQuest es una aplicacion web educativa para que el profesorado convierta repasos en misiones visuales, las asigne a clases y consulte el avance del alumnado.
 
-El desarrollo del hito del 50 % ha comenzado. La base tecnica ya usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado. Ninguna funcionalidad R01-R08 se considera terminada todavia.
+El desarrollo del hito del 50 % esta en curso. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado y R01 esta parcialmente implementado.
 
 ## Entorno local
 
@@ -29,6 +29,22 @@ docker compose exec -T laravel.test npm run build
 ```
 
 Aplicacion local: <http://localhost:8080/login>
+
+## Primer administrador
+
+Con los contenedores arrancados, el administrador inicial se crea mediante un asistente interactivo. El comando solicita nombre, usuario, email, contrasena y confirmacion; la contrasena no se pasa como argumento ni se almacena en el repositorio.
+
+```powershell
+docker compose exec laravel.test php artisan eduquest:create-admin
+```
+
+El administrador puede crear y desactivar docentes desde su panel. Las altas de docentes reciben una contrasena temporal y deben cambiarla al iniciar sesion. La gestion de alumnos se incorporara con R02.
+
+Los accesos de administrador, docente y alumno se comprueban sin publicar credenciales mediante las factories y pruebas automatizadas:
+
+```powershell
+docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
+```
 
 ## Documentacion
 

@@ -1,16 +1,16 @@
 # RFTP - Requisitos, funciones, tareas y pruebas
 
-Estado general: planificación inicial. Las pruebas están planificadas, no ejecutadas.
+Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas las tareas y pruebas verificadas.
 
 ## R01 Solo deben acceder personas autorizadas y cada una debe tener los permisos de su perfil.
 
 - **R01F01** Gestionar credenciales y cuentas.
-- **R01F01T01** Adaptar acceso por usuario, altas controladas, cambio y recuperación de contraseña, desactivación y cierre de sesión.
-- **R01F01T01P01** Probar acceso válido e inválido, recuperación docente y bloqueo de una cuenta desactivada con sesión previa. Estado: planificada.
+- **R01F01T01** Adaptar acceso por usuario, altas controladas, cambio y recuperación de contraseña, desactivación y cierre de sesión. Estado: ejecutada para administrador y docentes; las altas de alumnos corresponden a R02.
+- **R01F01T01P01** Probar acceso válido e inválido, recuperación docente y bloqueo de una cuenta desactivada con sesión previa. Estado: ejecutada y superada con Pest.
 
 - **R01F02** Aplicar roles y propiedad.
-- **R01F02T01** Crear Policies y validación de campos para impedir elevación de rol y acceso a recursos ajenos.
-- **R01F02T01P01** Comprobar que un alumno no entra en docencia y que un docente no modifica una clase ajena. Estado: planificada.
+- **R01F02T01** Crear Policies y validación de campos para impedir elevación de rol y acceso a recursos ajenos. Estado: parcial; aplicadas a la administracion de docentes, pendiente la propiedad de clases y demas recursos futuros.
+- **R01F02T01P01** Comprobar que un alumno no entra en docencia y que un docente no modifica una clase ajena. Estado: parcial; probado el bloqueo de paneles y acciones por rol, pendiente la prueba de clase ajena hasta R02.
 
 ## R02 El profesor debe organizar a sus alumnos en clases.
 
