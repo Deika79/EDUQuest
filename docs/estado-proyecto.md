@@ -10,7 +10,8 @@ Fecha de revision: 2026-09-27.
 - Primera parte de R01 implementada y probada; sus controles de propiedad ya cubren tambien las clases de R02.
 - R02F01 y R02F02 implementadas y probadas, incluida la conservacion de progreso tras baja y reincorporacion.
 - R03F01 y R03F02 implementadas y probadas, incluido el cierre con historial despues de actividad real.
-- Primer recorrido de R04F01, R05F01 y R05F02 implementado para explicacion, video y flashcards. R04 y R05 permanecen parciales.
+- R04F01 y R04F02 implementadas y probadas para explicacion, video, flashcards y cuestionarios.
+- R05F01 implementada y R05F02 funcional para los cuatro tipos; R05 permanece parcial por la prueba de concurrencia real pendiente.
 
 ## Existe realmente
 
@@ -52,12 +53,14 @@ Fecha de revision: 2026-09-27.
 - Inscripciones unicas por asignacion y alumno creadas para matriculas activas y sincronizadas al matricular, dar de baja o reincorporar.
 - Retirada transaccional de asignaciones sin actividad y cierre con conservacion de historial cuando existe una finalizacion real.
 - Panel de alumno en `/student/missions` limitado a inscripciones activas, asignaciones abiertas y matriculas activas.
-- Mapa lineal con nodos disponibles, bloqueados, completados o pendientes; el servidor no envia contenido de nodos bloqueados.
-- Actividades de explicacion, video YouTube/Vimeo con enlace alternativo y flashcards que exigen revisar todas las tarjetas.
+- Mapa lineal con nodos disponibles, bloqueados o completados; el servidor no envia contenido de nodos bloqueados.
+- Actividades de explicacion, video YouTube/Vimeo con enlace alternativo, flashcards que exigen revisar todas las tarjetas y cuestionarios corregidos en servidor.
 - Comprobaciones de cuenta, rol, matricula, inscripcion, asignacion, mision, nodo y predecesor en cada consulta o finalizacion.
 - Progreso unico por inscripcion y nodo, protegido por transaccion y restriccion unica, con diez puntos no duplicables y porcentaje derivado.
 - Aviso visible de que confirmar lectura, revision o tarjetas no demuestra comprension ni visionado completo.
-- Cuestionarios visibles como pendientes y usados como barrera de avance, sin exponer preguntas al alumno.
+- Preguntas y opciones del cuestionario sin `is_correct`, explicaciones ni otros indicadores de solucion antes del envio.
+- Intentos y respuestas persistidos, nota precisa calculada en servidor, mejor nota derivada, feedback posterior y cinco envios por minuto.
+- Un suspenso conserva el intento sin progreso; un aprobado desbloquea el siguiente nodo y concede diez puntos una sola vez. Un suspenso posterior no revoca la aprobacion.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 
@@ -72,11 +75,12 @@ Fecha de revision: 2026-09-27.
 | Pruebas focalizadas R03F01 | `14 passed`, `100 assertions`.                                                                             |
 | Pruebas focalizadas R03F02 | `10 passed`, `77 assertions`.                                                                              |
 | Integracion R02-R03        | `33 passed`, `226 assertions`.                                                                             |
-| Recorrido alumno R04-R05   | `10 passed`, `120 assertions`.                                                                             |
+| Recorrido alumno R04-R05   | `21 passed`, `215 assertions`.                                                                             |
+| Cuestionarios R04F02       | `11 passed`, `87 assertions`.                                                                              |
 | Regresion R02-R03 afectada | `20 passed`, `147 assertions`.                                                                             |
-| Suite Pest completa        | `91 passed`, `544 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.     |
-| Pint                       | Sin problemas de estilo en 134 archivos PHP en la ultima ejecucion.                                        |
-| PHPStan                    | Sin errores en 109 archivos analizados.                                                                    |
+| Suite Pest completa        | `102 passed`, `639 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.    |
+| Pint                       | Sin problemas de estilo en 140 archivos PHP en la ultima ejecucion.                                        |
+| PHPStan                    | Sin errores en 114 archivos analizados.                                                                    |
 | TypeScript                 | `vue-tsc --noEmit` correcto.                                                                               |
 | Frontend                   | TypeScript correcto; formato en 84 archivos y lint en 71 sin avisos; build con `3395 modules transformed`. |
 | Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                            |
@@ -122,8 +126,7 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 ## Pendiente funcional
 
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
-- Completar R04F02 con correccion de cuestionarios, intentos y mejor nota en servidor.
-- Completar R05F02 con una prueba de concurrencia real y ampliar el progreso cuando existan cuestionarios.
+- Completar R05F02 con una prueba de concurrencia real sobre la finalizacion idempotente.
 - Implementar seguimiento docente, informes y el resto de R06-R08.
 - Decidir mas adelante el alcance autorizado de IA y cualquier integracion externa.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.

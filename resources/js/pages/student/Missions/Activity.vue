@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, Check, ExternalLink, RotateCcw } from '@lucide/vue';
+import {
+    ArrowLeft,
+    Check,
+    CheckCircle2,
+    ExternalLink,
+    RotateCcw,
+    XCircle,
+} from '@lucide/vue';
 import { computed, ref } from 'vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -8,20 +15,56 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 type Flashcard = { id: number; front: string; back: string };
+type QuizOption = { id: number; position: number; text: string };
+type QuizQuestion = {
+    id: number;
+    position: number;
+    statement: string;
+    options: QuizOption[];
+};
+type QuizFeedbackAnswer = {
+    question_id: number;
+    selected_option_id: number;
+    correct_option_id: number;
+    correct: boolean;
+    explanation: string;
+};
+type Quiz = {
+    pass_threshold: number;
+    questions: QuizQuestion[];
+    attempt_count: number;
+    best_score: number;
+    ever_passed: boolean;
+    latest_feedback: {
+        score: number;
+        correct_answers: number;
+        total_questions: number;
+        passed: boolean;
+        answers: QuizFeedbackAnswer[];
+    } | null;
+};
 type Node = {
     id: number;
     position: number;
-    type: 'explanation' | 'video' | 'flashcards';
+    type: 'explanation' | 'video' | 'quiz' | 'flashcards';
     title: string;
     body: string | null;
     video: { embed_url: string; external_url: string } | null;
     flashcards: Flashcard[];
+    quiz: Quiz | null;
     completed: boolean;
 };
 
 const props = defineProps<{ enrollmentId: number; node: Node }>();
 const revealedCards = ref<number[]>([]);
 const form = useForm({ confirmed: false, flashcard_ids: [] as number[] });
+const quizForm = useForm({
+    answers:
+        props.node.quiz?.questions.map((question) => ({
+            question_id: question.id,
+            option_id: null as number | null,
+        })) ?? [],
+});
 
 const allCardsReviewed = computed(
     () =>
@@ -40,6 +83,36 @@ const submit = () => {
     form.post(
         `/student/missions/${props.enrollmentId}/nodes/${props.node.id}/complete`,
     );
+};
+
+const allQuestionsAnswered = computed(() =>
+    quizForm.answers.every((answer) => answer.option_id !== null),
+);
+
+const submitQuiz = () => {
+    quizForm.post(
+        `/student/missions/${props.enrollmentId}/nodes/${props.node.id}/quiz-attempts`,
+        { preserveScroll: true },
+    );
+};
+
+const feedbackFor = (questionId: number) =>
+    props.node.quiz?.latest_feedback?.answers.find(
+        (answer) => answer.question_id === questionId,
+    );
+
+const optionFeedbackClass = (questionId: number, optionId: number) => {
+    const feedback = feedbackFor(questionId);
+
+    if (feedback?.correct_option_id === optionId) {
+        return 'border-green-600 bg-green-50 dark:bg-green-950/20';
+    }
+
+    if (feedback?.selected_option_id === optionId && !feedback.correct) {
+        return 'border-destructive bg-destructive/5';
+    }
+
+    return '';
 };
 
 defineOptions({
@@ -105,7 +178,7 @@ defineOptions({
             </Button>
         </section>
 
-        <section v-else class="space-y-5">
+        <section v-else-if="node.type === 'flashcards'" class="space-y-5">
             <p class="text-sm text-muted-foreground">
                 Reveal the back of every card before confirming your review.
             </p>
@@ -146,8 +219,124 @@ defineOptions({
             <InputError :message="form.errors.flashcard_ids" />
         </section>
 
+        <section v-else-if="node.quiz" class="space-y-6">
+            <div class="border-y py-4 text-sm text-muted-foreground">
+                <p>
+                    Answer every question, then submit the whole attempt. Your
+                    answers are saved only when you submit; unfinished drafts
+                    are not retained.
+                </p>
+                <p class="mt-2">
+                    Pass mark: {{ node.quiz.pass_threshold }}%. Attempts:
+                    {{ node.quiz.attempt_count }}. Best score:
+                    {{ node.quiz.best_score.toFixed(2) }}%.
+                </p>
+            </div>
+
+            <div
+                v-if="node.quiz.latest_feedback"
+                class="space-y-4 border-y py-5"
+            >
+                <div class="flex flex-wrap items-center gap-3">
+                    <CheckCircle2
+                        v-if="node.quiz.latest_feedback.passed"
+                        class="size-5 text-green-700"
+                    />
+                    <XCircle v-else class="size-5 text-destructive" />
+                    <strong>
+                        Latest attempt:
+                        {{ node.quiz.latest_feedback.score.toFixed(2) }}%
+                    </strong>
+                    <Badge
+                        :variant="
+                            node.quiz.latest_feedback.passed
+                                ? 'default'
+                                : 'destructive'
+                        "
+                    >
+                        {{
+                            node.quiz.latest_feedback.passed
+                                ? 'Passed'
+                                : 'Not passed'
+                        }}
+                    </Badge>
+                </div>
+                <p class="text-sm text-muted-foreground">
+                    {{ node.quiz.latest_feedback.correct_answers }} of
+                    {{ node.quiz.latest_feedback.total_questions }} correct.
+                    Review the explanations below before trying again.
+                </p>
+            </div>
+
+            <form class="space-y-8" @submit.prevent="submitQuiz">
+                <fieldset
+                    v-for="(question, questionIndex) in node.quiz.questions"
+                    :key="question.id"
+                    class="space-y-4 border-b pb-7"
+                >
+                    <legend class="font-medium">
+                        {{ question.position }}. {{ question.statement }}
+                    </legend>
+                    <label
+                        v-for="option in question.options"
+                        :key="option.id"
+                        class="flex items-start gap-3 border p-3 text-sm"
+                        :class="optionFeedbackClass(question.id, option.id)"
+                    >
+                        <input
+                            v-model="quizForm.answers[questionIndex].option_id"
+                            type="radio"
+                            :name="`question-${question.id}`"
+                            :value="option.id"
+                            class="mt-0.5 size-4"
+                        />
+                        <span>{{ option.text }}</span>
+                    </label>
+                    <div
+                        v-if="feedbackFor(question.id)"
+                        class="space-y-2 border-l-4 p-3 text-sm"
+                        :class="
+                            feedbackFor(question.id)?.correct
+                                ? 'border-green-600'
+                                : 'border-destructive'
+                        "
+                    >
+                        <p class="font-medium">
+                            {{
+                                feedbackFor(question.id)?.correct
+                                    ? 'Correct answer.'
+                                    : 'Review this answer.'
+                            }}
+                        </p>
+                        <p>{{ feedbackFor(question.id)?.explanation }}</p>
+                        <p
+                            v-if="!feedbackFor(question.id)?.correct"
+                            class="text-muted-foreground"
+                        >
+                            Correct option:
+                            {{
+                                question.options.findIndex(
+                                    (option) =>
+                                        option.id ===
+                                        feedbackFor(question.id)
+                                            ?.correct_option_id,
+                                ) + 1
+                            }}.
+                        </p>
+                    </div>
+                </fieldset>
+                <InputError :message="quizForm.errors.answers" />
+                <Button
+                    type="submit"
+                    :disabled="quizForm.processing || !allQuestionsAnswered"
+                >
+                    <Check /> Submit answers
+                </Button>
+            </form>
+        </section>
+
         <form
-            v-if="!node.completed"
+            v-if="node.type !== 'quiz' && !node.completed"
             class="space-y-4 border-y py-6"
             @submit.prevent="submit"
         >
@@ -174,7 +363,7 @@ defineOptions({
             </Button>
         </form>
         <p
-            v-else
+            v-else-if="node.type !== 'quiz'"
             class="flex items-center gap-2 border-y py-5 text-sm text-green-700"
         >
             <Check class="size-5" /> This stage is already complete. Reviewing

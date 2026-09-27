@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Enums\MissionAssignmentStatus;
-use App\Enums\MissionNodeType;
 use App\Models\ClassroomMembership;
 use App\Models\MissionEnrollment;
 use App\Models\MissionNode;
@@ -66,7 +65,6 @@ class StudentMissionAccess
             $status = match (true) {
                 $completed => 'completed',
                 ! $previousCompleted => 'locked',
-                $node->type === MissionNodeType::Quiz => 'pending',
                 default => 'available',
             };
             $previousCompleted = $completed;

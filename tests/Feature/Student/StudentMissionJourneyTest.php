@@ -248,7 +248,7 @@ test('removal blocks access and reinstatement preserves progress', function () {
     expect($journey['enrollment']->progress()->count())->toBe(1);
 });
 
-test('an unimplemented questionnaire stops the linear path', function () {
+test('an available questionnaire still stops the linear path until it is passed', function () {
     $journey = createStudentJourney(['explanation', 'quiz', 'explanation']);
     $nodes = $journey['mission']->nodes()->get();
     completeStudentNode($journey['student'], $journey['enrollment'], $nodes[0]->id)->assertSessionHasNoErrors();
@@ -256,11 +256,11 @@ test('an unimplemented questionnaire stops the linear path', function () {
     $this->actingAs($journey['student'])
         ->get(route('student.missions.show', $journey['enrollment']))
         ->assertInertia(fn (Assert $page) => $page
-            ->where('nodes.1.status', 'pending')
+            ->where('nodes.1.status', 'available')
             ->where('nodes.2.status', 'locked'));
     $this->actingAs($journey['student'])
         ->get(route('student.missions.nodes.show', [$journey['enrollment'], $nodes[1]]))
-        ->assertForbidden();
+        ->assertOk();
     completeStudentNode($journey['student'], $journey['enrollment'], $nodes[1]->id)
         ->assertForbidden();
     $this->actingAs($journey['student'])

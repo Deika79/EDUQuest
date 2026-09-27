@@ -36,20 +36,20 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 
 - **R04F01** Presentar recursos y tarjetas.
 - **R04F01T01** Implementar explicación, vídeo validado con enlace alternativo y flashcards accesibles. Estado: ejecutada con confirmacion explicita y aviso de que la accion no acredita comprension ni visionado completo.
-- **R04F01T01P01** Completar cada tipo; comprobar rechazo de vídeo inválido y de tarjetas ajenas al nodo. Estado: ejecutada y superada con Pest; la validacion de video se cubre en el editor y las tarjetas se contrastan en servidor. R04 permanece parcial porque R04F02 no esta implementada.
+- **R04F01T01P01** Completar cada tipo; comprobar rechazo de vídeo inválido y de tarjetas ajenas al nodo. Estado: ejecutada y superada con Pest; la validacion de video se cubre en el editor y las tarjetas se contrastan en servidor.
 
 - **R04F02** Corregir cuestionarios.
-- **R04F02T01** Validar preguntas y opciones, corregir en servidor y guardar intentos y mejor nota.
-- **R04F02T01P01** Probar 2 de 3 aciertos con umbral del 70 %, respuestas manipuladas y reintento posterior. Estado: planificada.
+- **R04F02T01** Validar preguntas y opciones, corregir en servidor y guardar intentos y mejor nota. Estado: ejecutada; no expone soluciones antes de responder, compara la nota sin redondear, conserva todos los intentos y limita a cinco envios por minuto.
+- **R04F02T01P01** Probar 2 de 3 aciertos con umbral del 70 %, respuestas manipuladas y reintento posterior. Estado: ejecutada y superada con Pest; incluye preguntas omitidas o duplicadas, IDs ajenos, nodo bloqueado, baja, aprobacion seguida de suspenso, feedback y puntos unicos. R04 queda implementado en su alcance previsto.
 
 ## R05 El alumno debe avanzar por etapas sin perder lo que ha completado.
 
 - **R05F01** Aplicar los desbloqueos.
 - **R05F01T01** Comprobar matrícula, asignación y nodo anterior al consultar o finalizar una actividad. Estado: ejecutada; incluye cuenta e inscripcion activas, asignacion abierta, pertenencia a la mision y rol de alumno en cada peticion.
-- **R05F01T01P01** Intentar abrir y completar un nodo bloqueado por URL y petición directa; debe rechazarse. Estado: ejecutada y superada con Pest, incluidos IDs de otra inscripcion o mision y el bloqueo lineal ante un cuestionario pendiente.
+- **R05F01T01P01** Intentar abrir y completar un nodo bloqueado por URL y petición directa; debe rechazarse. Estado: ejecutada y superada con Pest, incluidos IDs de otra inscripcion o mision; un cuestionario no desbloquea el siguiente nodo hasta aprobarse.
 
 - **R05F02** Persistir progreso y puntos.
-- **R05F02T01** Guardar una finalización por inscripción y nodo, con transacción y unicidad; calcular avance. Estado: ejecutada para explicacion, video y flashcards; cada nodo concede diez puntos una vez y el porcentaje se calcula desde finalizaciones persistidas.
+- **R05F02T01** Guardar una finalización por inscripción y nodo, con transacción y unicidad; calcular avance. Estado: ejecutada para los cuatro tipos; aprobar un cuestionario reutiliza la finalizacion idempotente, concede diez puntos una vez y el porcentaje se calcula desde finalizaciones persistidas.
 - **R05F02T01P01** Reenviar y duplicar simultáneamente la finalización; verificar un único premio y persistencia tras nuevo acceso. Estado: parcial; el reenvio repetido, la unicidad y la persistencia tras baja y reincorporacion estan probados. Falta una prueba de concurrencia real y R05 permanece parcial.
 
 ## R06 El profesor debe conocer el avance de sus alumnos.

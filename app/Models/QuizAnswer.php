@@ -5,21 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
+ * @property int $attempt_id
  * @property int $question_id
- * @property int $position
- * @property string $text
+ * @property int $option_id
  * @property bool $is_correct
  */
-#[Fillable(['position', 'text', 'is_correct'])]
-class QuizOption extends Model
+#[Fillable(['attempt_id', 'question_id', 'option_id', 'is_correct'])]
+class QuizAnswer extends Model
 {
     protected function casts(): array
     {
         return ['is_correct' => 'boolean'];
+    }
+
+    /** @return BelongsTo<QuizAttempt, $this> */
+    public function attempt(): BelongsTo
+    {
+        return $this->belongsTo(QuizAttempt::class, 'attempt_id');
     }
 
     /** @return BelongsTo<QuizQuestion, $this> */
@@ -28,9 +33,9 @@ class QuizOption extends Model
         return $this->belongsTo(QuizQuestion::class, 'question_id');
     }
 
-    /** @return HasMany<QuizAnswer, $this> */
-    public function answers(): HasMany
+    /** @return BelongsTo<QuizOption, $this> */
+    public function option(): BelongsTo
     {
-        return $this->hasMany(QuizAnswer::class, 'option_id');
+        return $this->belongsTo(QuizOption::class, 'option_id');
     }
 }

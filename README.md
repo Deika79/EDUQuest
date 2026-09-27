@@ -86,13 +86,18 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/Missi
 
 El alumno accede a `/student/missions` y solo ve misiones con matricula e inscripcion activas y asignacion abierta. Cada mision presenta un mapa lineal: el primer nodo esta disponible, los siguientes se desbloquean en orden y los completados pueden abrirse de nuevo. El servidor no incluye el contenido de nodos bloqueados.
 
-Se pueden completar explicaciones, videos de YouTube o Vimeo y conjuntos de flashcards. El alumno confirma la revision y recibe diez puntos una sola vez por nodo; esta confirmacion registra una accion, pero no acredita comprension ni el visionado completo. Los cuestionarios se muestran pendientes y bloquean el avance hasta implementar R04F02.
+Se pueden completar explicaciones, videos de YouTube o Vimeo, conjuntos de flashcards y cuestionarios. El alumno confirma la revision de recursos y recibe diez puntos una sola vez por nodo; esta confirmacion registra una accion, pero no acredita comprension ni el visionado completo.
 
-Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. Todavia no existen correccion de cuestionarios, intentos, seguimiento docente ni IA.
+Los cuestionarios muestran preguntas y opciones sin indicadores de solucion antes de responder. Al enviar se guardan el intento y sus respuestas, se calcula la nota en servidor sin redondearla para comparar el umbral y se muestran feedback y explicaciones. Se permiten reintentos, con un maximo de cinco envios por minuto; la mejor nota y una aprobacion anterior se conservan. No se guardan borradores a mitad del intento.
+
+Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. Todavia no existen seguimiento docente ni IA.
 
 ```powershell
 # Pruebas focalizadas del recorrido del alumno
 docker compose exec -T laravel.test php artisan test tests/Feature/Student/StudentMissionJourneyTest.php
+
+# Pruebas focalizadas de cuestionarios
+docker compose exec -T laravel.test php artisan test tests/Feature/Student/StudentQuizAttemptTest.php
 ```
 
 ## Documentacion

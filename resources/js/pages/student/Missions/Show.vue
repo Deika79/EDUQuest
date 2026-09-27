@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import {
-    ArrowLeft,
-    CheckCircle2,
-    CircleEllipsis,
-    LockKeyhole,
-    Play,
-} from '@lucide/vue';
+import { ArrowLeft, CheckCircle2, LockKeyhole, Play } from '@lucide/vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -31,7 +25,7 @@ type MapNode = {
     position: number;
     type: 'explanation' | 'video' | 'quiz' | 'flashcards';
     title: string;
-    status: 'completed' | 'available' | 'locked' | 'pending';
+    status: 'completed' | 'available' | 'locked';
 };
 
 defineProps<{ enrollment: Enrollment; nodes: MapNode[] }>();
@@ -110,9 +104,7 @@ defineOptions({
                                 node.status === 'completed',
                             'border-primary text-primary':
                                 node.status === 'available',
-                            'text-muted-foreground':
-                                node.status === 'locked' ||
-                                node.status === 'pending',
+                            'text-muted-foreground': node.status === 'locked',
                         }"
                     >
                         <CheckCircle2
@@ -121,10 +113,6 @@ defineOptions({
                         />
                         <LockKeyhole
                             v-else-if="node.status === 'locked'"
-                            class="size-5"
-                        />
-                        <CircleEllipsis
-                            v-else-if="node.status === 'pending'"
                             class="size-5"
                         />
                         <span v-else>{{ node.position }}</span>
@@ -146,13 +134,6 @@ defineOptions({
                                     {{ node.status }}
                                 </Badge>
                             </div>
-                            <p
-                                v-if="node.status === 'pending'"
-                                class="mt-1 text-sm text-muted-foreground"
-                            >
-                                Questionnaire completion is pending
-                                implementation.
-                            </p>
                         </div>
                         <Button
                             v-if="
@@ -181,7 +162,8 @@ defineOptions({
         <p class="border-y py-5 text-sm text-muted-foreground">
             Confirming reading, reviewing a video, or going through cards
             records your action. It does not prove comprehension or that a video
-            was watched in full.
+            was watched in full. Questionnaires are graded on the server and
+            only unlock the next stage when passed.
         </p>
     </main>
 </template>

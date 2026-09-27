@@ -15,7 +15,27 @@ class NodeProgressService
 
     public function complete(User $student, MissionEnrollment $enrollment, MissionNode $node): NodeProgress
     {
-        return DB::transaction(function () use ($student, $enrollment, $node): NodeProgress {
+        return $this->completeForTypes($student, $enrollment, $node, [
+            MissionNodeType::Explanation,
+            MissionNodeType::Video,
+            MissionNodeType::Flashcards,
+        ]);
+    }
+
+    public function completePassedQuiz(User $student, MissionEnrollment $enrollment, MissionNode $node): NodeProgress
+    {
+        return $this->completeForTypes($student, $enrollment, $node, [MissionNodeType::Quiz], true);
+    }
+
+    /** @param list<MissionNodeType> $types */
+    private function completeForTypes(
+        User $student,
+        MissionEnrollment $enrollment,
+        MissionNode $node,
+        array $types,
+        bool $requiresPassedAttempt = false,
+    ): NodeProgress {
+        return DB::transaction(function () use ($student, $enrollment, $node, $types, $requiresPassedAttempt): NodeProgress {
             $lockedEnrollment = MissionEnrollment::query()
                 ->with('assignment')
                 ->lockForUpdate()
@@ -23,11 +43,14 @@ class NodeProgressService
             $lockedNode = MissionNode::query()->lockForUpdate()->findOrFail($node->id);
             $this->access->assertNode($student, $lockedEnrollment, $lockedNode);
 
-            abort_unless(in_array($lockedNode->type, [
-                MissionNodeType::Explanation,
-                MissionNodeType::Video,
-                MissionNodeType::Flashcards,
-            ], true), 403);
+            abort_unless(in_array($lockedNode->type, $types, true), 403);
+
+            if ($requiresPassedAttempt) {
+                abort_unless($lockedEnrollment->quizAttempts()
+                    ->where('node_id', $lockedNode->id)
+                    ->where('passed', true)
+                    ->exists(), 403);
+            }
 
             $progress = $lockedEnrollment->progress()
                 ->where('node_id', $lockedNode->id)

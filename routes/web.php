@@ -76,6 +76,9 @@ Route::middleware('auth')->group(function () {
             ->name('missions.nodes.show');
         Route::post('missions/{enrollment}/nodes/{node}/complete', [StudentMissionController::class, 'complete'])
             ->name('missions.nodes.complete');
+        Route::post('missions/{enrollment}/nodes/{node}/quiz-attempts', [StudentMissionController::class, 'submitQuiz'])
+            ->middleware('throttle:5,1')
+            ->name('missions.nodes.quiz-attempts.store');
     });
 });
 

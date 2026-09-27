@@ -54,4 +54,10 @@ class MissionEnrollment extends Model
     {
         return $this->hasMany(NodeProgress::class, 'enrollment_id');
     }
+
+    /** @return HasMany<QuizAttempt, $this> */
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class, 'enrollment_id');
+    }
 }

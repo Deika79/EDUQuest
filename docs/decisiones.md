@@ -49,9 +49,12 @@
 - `node_progress` registra una unica finalizacion por pareja inscripcion-nodo y conserva los diez puntos concedidos. El total y el porcentaje se derivan de esas filas; no se mantienen contadores editables en el usuario.
 - El desbloqueo es lineal por `position`. El mapa entrega solo identificador, posicion, tipo, titulo y estado; el contenido se consulta en una ruta separada despues de repetir todos los controles de acceso.
 - Una explicacion, un video o unas flashcards se completan mediante confirmacion explicita. Es una evidencia de interaccion declarada, no una acreditacion de comprension ni de visionado real.
-- Un cuestionario pendiente actua como barrera: aparece en el mapa, no expone preguntas y no permite desbloquear nodos posteriores hasta R04F02.
+- Un cuestionario disponible muestra preguntas y opciones mediante una proyeccion explicita que excluye `is_correct` y explicaciones. Las soluciones y explicaciones solo se envian como feedback cuando ya existe un intento guardado.
 - La primera finalizacion fija `activity_started_at`. Desde ese momento, cerrar una asignacion conserva inscripciones y progreso; una asignacion sin actividad sigue pudiendo retirarse.
 - No existe vista previa docente del recorrido. Las rutas de finalizacion exigen rol alumno, por lo que una futura vista previa debera permanecer separada de `node_progress`.
+- `quiz_attempts` conserva nota con seis decimales, aciertos, total, resultado y fecha; `quiz_answers` conserva una opcion por pregunta. La comparacion del umbral usa los enteros de aciertos y preguntas, sin redondeo.
+- La mejor nota se deriva del historial inmutable. Un aprobado crea una unica fila de `node_progress`; los reintentos posteriores, aprobados o suspensos, no cambian los diez puntos ni revocan el desbloqueo.
+- Los cuestionarios admiten reintentos ilimitados funcionalmente, con un limite tecnico de cinco envios por minuto. No se persisten selecciones antes de enviar el intento completo.
 
 ## Cuestiones abiertas
 

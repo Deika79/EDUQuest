@@ -7,10 +7,15 @@ use App\Enums\MissionNodeType;
 use App\Enums\VideoProvider;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\CompleteMissionNodeRequest;
+use App\Http\Requests\Student\SubmitQuizAttemptRequest;
 use App\Models\Flashcard;
 use App\Models\MissionEnrollment;
 use App\Models\MissionNode;
+use App\Models\QuizAnswer;
+use App\Models\QuizOption;
+use App\Models\QuizQuestion;
 use App\Services\NodeProgressService;
+use App\Services\QuizGradingService;
 use App\Services\StudentMissionAccess;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -90,10 +95,13 @@ class StudentMissionController extends Controller
         StudentMissionAccess $access,
     ): Response {
         $access->assertNode($request->user(), $enrollment, $node);
-        abort_if($node->type === MissionNodeType::Quiz, 403, 'Questionnaires are not available yet.');
 
         if ($node->type === MissionNodeType::Flashcards) {
             $node->load('flashcards');
+        }
+
+        if ($node->type === MissionNodeType::Quiz) {
+            $node->load('questions.options');
         }
 
         return Inertia::render('student/Missions/Activity', [
@@ -108,6 +116,9 @@ class StudentMissionController extends Controller
                 'flashcards' => $node->type === MissionNodeType::Flashcards
                     ? $node->flashcards->map(fn (Flashcard $card) => $card->only(['id', 'front', 'back']))
                     : [],
+                'quiz' => $node->type === MissionNodeType::Quiz
+                    ? $this->quizData($enrollment, $node)
+                    : null,
                 'completed' => $enrollment->progress()->where('node_id', $node->id)->exists(),
             ],
         ]);
@@ -124,6 +135,79 @@ class StudentMissionController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Activity completed. Ten points awarded once.')]);
 
         return to_route('student.missions.show', $enrollment);
+    }
+
+    public function submitQuiz(
+        SubmitQuizAttemptRequest $request,
+        MissionEnrollment $enrollment,
+        MissionNode $node,
+        QuizGradingService $grading,
+    ): RedirectResponse {
+        $attempt = $grading->grade(
+            $request->user(),
+            $enrollment,
+            $node,
+            $request->validated('answers'),
+        );
+
+        Inertia::flash('toast', [
+            'type' => $attempt->passed ? 'success' : 'info',
+            'message' => $attempt->passed
+                ? __('Questionnaire passed. Ten points awarded once.')
+                : __('Attempt saved. Review the feedback and try again.'),
+        ]);
+
+        return to_route('student.missions.nodes.show', [$enrollment, $node]);
+    }
+
+    /** @return array<string, mixed> */
+    private function quizData(MissionEnrollment $enrollment, MissionNode $node): array
+    {
+        $attempts = $enrollment->quizAttempts()->where('node_id', $node->id);
+        $latestAttempt = (clone $attempts)
+            ->with('answers')
+            ->latest('submitted_at')
+            ->latest('id')
+            ->first();
+        $answerLookup = $latestAttempt?->answers->keyBy('question_id');
+
+        $feedback = $latestAttempt === null ? null : [
+            'score' => round((float) $latestAttempt->score, 2),
+            'correct_answers' => $latestAttempt->correct_answers,
+            'total_questions' => $latestAttempt->total_questions,
+            'passed' => $latestAttempt->passed,
+            'answers' => $node->questions->map(function (QuizQuestion $question) use ($answerLookup): array {
+                $answer = $answerLookup?->get($question->id);
+                $correctOption = $question->options->firstWhere('is_correct', true);
+                abort_unless($answer instanceof QuizAnswer && $correctOption instanceof QuizOption, 500);
+
+                return [
+                    'question_id' => $question->id,
+                    'selected_option_id' => $answer->option_id,
+                    'correct_option_id' => $correctOption->id,
+                    'correct' => $answer->is_correct,
+                    'explanation' => $question->explanation,
+                ];
+            })->values(),
+        ];
+
+        return [
+            'pass_threshold' => $node->pass_threshold ?? 70,
+            'questions' => $node->questions->map(fn (QuizQuestion $question): array => [
+                'id' => $question->id,
+                'position' => $question->position,
+                'statement' => $question->statement,
+                'options' => $question->options->map(fn (QuizOption $option): array => [
+                    'id' => $option->id,
+                    'position' => $option->position,
+                    'text' => $option->text,
+                ])->values(),
+            ])->values(),
+            'attempt_count' => (clone $attempts)->count(),
+            'best_score' => round((float) ((clone $attempts)->max('score') ?? 0), 2),
+            'ever_passed' => (clone $attempts)->where('passed', true)->exists(),
+            'latest_feedback' => $feedback,
+        ];
     }
 
     /** @return array{embed_url: string, external_url: string} */

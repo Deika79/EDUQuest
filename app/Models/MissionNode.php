@@ -61,4 +61,10 @@ class MissionNode extends Model
     {
         return $this->hasMany(NodeProgress::class, 'node_id');
     }
+
+    /** @return HasMany<QuizAttempt, $this> */
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class, 'node_id');
+    }
 }
