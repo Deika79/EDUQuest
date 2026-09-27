@@ -50,8 +50,8 @@ defineOptions({
             </Button>
         </div>
         <p class="mt-6 border-y py-6 text-sm text-muted-foreground">
-            Publishing, assignment, student activities, and progress are not
-            available yet.
+            Teacher tracking and AI-assisted authoring are planned for later
+            milestones.
         </p>
     </main>
 </template>

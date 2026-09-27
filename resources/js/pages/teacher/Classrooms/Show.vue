@@ -295,7 +295,7 @@ defineOptions({
 
         <p class="border-y py-5 text-sm text-muted-foreground">
             Open mission assignments follow enrollment changes automatically.
-            Student activities and progress are not available yet.
+            Teacher tracking is planned for a later milestone.
         </p>
     </main>
 </template>

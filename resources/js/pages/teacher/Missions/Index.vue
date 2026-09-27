@@ -138,8 +138,8 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Student activities, scoring, progress, and AI generation are not
-            available yet.
+            Teacher tracking and AI-assisted authoring are planned for later
+            milestones.
         </p>
     </main>
 </template>

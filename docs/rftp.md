@@ -50,7 +50,7 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 
 - **R05F02** Persistir progreso y puntos.
 - **R05F02T01** Guardar una finalización por inscripción y nodo, con transacción y unicidad; calcular avance. Estado: ejecutada para los cuatro tipos; aprobar un cuestionario reutiliza la finalizacion idempotente, concede diez puntos una vez y el porcentaje se calcula desde finalizaciones persistidas.
-- **R05F02T01P01** Reenviar y duplicar simultáneamente la finalización; verificar un único premio y persistencia tras nuevo acceso. Estado: parcial; el reenvio repetido, la unicidad y la persistencia tras baja y reincorporacion estan probados. Falta una prueba de concurrencia real y R05 permanece parcial.
+- **R05F02T01P01** Reenviar y duplicar simultáneamente la finalización; verificar un único premio y persistencia tras nuevo acceso. Estado: ejecutada y superada. Ademas de los reenvios secuenciales y la persistencia tras baja y reincorporacion, una carrera real de dos peticiones HTTP simultaneas contra MySQL termino con dos respuestas controladas, una sola fila de progreso y diez puntos totales.
 
 ## R06 El profesor debe conocer el avance de sus alumnos.
 
@@ -75,9 +75,9 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 ## R08 El proyecto debe poder instalarse, probarse y explicarse con evidencias.
 
 - **R08F01** Diseñar y documentar la solución.
-- **R08F01T01** Mantener RFTP, casos de uso, diagramas, planificación, horas reales y memoria por hitos.
-- **R08F01T01P01** Contrastar tareas cerradas con commits y evidencias, y totalizar horas y desviaciones. Estado: planificada.
+- **R08F01T01** Mantener RFTP, casos de uso, diagramas, planificación, horas reales y memoria por hitos. Estado: parcial; RFTP, estado, guia de demo y evidencias del recorrido estan actualizados. Diagramas, memoria y totalizacion de horas siguen pendientes.
+- **R08F01T01P01** Contrastar tareas cerradas con commits y evidencias, y totalizar horas y desviaciones. Estado: parcial; funciones R01-R05 contrastadas con pruebas y capturas reales, sin inventar horas. Falta la revision academica y la totalizacion cuando existan registros reales.
 
 - **R08F02** Verificar e instalar la aplicación.
-- **R08F02T01** Preparar pruebas críticas, interfaz adaptable, README, contenedores, datos de demo y copia/restauración de la BD.
-- **R08F02T01P01** Ejecutar pruebas, recorrer la demo con teclado y móvil, instalar desde cero y restaurar una copia. Estado: planificada.
+- **R08F02T01** Preparar pruebas críticas, interfaz adaptable, README, contenedores, datos de demo y copia/restauración de la BD. Estado: parcial; pruebas criticas, contenedores, README y datos ficticios de demo disponibles. Copia y restauracion siguen pendientes.
+- **R08F02T01P01** Ejecutar pruebas, recorrer la demo con teclado y móvil, instalar desde cero y restaurar una copia. Estado: parcial; recorrido completo verificado en Chrome de escritorio y cadena de calidad superada. Teclado, movil, instalacion limpia y restauracion siguen pendientes.

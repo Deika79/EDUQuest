@@ -405,9 +405,9 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Student activities, answers, points, progress, and AI are not
-            available yet. Existing open assignments remain recorded when a
-            mission is archived.
+            Teacher tracking and AI-assisted authoring are planned for later
+            milestones. Existing open assignments remain recorded when a mission
+            is archived.
         </p>
     </main>
 </template>

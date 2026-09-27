@@ -11,7 +11,7 @@ Fecha de revision: 2026-09-27.
 - R02F01 y R02F02 implementadas y probadas, incluida la conservacion de progreso tras baja y reincorporacion.
 - R03F01 y R03F02 implementadas y probadas, incluido el cierre con historial despues de actividad real.
 - R04F01 y R04F02 implementadas y probadas para explicacion, video, flashcards y cuestionarios.
-- R05F01 implementada y R05F02 funcional para los cuatro tipos; R05 permanece parcial por la prueba de concurrencia real pendiente.
+- R05F01 y R05F02 implementadas y probadas para los cuatro tipos, incluida una carrera HTTP simultanea real contra MySQL.
 
 ## Existe realmente
 
@@ -63,6 +63,7 @@ Fecha de revision: 2026-09-27.
 - Un suspenso conserva el intento sin progreso; un aprobado desbloquea el siguiente nodo y concede diez puntos una sola vez. Un suspenso posterior no revoca la aprobacion.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
+- Guia reproducible y evidencias reales de la revision previa del hito en `docs/guia-demo-hito-50.md` y `docs/evidencias-hito-50.md`.
 
 ## Verificaciones realizadas
 
@@ -78,6 +79,9 @@ Fecha de revision: 2026-09-27.
 | Recorrido alumno R04-R05   | `21 passed`, `215 assertions`.                                                                             |
 | Cuestionarios R04F02       | `11 passed`, `87 assertions`.                                                                              |
 | Regresion R02-R03 afectada | `20 passed`, `147 assertions`.                                                                             |
+| Seguridad focalizada hito  | `55 passed`, `462 assertions`: bloqueos, soluciones, IDs ajenos y propiedad docente.                       |
+| Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.            |
+| Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.          |
 | Suite Pest completa        | `102 passed`, `639 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.    |
 | Pint                       | Sin problemas de estilo en 140 archivos PHP en la ultima ejecucion.                                        |
 | PHPStan                    | Sin errores en 114 archivos analizados.                                                                    |
@@ -86,7 +90,9 @@ Fecha de revision: 2026-09-27.
 | Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                            |
 | Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                       |
 
-La primera pasada de pruebas fallo porque aun no existia `public/build/manifest.json`. Tras compilar el frontend, toda la suite paso. La ejecucion inicial como `root` dejo la cache de vistas sin escritura para el servidor `sail`; se corrigieron los permisos de `storage/` y `bootstrap/cache/` y se limpiaron las caches.
+La primera pasada historica de pruebas fallo porque aun no existia `public/build/manifest.json`. Tras compilar el frontend, toda la suite paso. La ejecucion inicial como `root` dejo la cache de vistas sin escritura para el servidor `sail`; se corrigieron los permisos de `storage/` y `bootstrap/cache/` y se limpiaron las caches.
+
+En la revision del hito, el primer `composer ci:check` intento analizar un perfil temporal de Chrome creado dentro de `tmp/`. Se cerro ese navegador, se retiro exclusivamente el temporal generado y la cadena completa se repitio correctamente. La interfaz docente tambien contenia avisos obsoletos sobre actividades y progreso; se corrigieron y el build volvio a pasar.
 
 ## Herramientas comprobadas
 
@@ -126,10 +132,11 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 ## Pendiente funcional
 
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
-- Completar R05F02 con una prueba de concurrencia real sobre la finalizacion idempotente.
 - Implementar seguimiento docente, informes y el resto de R06-R08.
 - Decidir mas adelante el alcance autorizado de IA y cualquier integracion externa.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
+- Revisar la demo y las evidencias con David y el centro. El feedback del 50 % no esta marcado como entregado y no se ha creado la etiqueta `hito-50`.
+- Completar en R08 el recorrido con teclado y movil, la instalacion desde cero y la restauracion de una copia.
 - El repositorio remoto `origin/main` esta configurado; no hay entrega academica marcada como realizada.
 
 ## Datos pendientes del centro
