@@ -52,16 +52,16 @@ Un docente gestiona unicamente sus clases desde `/teacher/classes`. Puede crear 
 
 Si la cuenta ya existe, se incorpora mediante su `username` exacto en lugar de crear otra. No existe busqueda global, autocompletado ni vista previa de cuentas ajenas. El docente que incorpora una cuenta compartida solo gestiona su matricula en esa clase; no puede modificar la cuenta ni sus credenciales. La regeneracion de contrasenas de alumnos por su docente creador queda pendiente.
 
-Una baja desactiva la matricula sin borrar su registro ni desactivar la cuenta global. La reincorporacion reactiva esa misma matricula. La sincronizacion con asignaciones y la conservacion del avance se implementaran cuando existan esas entidades en R03-R05.
+Una baja desactiva la matricula sin borrar su registro ni desactivar la cuenta global. Tambien desactiva sus inscripciones en asignaciones abiertas de la clase. La reincorporacion reactiva los mismos registros, y matricular a un alumno crea sus inscripciones en las asignaciones abiertas. El progreso de nodos aun no existe y su conservacion se comprobara durante R04-R05.
 
 ```powershell
 # Pruebas focalizadas de clases, alumnos y matriculas
 docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/ClassroomManagementTest.php
 ```
 
-## Borradores de misiones
+## Misiones y asignaciones
 
-Cada docente gestiona unicamente sus borradores desde `/teacher/missions`. La mision guarda titulo, descripcion narrativa, asignatura y nivel. El editor permite anadir, editar, eliminar y mover nodos con botones, conservando su orden al reabrir el borrador.
+Cada docente gestiona unicamente sus misiones desde `/teacher/missions`. La mision guarda titulo, descripcion narrativa, asignatura y nivel. El editor permite anadir, editar, eliminar y mover nodos con botones, conservando su orden al reabrir el borrador.
 
 Tipos disponibles en el editor:
 
@@ -70,11 +70,18 @@ Tipos disponibles en el editor:
 - Cuestionario con 1-10 preguntas, 2-4 opciones por pregunta, explicacion de respuesta, umbral entre 1 y 100 y exactamente una opcion correcta.
 - Conjunto de 1-10 flashcards con anverso y reverso obligatorios.
 
-El editor calcula si el borrador estaria listo para publicarse y muestra los errores pendientes. Esta comprobacion no publica ni cambia el estado: publicacion, duplicacion, asignacion, realizacion por alumnos, correccion, progreso e IA siguen pendientes.
+El editor calcula si el borrador esta listo y solo entonces permite publicarlo. Una mision publicada y sus nodos son inmutables; para cambiar su contenido se duplica como un nuevo borrador independiente. Una mision archivada no acepta nuevas asignaciones, pero conserva las existentes.
+
+Una mision publicada puede asignarse a una o varias clases propias. La pareja mision-clase y la pareja asignacion-alumno son unicas. La pantalla muestra si cada asignacion esta abierta o cerrada y cuantos alumnos mantienen una inscripcion activa. Una asignacion sin actividad puede retirarse; el cierre con historial queda preparado para cuando R04 registre actividad real.
+
+Las actividades del alumno, respuestas, puntos, progreso e IA siguen pendientes.
 
 ```powershell
 # Pruebas focalizadas del editor de borradores
 docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/MissionDraftManagementTest.php
+
+# Pruebas focalizadas de publicacion y asignaciones
+docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/MissionPublishingAndAssignmentTest.php
 ```
 
 ## Documentacion

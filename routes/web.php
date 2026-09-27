@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\AdminTeacherController;
 use App\Http\Controllers\Auth\RequiredPasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Teacher\MissionAssignmentController;
+use App\Http\Controllers\Teacher\MissionLifecycleController;
 use App\Http\Controllers\Teacher\MissionNodeController;
 use App\Http\Controllers\Teacher\StudentEnrollmentController;
 use App\Http\Controllers\Teacher\TeacherClassroomController;
@@ -47,6 +49,16 @@ Route::middleware('auth')->group(function () {
         Route::post('missions', [TeacherMissionController::class, 'store'])->name('missions.store');
         Route::get('missions/{mission}', [TeacherMissionController::class, 'show'])->name('missions.show');
         Route::patch('missions/{mission}', [TeacherMissionController::class, 'update'])->name('missions.update');
+        Route::post('missions/{mission}/publish', [MissionLifecycleController::class, 'publish'])
+            ->name('missions.publish');
+        Route::post('missions/{mission}/duplicate', [MissionLifecycleController::class, 'duplicate'])
+            ->name('missions.duplicate');
+        Route::post('missions/{mission}/archive', [MissionLifecycleController::class, 'archive'])
+            ->name('missions.archive');
+        Route::post('missions/{mission}/assignments', [MissionAssignmentController::class, 'store'])
+            ->name('missions.assignments.store');
+        Route::delete('missions/{mission}/assignments/{assignment}', [MissionAssignmentController::class, 'destroy'])
+            ->name('missions.assignments.destroy');
         Route::post('missions/{mission}/nodes', [MissionNodeController::class, 'store'])->name('missions.nodes.store');
         Route::patch('missions/{mission}/nodes/{node}', [MissionNodeController::class, 'update'])
             ->name('missions.nodes.update');

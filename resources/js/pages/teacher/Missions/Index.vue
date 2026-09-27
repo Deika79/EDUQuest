@@ -16,8 +16,9 @@ type MissionSummary = {
     description: string;
     subject: string;
     level: string;
-    status: 'draft';
+    status: 'draft' | 'published' | 'archived';
     nodes_count: number;
+    assignments_count: number;
     updated_at: string;
 };
 
@@ -27,21 +28,21 @@ defineOptions({
     layout: {
         breadcrumbs: [
             { title: 'Teacher', href: dashboard() },
-            { title: 'Mission drafts', href: '/teacher/missions' },
+            { title: 'Missions', href: '/teacher/missions' },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Mission drafts" />
+    <Head title="Missions" />
     <main
         class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 p-4 md:p-8"
     >
         <section class="space-y-6">
             <Heading
-                title="Mission drafts"
-                description="Manual mission editor"
+                title="Missions"
+                description="Create, publish and distribute your own content"
             />
             <Form
                 v-bind="TeacherMissionController.store.form()"
@@ -89,8 +90,8 @@ defineOptions({
         <section class="space-y-4">
             <Heading
                 variant="small"
-                title="Your drafts"
-                description="Private to your teacher account"
+                title="Your missions"
+                description="Draft, published and archived content"
             />
             <div v-if="missions.length" class="divide-y border-y">
                 <div
@@ -101,10 +102,23 @@ defineOptions({
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <p class="font-medium">{{ mission.title }}</p>
-                            <Badge variant="outline">Draft</Badge>
+                            <Badge
+                                :variant="
+                                    mission.status === 'published'
+                                        ? 'default'
+                                        : mission.status === 'archived'
+                                          ? 'secondary'
+                                          : 'outline'
+                                "
+                            >
+                                {{ mission.status }}
+                            </Badge>
                             <Badge variant="secondary"
                                 >{{ mission.nodes_count }} nodes</Badge
                             >
+                            <Badge variant="outline">
+                                {{ mission.assignments_count }} assignments
+                            </Badge>
                         </div>
                         <p class="mt-1 text-sm text-muted-foreground">
                             {{ mission.subject }} · {{ mission.level }}
@@ -112,20 +126,20 @@ defineOptions({
                     </div>
                     <Button as-child variant="outline">
                         <Link :href="`/teacher/missions/${mission.id}`">
-                            Edit
+                            {{ mission.status === 'draft' ? 'Edit' : 'Open' }}
                             <ArrowRight />
                         </Link>
                     </Button>
                 </div>
             </div>
             <p v-else class="border-y py-6 text-sm text-muted-foreground">
-                No mission drafts yet.
+                No missions yet.
             </p>
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Publishing, assignment, student access, progress, and AI generation
-            are not available yet.
+            Student activities, scoring, progress, and AI generation are not
+            available yet.
         </p>
     </main>
 </template>

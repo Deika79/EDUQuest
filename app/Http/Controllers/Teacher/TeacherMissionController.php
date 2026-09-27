@@ -9,6 +9,7 @@ use App\Http\Requests\Teacher\StoreMissionRequest;
 use App\Http\Requests\Teacher\UpdateMissionRequest;
 use App\Models\Flashcard;
 use App\Models\Mission;
+use App\Models\MissionAssignment;
 use App\Models\MissionNode;
 use App\Models\QuizOption;
 use App\Models\QuizQuestion;
@@ -27,8 +28,7 @@ class TeacherMissionController extends Controller
 
         return Inertia::render('teacher/Missions/Index', [
             'missions' => $request->user()->missions()
-                ->where('status', MissionStatus::Draft)
-                ->withCount('nodes')
+                ->withCount(['nodes', 'assignments'])
                 ->latest('updated_at')
                 ->get(['id', 'title', 'description', 'subject', 'level', 'status', 'teacher_id', 'updated_at']),
         ]);
@@ -50,7 +50,12 @@ class TeacherMissionController extends Controller
     public function show(Mission $mission, MissionReadiness $readiness): Response
     {
         Gate::authorize('view', $mission);
-        $mission->load(['nodes.questions.options', 'nodes.flashcards']);
+        $mission->load([
+            'nodes.questions.options',
+            'nodes.flashcards',
+            'assignments.classroom',
+            'assignments.enrollments',
+        ]);
 
         return Inertia::render('teacher/Missions/Show', [
             'mission' => [
@@ -83,6 +88,22 @@ class TeacherMissionController extends Controller
                 ]),
             ]),
             'readiness' => $readiness->check($mission),
+            'classrooms' => $mission->teacher->ownedClassrooms()
+                ->whereNull('archived_at')
+                ->orderBy('name')
+                ->get(['id', 'name', 'level', 'subject']),
+            'assignments' => $mission->assignments
+                ->sortByDesc('assigned_at')
+                ->values()
+                ->map(fn (MissionAssignment $assignment) => [
+                    'id' => $assignment->id,
+                    'status' => $assignment->status->value,
+                    'assigned_at' => $assignment->assigned_at,
+                    'closed_at' => $assignment->closed_at,
+                    'classroom' => $assignment->classroom->only(['id', 'name', 'level', 'subject']),
+                    'enrollments_count' => $assignment->enrollments->count(),
+                    'active_enrollments_count' => $assignment->enrollments->where('active', true)->count(),
+                ]),
         ]);
     }
 

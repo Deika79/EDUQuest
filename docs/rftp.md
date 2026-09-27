@@ -19,18 +19,18 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 - **R02F01T01P01** Crear dos clases con propietarios distintos y verificar separación de sus alumnos. Estado: ejecutada y superada con Pest, incluidos ID ajeno, campos manipulados y matricula duplicada.
 
 - **R02F02** Gestionar altas y bajas.
-- **R02F02T01** Sincronizar matrículas con inscripciones en asignaciones abiertas, conservando historial al desactivar. Estado: parcial; la baja y reincorporacion conservan la misma matricula, pero no existen aun asignaciones que sincronizar.
-- **R02F02T01P01** Comprobar que una baja bloquea el acceso y que una reincorporación conserva el avance previo. Estado: parcial; probado el cambio reversible de matricula y su independencia de la cuenta global, pendiente probar acceso a asignaciones y avance cuando existan.
+- **R02F02T01** Sincronizar matrículas con inscripciones en asignaciones abiertas, conservando historial al desactivar. Estado: ejecutada; altas, bajas y reincorporaciones crean, desactivan o reactivan la misma inscripcion mediante transacciones y restricciones unicas.
+- **R02F02T01P01** Comprobar que una baja bloquea el acceso y que una reincorporación conserva el avance previo. Estado: parcial; probada la desactivacion y reactivacion de la misma inscripcion sin duplicados. El acceso del alumno y la conservacion de avance permanecen pendientes porque R04-R05 aun no existen.
 
 ## R03 El profesor debe poder preparar y distribuir una misión.
 
 - **R03F01** Editar y validar borradores.
 - **R03F01T01** Crear editor de misión y ordenación de nodos; validar contenido antes de publicar. Estado: ejecutada para borradores manuales con explicacion, video, cuestionario y flashcards.
-- **R03F01T01P01** Guardar, reabrir y reordenar un borrador; rechazar publicación con nodos incompletos. Estado: parcial y superada en el alcance disponible; Pest verifica persistencia, reapertura, orden, rechazo de contenido incompleto y comprobacion de preparacion. La accion real de publicar pertenece a R03F02 y aun no existe.
+- **R03F01T01P01** Guardar, reabrir y reordenar un borrador; rechazar publicación con nodos incompletos. Estado: superada; Pest verifica persistencia, reapertura, orden, validacion de contenido y rechazo efectivo de una publicacion incompleta.
 
 - **R03F02** Publicar y asignar contenido.
-- **R03F02T01** Publicar, duplicar, archivar y asignar misiones a clases propias; impedir edición de publicadas.
-- **R03F02T01P01** Asignar a dos clases propias; rechazar una clase ajena y verificar que una copia no altera el original. Estado: planificada.
+- **R03F02T01** Publicar, duplicar, archivar y asignar misiones a clases propias; impedir edición de publicadas. Estado: ejecutada; incluye inscripciones sincronizadas y retirada de asignaciones sin actividad.
+- **R03F02T01P01** Asignar a dos clases propias; rechazar una clase ajena y verificar que una copia no altera el original. Estado: superada; tambien se prueban publicacion invalida, inmutabilidad, IDs anidados, duplicados, archivo y altas, bajas y reincorporaciones. El cierre con historial se probara cuando R04 pueda registrar actividad real.
 
 ## R04 El alumno debe realizar actividades de repaso de varios tipos.
 

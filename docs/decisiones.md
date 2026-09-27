@@ -36,6 +36,14 @@
 - Los proveedores de video admitidos inicialmente son YouTube y Vimeo. Se guarda el proveedor y el identificador normalizado; no se descarga la URL ni se aceptan iframes.
 - El cuestionario guarda cual es la opcion correcta para la futura correccion en servidor, pero R03F01 no expone contenido a alumnos ni implementa intentos o notas.
 
+## Tomadas durante R03F02
+
+- Publicar bloquea el borrador, repite la comprobacion de preparacion dentro de una transaccion y fija `published_at`. El contenido publicado solo puede reutilizarse mediante una copia profunda como nuevo borrador.
+- `mission_assignments` impone una pareja unica mision-clase y `mission_enrollments` una pareja unica asignacion-alumno. Las altas, bajas y reincorporaciones sincronizan inscripciones abiertas en la misma transaccion que la matricula.
+- Archivar impide nuevas asignaciones sin cerrar ni borrar las existentes. Las asignaciones abiertas de una mision archivada siguen sincronizando sus matriculas.
+- Retirar una asignacion sin actividad elimina la asignacion y sus inscripciones. Si existe actividad, el servicio cambia su estado a cerrada, desactiva las inscripciones y conserva las filas.
+- `activity_started_at` queda como marcador interno para la futura actividad de R04. Ninguna funcion actual lo establece; la rama de cierre con historial no se presenta como probada hasta que exista actividad real.
+
 ## Cuestiones abiertas
 
 - Fechas oficiales de propuesta, 50 %, 80 % y entrega final.

@@ -10,6 +10,7 @@ use App\Http\Requests\Teacher\UpdateMembershipRequest;
 use App\Models\Classroom;
 use App\Models\ClassroomMembership;
 use App\Models\User;
+use App\Services\MissionEnrollmentSynchronizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -18,11 +19,14 @@ use Inertia\Inertia;
 
 class StudentEnrollmentController extends Controller
 {
-    public function store(StoreStudentRequest $request, Classroom $classroom): RedirectResponse
-    {
+    public function store(
+        StoreStudentRequest $request,
+        Classroom $classroom,
+        MissionEnrollmentSynchronizer $synchronizer,
+    ): RedirectResponse {
         $data = $request->validated();
 
-        DB::transaction(function () use ($request, $classroom, $data): void {
+        DB::transaction(function () use ($request, $classroom, $data, $synchronizer): void {
             $student = new User;
             $student->fill($data);
             $student->role = UserRole::Student;
@@ -31,11 +35,12 @@ class StudentEnrollmentController extends Controller
             $student->creator()->associate($request->user());
             $student->save();
 
-            $classroom->memberships()->create([
+            $membership = $classroom->memberships()->create([
                 'student_id' => $student->id,
                 'active' => true,
                 'activated_at' => now(),
             ]);
+            $synchronizer->sync($membership);
         });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Student created and enrolled.')]);
@@ -43,8 +48,11 @@ class StudentEnrollmentController extends Controller
         return to_route('teacher.classrooms.show', $classroom);
     }
 
-    public function storeExisting(EnrollExistingStudentRequest $request, Classroom $classroom): RedirectResponse
-    {
+    public function storeExisting(
+        EnrollExistingStudentRequest $request,
+        Classroom $classroom,
+        MissionEnrollmentSynchronizer $synchronizer,
+    ): RedirectResponse {
         $student = User::query()
             ->where('username', $request->validated('username'))
             ->where('role', UserRole::Student)
@@ -57,18 +65,22 @@ class StudentEnrollmentController extends Controller
             ]);
         }
 
-        $membership = $classroom->memberships()->firstOrCreate(
-            ['student_id' => $student->id],
-            ['active' => true, 'activated_at' => now()],
-        );
+        DB::transaction(function () use ($classroom, $student, $synchronizer): void {
+            $membership = $classroom->memberships()->firstOrCreate(
+                ['student_id' => $student->id],
+                ['active' => true, 'activated_at' => now()],
+            );
 
-        if (! $membership->wasRecentlyCreated) {
-            throw ValidationException::withMessages([
-                'existing_username' => $membership->active
-                    ? __('This student is already enrolled in the class.')
-                    : __('This student already has an inactive membership. Use reinstate instead.'),
-            ]);
-        }
+            if (! $membership->wasRecentlyCreated) {
+                throw ValidationException::withMessages([
+                    'existing_username' => $membership->active
+                        ? __('This student is already enrolled in the class.')
+                        : __('This student already has an inactive membership. Use reinstate instead.'),
+                ]);
+            }
+
+            $synchronizer->sync($membership);
+        });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Existing student enrolled.')]);
 
@@ -79,16 +91,20 @@ class StudentEnrollmentController extends Controller
         UpdateMembershipRequest $request,
         Classroom $classroom,
         ClassroomMembership $membership,
+        MissionEnrollmentSynchronizer $synchronizer,
     ): RedirectResponse {
         Gate::authorize('view', $classroom);
         abort_unless($membership->classroom_id === $classroom->id, 404);
 
-        $active = $request->boolean('active');
-        $membership->forceFill([
-            'active' => $active,
-            'activated_at' => $active ? now() : $membership->activated_at,
-            'deactivated_at' => $active ? null : now(),
-        ])->save();
+        DB::transaction(function () use ($request, $membership, $synchronizer): void {
+            $active = $request->boolean('active');
+            $membership->forceFill([
+                'active' => $active,
+                'activated_at' => $active ? now() : $membership->activated_at,
+                'deactivated_at' => $active ? null : now(),
+            ])->save();
+            $synchronizer->sync($membership);
+        });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Enrollment status updated.')]);
 

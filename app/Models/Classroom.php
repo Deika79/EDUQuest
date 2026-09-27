@@ -42,4 +42,10 @@ class Classroom extends Model
             ->withPivot(['id', 'active', 'activated_at', 'deactivated_at'])
             ->withTimestamps();
     }
+
+    /** @return HasMany<MissionAssignment, $this> */
+    public function missionAssignments(): HasMany
+    {
+        return $this->hasMany(MissionAssignment::class);
+    }
 }

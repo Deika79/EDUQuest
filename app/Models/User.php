@@ -104,4 +104,10 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->hasMany(Mission::class, 'teacher_id');
     }
+
+    /** @return HasMany<MissionEnrollment, $this> */
+    public function missionEnrollments(): HasMany
+    {
+        return $this->hasMany(MissionEnrollment::class, 'student_id');
+    }
 }

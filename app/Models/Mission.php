@@ -47,4 +47,10 @@ class Mission extends Model
     {
         return $this->hasMany(MissionNode::class)->orderBy('position');
     }
+
+    /** @return HasMany<MissionAssignment, $this> */
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(MissionAssignment::class);
+    }
 }

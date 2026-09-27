@@ -27,4 +27,24 @@ class MissionPolicy
     {
         return $this->view($user, $mission) && $mission->status === MissionStatus::Draft;
     }
+
+    public function publish(User $user, Mission $mission): bool
+    {
+        return $this->update($user, $mission);
+    }
+
+    public function duplicate(User $user, Mission $mission): bool
+    {
+        return $this->view($user, $mission) && $mission->status === MissionStatus::Published;
+    }
+
+    public function archive(User $user, Mission $mission): bool
+    {
+        return $this->view($user, $mission) && $mission->status !== MissionStatus::Archived;
+    }
+
+    public function assign(User $user, Mission $mission): bool
+    {
+        return $this->view($user, $mission) && $mission->status === MissionStatus::Published;
+    }
 }

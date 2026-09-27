@@ -294,7 +294,8 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Missions, assignments, and student progress are not available yet.
+            Open mission assignments follow enrollment changes automatically.
+            Student activities and progress are not available yet.
         </p>
     </main>
 </template>

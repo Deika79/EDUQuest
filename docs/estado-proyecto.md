@@ -8,8 +8,8 @@ Fecha de revision: 2026-09-27.
 - Desarrollo iniciado con la instalacion de la base tecnica.
 - Base tecnica instalada, configurada, arrancada y verificada.
 - Primera parte de R01 implementada y probada; sus controles de propiedad ya cubren tambien las clases de R02.
-- R02F01 implementada y probada. R02F02 permanece parcial hasta que existan asignaciones y progreso.
-- R03F01 implementada y probada. R03F02 permanece pendiente y no existe publicacion ni asignacion.
+- R02F01 implementada y probada. R02F02 sincroniza inscripciones; la comprobacion de acceso y conservacion de progreso sigue pendiente de R04-R05.
+- R03F01 y R03F02 implementadas y probadas en el alcance que no depende de actividad del alumno.
 
 ## Existe realmente
 
@@ -41,28 +41,36 @@ Fecha de revision: 2026-09-27.
 - Cuestionarios con 1-10 preguntas, 2-4 opciones, una correcta, explicacion y umbral de aprobado entre 1 y 100.
 - Videos limitados a YouTube y Vimeo, validados por URL o identificador y almacenados como proveedor mas identificador normalizado.
 - Flashcards con 1-10 pares obligatorios de anverso y reverso.
-- Comprobacion de preparacion del borrador con errores concretos, sin accion de publicar.
+- Comprobacion de preparacion del borrador con errores concretos, reutilizada obligatoriamente al publicar.
 - Policies y validaciones que impiden consultar o alterar borradores y nodos de otro docente mediante su ID.
 - Ninguna ruta de borradores disponible para alumnos.
+- Publicacion limitada a borradores propios preparados, con estado publicado, fecha y bloqueo de toda edicion posterior.
+- Duplicacion profunda de misiones publicadas como nuevos borradores independientes, incluidos los cuatro tipos de nodo y su orden.
+- Archivo de misiones sin borrar asignaciones existentes y bloqueo de nuevas asignaciones.
+- Asignaciones unicas de misiones publicadas a una o varias clases propias, con estado abierto o cerrado y contadores visibles.
+- Inscripciones unicas por asignacion y alumno creadas para matriculas activas y sincronizadas al matricular, dar de baja o reincorporar.
+- Retirada transaccional de asignaciones sin actividad. La rama de cierre historico esta preparada mediante `activity_started_at`, pero no puede activarse ni probarse hasta R04.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 
 ## Verificaciones realizadas
 
-| Verificacion            | Resultado real                                                                                             |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Contenedores            | `laravel.test` y `mysql` arrancados; MySQL saludable.                                                      |
-| Migraciones             | Ejecutadas correctamente con `php artisan migrate --force`.                                                |
-| Pruebas focalizadas R01 | `23 passed`, `76 assertions`.                                                                              |
-| Pruebas focalizadas R02 | `10 passed`, `70 assertions`.                                                                              |
-| Pruebas focalizadas R03 | `14 passed`, `100 assertions`.                                                                             |
-| Suite Pest completa     | `71 passed`, `347 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.     |
-| Pint                    | Sin problemas de estilo en 111 archivos PHP.                                                               |
-| PHPStan                 | Sin errores en 88 archivos analizados.                                                                     |
-| TypeScript              | `vue-tsc --noEmit` correcto.                                                                               |
-| Frontend                | TypeScript correcto; formato en 82 archivos y lint en 69 sin avisos; build con `3391 modules transformed`. |
-| Login                   | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                            |
-| Registro publico        | Sin enlace visible y `GET /register` devuelve `404`.                                                       |
+| Verificacion               | Resultado real                                                                                             |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Contenedores               | `laravel.test` y `mysql` arrancados; MySQL saludable.                                                      |
+| Migraciones                | Ejecutadas correctamente con `php artisan migrate --force`.                                                |
+| Pruebas focalizadas R01    | `23 passed`, `76 assertions`.                                                                              |
+| Pruebas focalizadas R02    | `10 passed`, `70 assertions`.                                                                              |
+| Pruebas focalizadas R03F01 | `14 passed`, `100 assertions`.                                                                             |
+| Pruebas focalizadas R03F02 | `10 passed`, `77 assertions`.                                                                              |
+| Integracion R02-R03        | `33 passed`, `226 assertions`.                                                                             |
+| Suite Pest completa        | `81 passed`, `424 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.     |
+| Pint                       | Sin problemas de estilo en 126 archivos PHP.                                                               |
+| PHPStan                    | Sin errores en 102 archivos analizados.                                                                    |
+| TypeScript                 | `vue-tsc --noEmit` correcto.                                                                               |
+| Frontend                   | TypeScript correcto; formato en 82 archivos y lint en 69 sin avisos; build con `3391 modules transformed`. |
+| Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                            |
+| Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                       |
 
 La primera pasada de pruebas fallo porque aun no existia `public/build/manifest.json`. Tras compilar el frontend, toda la suite paso. La ejecucion inicial como `root` dejo la cache de vistas sin escritura para el servidor `sail`; se corrigieron los permisos de `storage/` y `bootstrap/cache/` y se limpiaron las caches.
 
@@ -103,9 +111,9 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 
 ## Pendiente funcional
 
-- Completar R01F02 al existir asignaciones, progreso y los demas recursos con propietario de hitos posteriores.
-- Completar R02F02 al existir asignaciones y avance: sincronizar sus inscripciones al dar de alta o baja una matricula y probar que el historial se conserva.
-- Implementar R03F02: publicar, duplicar, archivar y asignar misiones sin modificar las ya publicadas.
+- Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
+- Completar R02F02 cuando R04-R05 permitan probar acceso del alumno y conservacion de avance tras una baja y reincorporacion.
+- Probar el cierre historico de asignaciones cuando R04 registre actividad real; actualmente solo es verificable la retirada sin actividad.
 - Implementar realizacion de actividades, progreso, intentos, informes y el resto de R04-R08.
 - Decidir mas adelante el alcance autorizado de IA y cualquier integracion externa.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.

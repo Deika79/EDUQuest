@@ -105,7 +105,8 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Mission assignments and progress are not available yet.
+            Mission assignments are managed from each published mission. Student
+            activities and progress are not available yet.
         </p>
     </main>
 </template>
