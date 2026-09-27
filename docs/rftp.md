@@ -20,7 +20,7 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 
 - **R02F02** Gestionar altas y bajas.
 - **R02F02T01** Sincronizar matrículas con inscripciones en asignaciones abiertas, conservando historial al desactivar. Estado: ejecutada; altas, bajas y reincorporaciones crean, desactivan o reactivan la misma inscripcion mediante transacciones y restricciones unicas.
-- **R02F02T01P01** Comprobar que una baja bloquea el acceso y que una reincorporación conserva el avance previo. Estado: parcial; probada la desactivacion y reactivacion de la misma inscripcion sin duplicados. El acceso del alumno y la conservacion de avance permanecen pendientes porque R04-R05 aun no existen.
+- **R02F02T01P01** Comprobar que una baja bloquea el acceso y que una reincorporación conserva el avance previo. Estado: ejecutada y superada con Pest; la baja bloquea las rutas del alumno y la reincorporacion reutiliza la inscripcion con su progreso y puntos previos.
 
 ## R03 El profesor debe poder preparar y distribuir una misión.
 
@@ -30,13 +30,13 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 
 - **R03F02** Publicar y asignar contenido.
 - **R03F02T01** Publicar, duplicar, archivar y asignar misiones a clases propias; impedir edición de publicadas. Estado: ejecutada; incluye inscripciones sincronizadas y retirada de asignaciones sin actividad.
-- **R03F02T01P01** Asignar a dos clases propias; rechazar una clase ajena y verificar que una copia no altera el original. Estado: superada; tambien se prueban publicacion invalida, inmutabilidad, IDs anidados, duplicados, archivo y altas, bajas y reincorporaciones. El cierre con historial se probara cuando R04 pueda registrar actividad real.
+- **R03F02T01P01** Asignar a dos clases propias; rechazar una clase ajena y verificar que una copia no altera el original. Estado: superada; tambien se prueban publicacion invalida, inmutabilidad, IDs anidados, duplicados, archivo, altas, bajas y reincorporaciones. R04 registra actividad real y ya verifica que el cierre conserva inscripciones y progreso.
 
 ## R04 El alumno debe realizar actividades de repaso de varios tipos.
 
 - **R04F01** Presentar recursos y tarjetas.
-- **R04F01T01** Implementar explicación, vídeo validado con enlace alternativo y flashcards accesibles.
-- **R04F01T01P01** Completar cada tipo; comprobar rechazo de vídeo inválido y de tarjetas ajenas al nodo. Estado: planificada.
+- **R04F01T01** Implementar explicación, vídeo validado con enlace alternativo y flashcards accesibles. Estado: ejecutada con confirmacion explicita y aviso de que la accion no acredita comprension ni visionado completo.
+- **R04F01T01P01** Completar cada tipo; comprobar rechazo de vídeo inválido y de tarjetas ajenas al nodo. Estado: ejecutada y superada con Pest; la validacion de video se cubre en el editor y las tarjetas se contrastan en servidor. R04 permanece parcial porque R04F02 no esta implementada.
 
 - **R04F02** Corregir cuestionarios.
 - **R04F02T01** Validar preguntas y opciones, corregir en servidor y guardar intentos y mejor nota.
@@ -45,12 +45,12 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 ## R05 El alumno debe avanzar por etapas sin perder lo que ha completado.
 
 - **R05F01** Aplicar los desbloqueos.
-- **R05F01T01** Comprobar matrícula, asignación y nodo anterior al consultar o finalizar una actividad.
-- **R05F01T01P01** Intentar abrir y completar un nodo bloqueado por URL y petición directa; debe rechazarse. Estado: planificada.
+- **R05F01T01** Comprobar matrícula, asignación y nodo anterior al consultar o finalizar una actividad. Estado: ejecutada; incluye cuenta e inscripcion activas, asignacion abierta, pertenencia a la mision y rol de alumno en cada peticion.
+- **R05F01T01P01** Intentar abrir y completar un nodo bloqueado por URL y petición directa; debe rechazarse. Estado: ejecutada y superada con Pest, incluidos IDs de otra inscripcion o mision y el bloqueo lineal ante un cuestionario pendiente.
 
 - **R05F02** Persistir progreso y puntos.
-- **R05F02T01** Guardar una finalización por inscripción y nodo, con transacción y unicidad; calcular avance.
-- **R05F02T01P01** Reenviar y duplicar simultáneamente la finalización; verificar un único premio y persistencia tras nuevo acceso. Estado: planificada.
+- **R05F02T01** Guardar una finalización por inscripción y nodo, con transacción y unicidad; calcular avance. Estado: ejecutada para explicacion, video y flashcards; cada nodo concede diez puntos una vez y el porcentaje se calcula desde finalizaciones persistidas.
+- **R05F02T01P01** Reenviar y duplicar simultáneamente la finalización; verificar un único premio y persistencia tras nuevo acceso. Estado: parcial; el reenvio repetido, la unicidad y la persistencia tras baja y reincorporacion estan probados. Falta una prueba de concurrencia real y R05 permanece parcial.
 
 ## R06 El profesor debe conocer el avance de sus alumnos.
 

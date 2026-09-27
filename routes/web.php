@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminTeacherController;
 use App\Http\Controllers\Auth\RequiredPasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Student\StudentMissionController;
 use App\Http\Controllers\Teacher\MissionAssignmentController;
 use App\Http\Controllers\Teacher\MissionLifecycleController;
 use App\Http\Controllers\Teacher\MissionNodeController;
@@ -67,9 +68,15 @@ Route::middleware('auth')->group(function () {
         Route::patch('missions/{mission}/nodes/{node}/position', [MissionNodeController::class, 'move'])
             ->name('missions.nodes.move');
     });
-    Route::inertia('student', 'student/Dashboard')
-        ->middleware('role:student')
-        ->name('student.dashboard');
+    Route::middleware('role:student')->prefix('student')->name('student.')->group(function () {
+        Route::get('/', [StudentMissionController::class, 'index'])->name('dashboard');
+        Route::get('missions', [StudentMissionController::class, 'index'])->name('missions.index');
+        Route::get('missions/{enrollment}', [StudentMissionController::class, 'show'])->name('missions.show');
+        Route::get('missions/{enrollment}/nodes/{node}', [StudentMissionController::class, 'activity'])
+            ->name('missions.nodes.show');
+        Route::post('missions/{enrollment}/nodes/{node}/complete', [StudentMissionController::class, 'complete'])
+            ->name('missions.nodes.complete');
+    });
 });
 
 require __DIR__.'/settings.php';

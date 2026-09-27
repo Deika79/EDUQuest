@@ -34,8 +34,16 @@ const mainNavItems = computed<NavItem[]>(() => {
             icon: School,
         });
         items.push({
-            title: 'Mission drafts',
+            title: 'Missions',
             href: '/teacher/missions',
+            icon: Map,
+        });
+    }
+
+    if (page.props.auth.user.role === 'student') {
+        items.push({
+            title: 'My missions',
+            href: '/student/missions',
             icon: Map,
         });
     }

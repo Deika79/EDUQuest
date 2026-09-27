@@ -2,7 +2,7 @@
 
 EDUQuest es una aplicacion web educativa para que el profesorado convierta repasos en misiones visuales, las asigne a clases y consulte el avance del alumnado.
 
-El desarrollo del hito del 50 % esta en curso. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; R01 y R02 siguen su desarrollo por tareas verificables.
+El desarrollo del hito del 50 % esta en curso. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; R04 y R05 han comenzado con un primer recorrido verificable del alumno y siguen parciales.
 
 ## Entorno local
 
@@ -52,7 +52,7 @@ Un docente gestiona unicamente sus clases desde `/teacher/classes`. Puede crear 
 
 Si la cuenta ya existe, se incorpora mediante su `username` exacto en lugar de crear otra. No existe busqueda global, autocompletado ni vista previa de cuentas ajenas. El docente que incorpora una cuenta compartida solo gestiona su matricula en esa clase; no puede modificar la cuenta ni sus credenciales. La regeneracion de contrasenas de alumnos por su docente creador queda pendiente.
 
-Una baja desactiva la matricula sin borrar su registro ni desactivar la cuenta global. Tambien desactiva sus inscripciones en asignaciones abiertas de la clase. La reincorporacion reactiva los mismos registros, y matricular a un alumno crea sus inscripciones en las asignaciones abiertas. El progreso de nodos aun no existe y su conservacion se comprobara durante R04-R05.
+Una baja desactiva la matricula sin borrar su registro ni desactivar la cuenta global. Tambien desactiva sus inscripciones en asignaciones abiertas de la clase. La reincorporacion reactiva los mismos registros, y matricular a un alumno crea sus inscripciones en las asignaciones abiertas. El progreso ya registrado se conserva durante la baja y vuelve a estar disponible al reincorporar al alumno.
 
 ```powershell
 # Pruebas focalizadas de clases, alumnos y matriculas
@@ -72,9 +72,7 @@ Tipos disponibles en el editor:
 
 El editor calcula si el borrador esta listo y solo entonces permite publicarlo. Una mision publicada y sus nodos son inmutables; para cambiar su contenido se duplica como un nuevo borrador independiente. Una mision archivada no acepta nuevas asignaciones, pero conserva las existentes.
 
-Una mision publicada puede asignarse a una o varias clases propias. La pareja mision-clase y la pareja asignacion-alumno son unicas. La pantalla muestra si cada asignacion esta abierta o cerrada y cuantos alumnos mantienen una inscripcion activa. Una asignacion sin actividad puede retirarse; el cierre con historial queda preparado para cuando R04 registre actividad real.
-
-Las actividades del alumno, respuestas, puntos, progreso e IA siguen pendientes.
+Una mision publicada puede asignarse a una o varias clases propias. La pareja mision-clase y la pareja asignacion-alumno son unicas. La pantalla muestra si cada asignacion esta abierta o cerrada y cuantos alumnos mantienen una inscripcion activa. Una asignacion sin actividad puede retirarse; si ya existe progreso, se cierra y conserva las inscripciones y su historial.
 
 ```powershell
 # Pruebas focalizadas del editor de borradores
@@ -82,6 +80,19 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/Missi
 
 # Pruebas focalizadas de publicacion y asignaciones
 docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/MissionPublishingAndAssignmentTest.php
+```
+
+## Recorrido del alumno
+
+El alumno accede a `/student/missions` y solo ve misiones con matricula e inscripcion activas y asignacion abierta. Cada mision presenta un mapa lineal: el primer nodo esta disponible, los siguientes se desbloquean en orden y los completados pueden abrirse de nuevo. El servidor no incluye el contenido de nodos bloqueados.
+
+Se pueden completar explicaciones, videos de YouTube o Vimeo y conjuntos de flashcards. El alumno confirma la revision y recibe diez puntos una sola vez por nodo; esta confirmacion registra una accion, pero no acredita comprension ni el visionado completo. Los cuestionarios se muestran pendientes y bloquean el avance hasta implementar R04F02.
+
+Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. Todavia no existen correccion de cuestionarios, intentos, seguimiento docente ni IA.
+
+```powershell
+# Pruebas focalizadas del recorrido del alumno
+docker compose exec -T laravel.test php artisan test tests/Feature/Student/StudentMissionJourneyTest.php
 ```
 
 ## Documentacion

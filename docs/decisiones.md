@@ -42,7 +42,16 @@
 - `mission_assignments` impone una pareja unica mision-clase y `mission_enrollments` una pareja unica asignacion-alumno. Las altas, bajas y reincorporaciones sincronizan inscripciones abiertas en la misma transaccion que la matricula.
 - Archivar impide nuevas asignaciones sin cerrar ni borrar las existentes. Las asignaciones abiertas de una mision archivada siguen sincronizando sus matriculas.
 - Retirar una asignacion sin actividad elimina la asignacion y sus inscripciones. Si existe actividad, el servicio cambia su estado a cerrada, desactiva las inscripciones y conserva las filas.
-- `activity_started_at` queda como marcador interno para la futura actividad de R04. Ninguna funcion actual lo establece; la rama de cierre con historial no se presenta como probada hasta que exista actividad real.
+- `activity_started_at` se preparo como marcador interno para la futura actividad de R04; el primer recorrido del alumno lo activa al guardar la primera finalizacion real.
+
+## Tomadas durante el primer recorrido de R04-R05
+
+- `node_progress` registra una unica finalizacion por pareja inscripcion-nodo y conserva los diez puntos concedidos. El total y el porcentaje se derivan de esas filas; no se mantienen contadores editables en el usuario.
+- El desbloqueo es lineal por `position`. El mapa entrega solo identificador, posicion, tipo, titulo y estado; el contenido se consulta en una ruta separada despues de repetir todos los controles de acceso.
+- Una explicacion, un video o unas flashcards se completan mediante confirmacion explicita. Es una evidencia de interaccion declarada, no una acreditacion de comprension ni de visionado real.
+- Un cuestionario pendiente actua como barrera: aparece en el mapa, no expone preguntas y no permite desbloquear nodos posteriores hasta R04F02.
+- La primera finalizacion fija `activity_started_at`. Desde ese momento, cerrar una asignacion conserva inscripciones y progreso; una asignacion sin actividad sigue pudiendo retirarse.
+- No existe vista previa docente del recorrido. Las rutas de finalizacion exigen rol alumno, por lo que una futura vista previa debera permanecer separada de `node_progress`.
 
 ## Cuestiones abiertas
 

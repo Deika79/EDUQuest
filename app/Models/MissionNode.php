@@ -55,4 +55,10 @@ class MissionNode extends Model
     {
         return $this->hasMany(Flashcard::class, 'node_id')->orderBy('position');
     }
+
+    /** @return HasMany<NodeProgress, $this> */
+    public function progress(): HasMany
+    {
+        return $this->hasMany(NodeProgress::class, 'node_id');
+    }
 }
