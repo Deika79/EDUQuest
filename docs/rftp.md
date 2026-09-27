@@ -9,7 +9,7 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 - **R01F01T01P01** Probar acceso válido e inválido, recuperación docente y bloqueo de una cuenta desactivada con sesión previa. Estado: ejecutada y superada con Pest.
 
 - **R01F02** Aplicar roles y propiedad.
-- **R01F02T01** Crear Policies y validación de campos para impedir elevación de rol y acceso a recursos ajenos. Estado: parcial; aplicadas a docentes, clases y matriculas, pendiente extenderlas a los recursos futuros.
+- **R01F02T01** Crear Policies y validación de campos para impedir elevación de rol y acceso a recursos ajenos. Estado: parcial; aplicadas a docentes, clases, matriculas y borradores de mision, pendiente extenderlas a los recursos futuros.
 - **R01F02T01P01** Comprobar que un alumno no entra en docencia y que un docente no modifica una clase ajena. Estado: ejecutada y superada con Pest para roles y clases.
 
 ## R02 El profesor debe organizar a sus alumnos en clases.
@@ -25,8 +25,8 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 ## R03 El profesor debe poder preparar y distribuir una misión.
 
 - **R03F01** Editar y validar borradores.
-- **R03F01T01** Crear editor de misión y ordenación de nodos; validar contenido antes de publicar.
-- **R03F01T01P01** Guardar, reabrir y reordenar un borrador; rechazar publicación con nodos incompletos. Estado: planificada.
+- **R03F01T01** Crear editor de misión y ordenación de nodos; validar contenido antes de publicar. Estado: ejecutada para borradores manuales con explicacion, video, cuestionario y flashcards.
+- **R03F01T01P01** Guardar, reabrir y reordenar un borrador; rechazar publicación con nodos incompletos. Estado: parcial y superada en el alcance disponible; Pest verifica persistencia, reapertura, orden, rechazo de contenido incompleto y comprobacion de preparacion. La accion real de publicar pertenece a R03F02 y aun no existe.
 
 - **R03F02** Publicar y asignar contenido.
 - **R03F02T01** Publicar, duplicar, archivar y asignar misiones a clases propias; impedir edición de publicadas.

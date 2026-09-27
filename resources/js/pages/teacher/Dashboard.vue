@@ -33,8 +33,25 @@ defineOptions({
                 </Link>
             </Button>
         </div>
+        <div
+            class="mt-6 flex flex-col gap-4 border-y py-6 sm:flex-row sm:items-center"
+        >
+            <div class="min-w-0 flex-1">
+                <p class="font-medium">Mission drafts</p>
+                <p class="text-sm text-muted-foreground">
+                    Build and validate manual mission content.
+                </p>
+            </div>
+            <Button as-child>
+                <Link href="/teacher/missions">
+                    Open drafts
+                    <ArrowRight />
+                </Link>
+            </Button>
+        </div>
         <p class="mt-6 border-y py-6 text-sm text-muted-foreground">
-            Mission and progress tools are not available yet.
+            Publishing, assignment, student activities, and progress are not
+            available yet.
         </p>
     </main>
 </template>

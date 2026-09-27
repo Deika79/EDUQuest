@@ -59,6 +59,24 @@ Una baja desactiva la matricula sin borrar su registro ni desactivar la cuenta g
 docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/ClassroomManagementTest.php
 ```
 
+## Borradores de misiones
+
+Cada docente gestiona unicamente sus borradores desde `/teacher/missions`. La mision guarda titulo, descripcion narrativa, asignatura y nivel. El editor permite anadir, editar, eliminar y mover nodos con botones, conservando su orden al reabrir el borrador.
+
+Tipos disponibles en el editor:
+
+- Explicacion con titulo y texto.
+- Video de YouTube o Vimeo mediante URL o identificador validado y normalizado en servidor.
+- Cuestionario con 1-10 preguntas, 2-4 opciones por pregunta, explicacion de respuesta, umbral entre 1 y 100 y exactamente una opcion correcta.
+- Conjunto de 1-10 flashcards con anverso y reverso obligatorios.
+
+El editor calcula si el borrador estaria listo para publicarse y muestra los errores pendientes. Esta comprobacion no publica ni cambia el estado: publicacion, duplicacion, asignacion, realizacion por alumnos, correccion, progreso e IA siguen pendientes.
+
+```powershell
+# Pruebas focalizadas del editor de borradores
+docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/MissionDraftManagementTest.php
+```
+
 ## Documentacion
 
 - `EduQuest_Plan_Maestro_DAW.md`: plan maestro original.

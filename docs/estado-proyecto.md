@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Fecha de revision: 2026-09-25.
+Fecha de revision: 2026-09-27.
 
 ## Fase actual
 
@@ -9,6 +9,7 @@ Fecha de revision: 2026-09-25.
 - Base tecnica instalada, configurada, arrancada y verificada.
 - Primera parte de R01 implementada y probada; sus controles de propiedad ya cubren tambien las clases de R02.
 - R02F01 implementada y probada. R02F02 permanece parcial hasta que existan asignaciones y progreso.
+- R03F01 implementada y probada. R03F02 permanece pendiente y no existe publicacion ni asignacion.
 
 ## Existe realmente
 
@@ -35,6 +36,14 @@ Fecha de revision: 2026-09-25.
 - Matriculas unicas por clase y alumno, con estado, fecha de activacion y fecha de baja independientes del estado global de la cuenta.
 - Baja y reincorporacion sobre el mismo registro de matricula, sin borrado.
 - Pantallas docentes de listado de clases y detalle con edicion, alumnado y estado de matriculas.
+- Borradores de mision propios con titulo, descripcion narrativa, asignatura, nivel, estado borrador y origen manual fijados en servidor.
+- Editor de nodos de explicacion, video, cuestionario y flashcards con alta, edicion, eliminacion y orden persistente.
+- Cuestionarios con 1-10 preguntas, 2-4 opciones, una correcta, explicacion y umbral de aprobado entre 1 y 100.
+- Videos limitados a YouTube y Vimeo, validados por URL o identificador y almacenados como proveedor mas identificador normalizado.
+- Flashcards con 1-10 pares obligatorios de anverso y reverso.
+- Comprobacion de preparacion del borrador con errores concretos, sin accion de publicar.
+- Policies y validaciones que impiden consultar o alterar borradores y nodos de otro docente mediante su ID.
+- Ninguna ruta de borradores disponible para alumnos.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 
@@ -46,10 +55,12 @@ Fecha de revision: 2026-09-25.
 | Migraciones             | Ejecutadas correctamente con `php artisan migrate --force`.                                                |
 | Pruebas focalizadas R01 | `23 passed`, `76 assertions`.                                                                              |
 | Pruebas focalizadas R02 | `10 passed`, `70 assertions`.                                                                              |
-| Suite Pest completa     | `57 passed`, `247 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.     |
-| PHPStan                 | Sin errores en 65 archivos analizados.                                                                     |
+| Pruebas focalizadas R03 | `14 passed`, `100 assertions`.                                                                             |
+| Suite Pest completa     | `71 passed`, `347 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.     |
+| Pint                    | Sin problemas de estilo en 111 archivos PHP.                                                               |
+| PHPStan                 | Sin errores en 88 archivos analizados.                                                                     |
 | TypeScript              | `vue-tsc --noEmit` correcto.                                                                               |
-| Frontend                | TypeScript correcto; formato en 79 archivos y lint en 66 sin avisos; build con `3383 modules transformed`. |
+| Frontend                | TypeScript correcto; formato en 82 archivos y lint en 69 sin avisos; build con `3391 modules transformed`. |
 | Login                   | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                            |
 | Registro publico        | Sin enlace visible y `GET /register` devuelve `404`.                                                       |
 
@@ -92,9 +103,10 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 
 ## Pendiente funcional
 
-- Completar R01F02 al existir misiones y los demas recursos con propietario de hitos posteriores.
+- Completar R01F02 al existir asignaciones, progreso y los demas recursos con propietario de hitos posteriores.
 - Completar R02F02 al existir asignaciones y avance: sincronizar sus inscripciones al dar de alta o baja una matricula y probar que el historial se conserva.
-- Implementar misiones, actividades, intentos, informes y el resto de R03-R08.
+- Implementar R03F02: publicar, duplicar, archivar y asignar misiones sin modificar las ya publicadas.
+- Implementar realizacion de actividades, progreso, intentos, informes y el resto de R04-R08.
 - Decidir mas adelante el alcance autorizado de IA y cualquier integracion externa.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - El repositorio remoto `origin/main` esta configurado; no hay entrega academica marcada como realizada.

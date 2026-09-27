@@ -98,4 +98,10 @@ class User extends Authenticatable implements PasskeyUser
             ->withPivot(['id', 'active', 'activated_at', 'deactivated_at'])
             ->withTimestamps();
     }
+
+    /** @return HasMany<Mission, $this> */
+    public function missions(): HasMany
+    {
+        return $this->hasMany(Mission::class, 'teacher_id');
+    }
 }

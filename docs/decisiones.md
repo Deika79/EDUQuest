@@ -28,6 +28,14 @@
 - `activated_at` y `deactivated_at` dejan el modelo preparado para sincronizar en el futuro las inscripciones de asignaciones, sin simularlas antes de R03-R05.
 - El estado de una matricula y el estado global de la cuenta son independientes.
 
+## Tomadas durante R03F01
+
+- Los borradores se normalizan en `missions`, `mission_nodes`, `quiz_questions`, `quiz_options` y `flashcards`; no se guarda el editor como un unico JSON.
+- La posicion de nodo es unica dentro de la mision. Subir, bajar y compactar posiciones se ejecuta en transacciones compatibles con MySQL.
+- Solo se persisten nodos que superan la validacion completa de su tipo. La comprobacion independiente de preparacion vuelve a recorrer el contenido guardado para proteger una futura publicacion.
+- Los proveedores de video admitidos inicialmente son YouTube y Vimeo. Se guarda el proveedor y el identificador normalizado; no se descarga la URL ni se aceptan iframes.
+- El cuestionario guarda cual es la opcion correcta para la futura correccion en servidor, pero R03F01 no expone contenido a alumnos ni implementa intentos o notas.
+
 ## Cuestiones abiertas
 
 - Fechas oficiales de propuesta, 50 %, 80 % y entrega final.

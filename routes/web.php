@@ -3,8 +3,10 @@
 use App\Http\Controllers\Admin\AdminTeacherController;
 use App\Http\Controllers\Auth\RequiredPasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Teacher\MissionNodeController;
 use App\Http\Controllers\Teacher\StudentEnrollmentController;
 use App\Http\Controllers\Teacher\TeacherClassroomController;
+use App\Http\Controllers\Teacher\TeacherMissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -40,6 +42,18 @@ Route::middleware('auth')->group(function () {
             ->name('classrooms.students.existing.store');
         Route::patch('classes/{classroom}/memberships/{membership}', [StudentEnrollmentController::class, 'update'])
             ->name('classrooms.memberships.update');
+
+        Route::get('missions', [TeacherMissionController::class, 'index'])->name('missions.index');
+        Route::post('missions', [TeacherMissionController::class, 'store'])->name('missions.store');
+        Route::get('missions/{mission}', [TeacherMissionController::class, 'show'])->name('missions.show');
+        Route::patch('missions/{mission}', [TeacherMissionController::class, 'update'])->name('missions.update');
+        Route::post('missions/{mission}/nodes', [MissionNodeController::class, 'store'])->name('missions.nodes.store');
+        Route::patch('missions/{mission}/nodes/{node}', [MissionNodeController::class, 'update'])
+            ->name('missions.nodes.update');
+        Route::delete('missions/{mission}/nodes/{node}', [MissionNodeController::class, 'destroy'])
+            ->name('missions.nodes.destroy');
+        Route::patch('missions/{mission}/nodes/{node}/position', [MissionNodeController::class, 'move'])
+            ->name('missions.nodes.move');
     });
     Route::inertia('student', 'student/Dashboard')
         ->middleware('role:student')
