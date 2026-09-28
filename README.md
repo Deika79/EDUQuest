@@ -30,6 +30,12 @@ docker compose exec -T laravel.test npm run build
 
 Aplicacion local: <http://localhost:8080/login>
 
+## Landing y trailer
+
+La portada publica en `/` mantiene una imagen estatica y no solicita el archivo de video durante la carga inicial. El boton `Ver trailer` abre un reproductor adaptable con sonido, controles nativos de reproduccion, volumen y pantalla completa. El reproductor no repite el video; se cierra con su boton o con `Escape`, detiene la reproduccion y devuelve el foco al boton de apertura.
+
+Se sirve `public/brand/eduquest-trailer.mp4`, una variante web H.264 de 1600 x 900 con audio AAC estereo, inicio rapido y 24,29 segundos de duracion. El original HEVC se conserva solo como fuente local excluida de Git. Las preferencias de movimiento reducido y ahorro de datos mantienen igualmente la portada fija; el video solo se carga si la persona decide abrirlo.
+
 ## Primer administrador
 
 Con los contenedores arrancados, el administrador inicial se crea mediante un asistente interactivo. El comando solicita nombre, usuario, email, contrasena y confirmacion; la contrasena no se pasa como argumento ni se almacena en el repositorio.

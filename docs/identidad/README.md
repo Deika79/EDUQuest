@@ -27,4 +27,4 @@ En el paquete disponible durante la integracion no estaban presentes la guia de 
 
 Las dos imagenes WebP se generaron desde los raster originales con FFmpeg. La portada web esta recortada para dejar el texto como contenido HTML accesible y pesa aproximadamente 49 KB frente a los 1,89 MB del PNG original; la imagen de mundos pesa aproximadamente 166 KB frente a los 2,43 MB originales.
 
-El trailer web se genero con FFmpeg desde el original HEVC de 26,73 MB. La variante publicada usa H.264, `yuv420p`, 1600 x 900 a 30 fps, inicio rapido y no contiene pista de audio. Dura 24,27 segundos y pesa aproximadamente 5,10 MB. El original se conserva localmente en `docs/identidad/originales-locales/eduquest-trailer-hevc.mp4` y esta excluido de Git por su peso.
+El trailer web se genero con FFmpeg desde el original HEVC de 26,73 MB. La variante publicada usa H.264, `yuv420p`, 1600 x 900 a 30 fps, inicio rapido y audio AAC estereo a 44,1 kHz. Dura 24,29 segundos y ocupa 5.513.692 bytes. El original se conserva localmente en `docs/identidad/originales-locales/eduquest-trailer-hevc.mp4` y esta excluido de Git por su peso.
