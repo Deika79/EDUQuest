@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 96" role="img" aria-labelledby="title">
+  <title id="title">EDUQuest</title>
+  <rect width="460" height="96" rx="18" fill="#F7F9FC"/>
+  <g transform="translate(14 12) scale(.9)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M62 17a29 29 0 1 0 0 46" stroke="#A3610D" stroke-width="7"/>
+    <path d="M59 55 74 70" stroke="#A3610D" stroke-width="7"/>
+    <path d="m22 48 15-16 16 14" stroke="#18314C" stroke-width="3"/>
+    <circle cx="22" cy="48" r="4" fill="#167C76" stroke="none"/>
+    <circle cx="37" cy="32" r="4" fill="#18314C" stroke="none"/>
+    <circle cx="53" cy="46" r="4" fill="#18314C" stroke="none"/>
+  </g>
+  <text x="96" y="61" fill="#101D36" font-family="Arial, sans-serif" font-size="43" font-weight="700" letter-spacing="-2">EDU<tspan fill="#A3610D">Quest</tspan></text>
+</svg>

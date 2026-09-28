@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+  <title id="title">Banner de presentación de EDUQuest</title>
+  <defs><linearGradient id="overlay"><stop offset="0" stop-color="#101d36"/><stop offset=".46" stop-color="#101d36" stop-opacity=".91"/><stop offset="1" stop-color="#101d36" stop-opacity=".13"/></linearGradient></defs>
+  <image href="hero-mundos.png" xlink:href="hero-mundos.png" width="1200" height="676" x="0" y="-23" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1200" height="630" fill="url(#overlay)"/>
+  <g transform="translate(56 51) scale(.64)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M61 17a29 29 0 1 0 0 46" stroke="#F5B845" stroke-width="7"/><path d="m58 55 15 15" stroke="#F5B845" stroke-width="7"/><path d="m21 48 15-16 16 14" stroke="#E8F0FB" stroke-width="3"/>
+    <circle cx="21" cy="48" r="4" fill="#4DD0C2" stroke="none"/><circle cx="36" cy="32" r="4" fill="#E8F0FB" stroke="none"/><circle cx="52" cy="46" r="4" fill="#E8F0FB" stroke="none"/>
+  </g>
+  <text x="115" y="94" fill="white" font-family="Arial,sans-serif" font-size="41" font-weight="700" letter-spacing="-1">EDU<tspan fill="#F5B845">Quest</tspan></text>
+  <text x="66" y="270" fill="white" font-family="Arial,sans-serif" font-size="64" font-weight="700">Cada aprendizaje</text>
+  <text x="66" y="345" fill="white" font-family="Arial,sans-serif" font-size="64" font-weight="700">abre un nuevo mundo.</text>
+  <text x="69" y="410" fill="#e7eff8" font-family="Arial,sans-serif" font-size="28">Misiones creadas por docentes.</text>
+  <text x="69" y="449" fill="#e7eff8" font-family="Arial,sans-serif" font-size="28">Progreso paso a paso.</text>
+  <path d="M69 532h90" stroke="#F5B845" stroke-width="8" stroke-linecap="round"/>
+</svg>

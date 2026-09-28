@@ -14,8 +14,8 @@ import PasskeyVerify from '@/components/PasskeyVerify.vue';
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your username and password to continue',
+        title: 'Accede a tu cuenta',
+        description: 'Introduce tu usuario y contraseña para continuar',
     },
 });
 
@@ -26,7 +26,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Acceso" />
 
     <div
         v-if="status"
@@ -35,7 +35,11 @@ defineProps<{
         {{ status }}
     </div>
 
-    <PasskeyVerify />
+    <PasskeyVerify
+        label="Acceder con una llave de acceso"
+        loading-label="Comprobando llave..."
+        separator="O continúa con tu usuario"
+    />
 
     <Form
         v-bind="store.form()"
@@ -45,59 +49,55 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="username">Username</Label>
+                <Label for="username">Usuario</Label>
                 <Input
                     id="username"
                     type="text"
                     name="username"
                     required
                     v-focus
-                    :tabindex="1"
                     autocomplete="username"
-                    placeholder="Username"
+                    placeholder="Tu usuario"
                 />
                 <InputError :message="errors.username" />
             </div>
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
+                    <Label for="password">Contraseña</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
                         class="text-sm"
-                        :tabindex="5"
                     >
-                        Forgot your password?
+                        ¿Has olvidado tu contraseña?
                     </TextLink>
                 </div>
                 <PasswordInput
                     id="password"
                     name="password"
                     required
-                    :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    placeholder="Tu contraseña"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="flex items-center justify-between">
                 <Label for="remember" class="flex items-center space-x-3">
-                    <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                    <Checkbox id="remember" name="remember" :tabindex="0" />
+                    <span>Recordarme</span>
                 </Label>
             </div>
 
             <Button
                 type="submit"
                 class="mt-4 w-full"
-                :tabindex="4"
                 :disabled="processing"
                 data-test="login-button"
             >
                 <Spinner v-if="processing" />
-                Log in
+                Acceder
             </Button>
         </div>
     </Form>

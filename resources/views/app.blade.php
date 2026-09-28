@@ -30,15 +30,16 @@
             }
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <meta name="theme-color" content="#101d36">
+        <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="/brand/favicon-32.png" type="image/png" sizes="32x32">
+        <link rel="apple-touch-icon" href="/brand/favicon-512.png">
 
         @fonts
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ config('app.name', 'EDUQuest') }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 900" role="img" aria-labelledby="title">
+  <title id="title">Portada conceptual para alumno EDUQuest</title>
+  <defs><linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101d36" stop-opacity=".04"/><stop offset=".5" stop-color="#101d36" stop-opacity=".25"/><stop offset="1" stop-color="#101d36" stop-opacity=".98"/></linearGradient></defs>
+  <image href="hero-mundos.png" xlink:href="hero-mundos.png" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1600" height="900" fill="url(#shade)"/>
+  <rect x="84" y="62" width="84" height="84" rx="18" fill="#101d36"/>
+  <g transform="translate(88 68)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M61 17a29 29 0 1 0 0 46" stroke="#F5B845" stroke-width="7"/><path d="m58 55 15 15" stroke="#F5B845" stroke-width="7"/><path d="m21 48 15-16 16 14" stroke="#E8F0FB" stroke-width="3"/></g>
+  <text x="88" y="684" fill="#F5B845" font-family="Arial,sans-serif" font-size="30" font-weight="700" letter-spacing="5">TU PRÓXIMA MISIÓN</text>
+  <text x="85" y="764" fill="white" font-family="Arial,sans-serif" font-size="74" font-weight="700">Te espera un mundo nuevo.</text>
+  <text x="89" y="822" fill="#e6ecf5" font-family="Arial,sans-serif" font-size="29">Avanza etapa a etapa. El siguiente paso empieza aquí.</text>
+</svg>
