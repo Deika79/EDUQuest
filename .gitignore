@@ -58,3 +58,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Fuentes multimedia pesadas conservadas solo en local
+/docs/identidad/originales-locales/*.mp4

@@ -77,7 +77,9 @@ Fecha de revision: 2026-09-28.
 - Portada de alumno en `/student/missions` sin ocultar la siguiente mision, el avance, los puntos ni la accion principal.
 - Recursos web usados en `public/brand/`; fuentes SVG y raster originales conservados en `docs/identidad/EDUQuest_identidad_v01/`.
 - Imagen principal optimizada a WebP de aproximadamente 166 KB y portada de alumno recortada y optimizada a aproximadamente 49 KB.
-- Contenedor de imagen estatica preparado para sustituirse en el futuro por un trailer, sin integrar video y respetando `prefers-reduced-motion`.
+- Trailer integrado en `public/brand/eduquest-trailer.mp4` mediante un reproductor progresivo que comprueba su disponibilidad, mantiene el poster como respaldo y ofrece pausa, reanudacion y repeticion.
+- El reproductor usa `muted`, `playsinline` y `autoplay`; no consulta ni carga el MP4 cuando `prefers-reduced-motion` solicita reducir movimiento o `navigator.connection.saveData` indica ahorro de datos.
+- Variante web verificada: MP4 H.264 `yuv420p`, 1600 x 900, 30 fps, 24,27 segundos, inicio rapido, sin pista de audio y 5.099.447 bytes. El original HEVC de 26.733.433 bytes se conserva fuera de `public/` y de Git.
 
 ## Verificaciones realizadas
 
@@ -97,6 +99,10 @@ Fecha de revision: 2026-09-28.
 | Seguimiento R06            | `3 passed`, `111 assertions`: dos alumnos, quiz suspendido/aprobado, historial y propietario.                                                   |
 | Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.         |
 | Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados. |
+| Reproduccion del trailer   | Autoplay silenciado, `playsinline`, pausa y reanudacion verificados; video listo a 1600 x 900 y acceso visible durante la reproduccion.         |
+| Fallback del trailer       | Si el MP4 falta o falla, `/` mantiene el poster, no crea un control inservible y conserva el acceso visible.                                    |
+| Preferencias del trailer   | Emulacion movil a 390 x 844: ancho de documento 390 px; movimiento reducido y ahorro de datos mantienen el poster sin cargar el video.          |
+| Landing y acceso           | Pruebas focalizadas: `8 passed`, `15 assertions`; `/` y `/login` se renderizan y la autenticacion conserva sus controles.                       |
 | Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.                                                |
 | Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.                                              |
 | Suite Pest completa        | `105 passed`, `750 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                         |
@@ -159,7 +165,9 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 - La landing publica presenta la marca, las misiones manuales, las actividades disponibles y el progreso que existe realmente.
 - La comprobacion adaptable se realizo en Chrome con anchos de 1440 y 390 pixeles. En ambos casos el ancho del documento coincidio con el del viewport.
 - En la landing se recorrio por teclado el logotipo enlazado y las llamadas a la accion; en el acceso, sus controles; y en el area del alumno, la navegacion y las acciones de mision. Los elementos modificados muestran foco visible.
-- Se comprobo la preferencia `prefers-reduced-motion: reduce`; la imagen de portada permanece estatica y no se ha anadido ningun trailer.
+- Se comprobo la preferencia `prefers-reduced-motion: reduce`; el hero mantiene el poster estatico y no crea el elemento de video.
+- La landing consulta la existencia del trailer mediante una peticion `HEAD` solo cuando no hay preferencia de movimiento reducido ni ahorro de datos. Si falta o falla, mantiene la imagen sin mostrar un control inutil.
+- El logo cinematografico del cierre queda en la zona central superior. Se retiro el logo grafico superpuesto de la cabecera y el bloque de texto permanece por debajo, con fondo oscuro estable y acceso visible.
 - Los contrastes principales comprobados superan AA: ambar sobre azul noche 9,45:1, blanco sobre azul noche 16,79:1, turquesa de texto sobre blanco 5,03:1 y texto secundario sobre blanco 7,76:1.
 - El paquete recibido contenia los recursos de `assets/`, pero no incluia la guia de identidad ni `vista-previa.html`. Esta ausencia queda documentada en `docs/identidad/README.md`; no se ha inventado ni publicado la vista previa.
 
@@ -168,7 +176,6 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
 - Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
 - Implementar R07 solo cuando se autorice y decidir entonces el proveedor, coste, cuota y tratamiento de errores de IA.
-- Incorporar un trailer solo cuando exista un recurso aprobado; hasta entonces se mantiene la imagen fija optimizada.
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - Revisar la demo y las evidencias con David y el centro. El feedback del 50 % no esta marcado como entregado y no se ha creado la etiqueta `hito-50`.

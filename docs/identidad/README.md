@@ -22,6 +22,9 @@ En el paquete disponible durante la integracion no estaban presentes la guia de 
 - `logo-horizontal-claro.svg` y `logo-horizontal-oscuro.svg`;
 - `favicon.svg`, `favicon-32.png` y `favicon-512.png`;
 - `hero-mundos-1600x900.webp` para la landing;
-- `portada-alumno-1280x448.webp` para el area del alumno.
+- `portada-alumno-1280x448.webp` para el area del alumno;
+- `eduquest-trailer.mp4` para el hero de la landing.
 
 Las dos imagenes WebP se generaron desde los raster originales con FFmpeg. La portada web esta recortada para dejar el texto como contenido HTML accesible y pesa aproximadamente 49 KB frente a los 1,89 MB del PNG original; la imagen de mundos pesa aproximadamente 166 KB frente a los 2,43 MB originales.
+
+El trailer web se genero con FFmpeg desde el original HEVC de 26,73 MB. La variante publicada usa H.264, `yuv420p`, 1600 x 900 a 30 fps, inicio rapido y no contiene pista de audio. Dura 24,27 segundos y pesa aproximadamente 5,10 MB. El original se conserva localmente en `docs/identidad/originales-locales/eduquest-trailer-hevc.mp4` y esta excluido de Git por su peso.
