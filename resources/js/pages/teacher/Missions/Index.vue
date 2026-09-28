@@ -138,8 +138,8 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Teacher tracking and AI-assisted authoring are planned for later
-            milestones.
+            Student progress is available in Tracking. AI-assisted authoring is
+            planned for a later milestone.
         </p>
     </main>
 </template>

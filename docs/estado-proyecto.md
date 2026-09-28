@@ -1,10 +1,10 @@
 # Estado del proyecto
 
-Fecha de revision: 2026-09-27.
+Fecha de revision: 2026-09-28.
 
 ## Fase actual
 
-- Hito autorizado por David: entrega del 50 %.
+- Hito autorizado por David: entrega del 80 %, limitado en esta tarea a R06.
 - Desarrollo iniciado con la instalacion de la base tecnica.
 - Base tecnica instalada, configurada, arrancada y verificada.
 - Primera parte de R01 implementada y probada; sus controles de propiedad ya cubren tambien las clases de R02.
@@ -12,6 +12,8 @@ Fecha de revision: 2026-09-27.
 - R03F01 y R03F02 implementadas y probadas, incluido el cierre con historial despues de actividad real.
 - R04F01 y R04F02 implementadas y probadas para explicacion, video, flashcards y cuestionarios.
 - R05F01 y R05F02 implementadas y probadas para los cuatro tipos, incluida una carrera HTTP simultanea real contra MySQL.
+- R06F01 y R06F02 implementadas y probadas sobre los datos persistidos por R04 y R05.
+- El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 
 ## Existe realmente
 
@@ -61,6 +63,11 @@ Fecha de revision: 2026-09-27.
 - Preguntas y opciones del cuestionario sin `is_correct`, explicaciones ni otros indicadores de solucion antes del envio.
 - Intentos y respuestas persistidos, nota precisa calculada en servidor, mejor nota derivada, feedback posterior y cinco envios por minuto.
 - Un suspenso conserva el intento sin progreso; un aprobado desbloquea el siguiente nodo y concede diez puntos una sola vez. Un suspenso posterior no revoca la aprobacion.
+- Selector docente de clase propia y mision asignada en `/teacher/tracking`, con resumen de todas sus inscripciones actuales e historicas.
+- Resumen separado de porcentaje completado, puntos, intentos y mejor nota, con estados sin empezar, en curso y completada.
+- Detalle individual por nodos e historial de intentos de cuestionario, sin exponer email, credenciales ni respuestas concretas.
+- Policies y comprobaciones de pertenencia anidada para clase, asignacion e inscripcion; un docente no recibe datos de otro docente.
+- Consultas de seguimiento de solo lectura: no alteran progreso, puntos, intentos ni estados de matricula o inscripcion.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 - Guia reproducible y evidencias reales de la revision previa del hito en `docs/guia-demo-hito-50.md` y `docs/evidencias-hito-50.md`.
@@ -80,13 +87,14 @@ Fecha de revision: 2026-09-27.
 | Cuestionarios R04F02       | `11 passed`, `87 assertions`.                                                                              |
 | Regresion R02-R03 afectada | `20 passed`, `147 assertions`.                                                                             |
 | Seguridad focalizada hito  | `55 passed`, `462 assertions`: bloqueos, soluciones, IDs ajenos y propiedad docente.                       |
-| Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.            |
-| Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.          |
-| Suite Pest completa        | `102 passed`, `639 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.    |
-| Pint                       | Sin problemas de estilo en 140 archivos PHP en la ultima ejecucion.                                        |
-| PHPStan                    | Sin errores en 114 archivos analizados.                                                                    |
+| Seguimiento R06            | `3 passed`, `111 assertions`: dos alumnos, quiz suspendido/aprobado, historial y propietario.              |
+| Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.           |
+| Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.         |
+| Suite Pest completa        | `105 passed`, `750 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.    |
+| Pint                       | Sin problemas de estilo en 143 archivos PHP en la ultima ejecucion.                                        |
+| PHPStan                    | Sin errores en 116 archivos analizados.                                                                    |
 | TypeScript                 | `vue-tsc --noEmit` correcto.                                                                               |
-| Frontend                   | TypeScript correcto; formato en 84 archivos y lint en 71 sin avisos; build con `3395 modules transformed`. |
+| Frontend                   | TypeScript correcto; formato en 90 archivos y lint en 74 sin avisos; build con `3401 modules transformed`. |
 | Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                            |
 | Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                       |
 
@@ -129,11 +137,20 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 - Un docente que incorpora una cuenta compartida solo controla su matricula y no puede modificar la cuenta ni sus credenciales. La regeneracion de contrasena por el docente creador queda pendiente.
 - La baja no borra la matricula ni desactiva la cuenta; la reincorporacion reutiliza el mismo registro.
 
+## Operacion del seguimiento docente
+
+- Iniciar sesion con un docente que tenga una clase y una mision asignada; los datos ficticios de la demo usan `demo50_teacher` sin publicar su contrasena.
+- Abrir `/teacher/tracking`, elegir la clase y la asignacion, y pulsar `View progress`.
+- Comparar estado, porcentaje, puntos, intentos y mejor nota. Pulsar `Details` para revisar nodos e intentos del alumno.
+- Una baja se presenta como matricula e inscripcion inactivas, pero conserva el progreso historico.
+- No se han generado capturas nuevas para R06 en esta tarea.
+
 ## Pendiente funcional
 
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
-- Implementar seguimiento docente, informes y el resto de R06-R08.
-- Decidir mas adelante el alcance autorizado de IA y cualquier integracion externa.
+- Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
+- Implementar R07 solo cuando se autorice y decidir entonces el proveedor, coste, cuota y tratamiento de errores de IA.
+- Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - Revisar la demo y las evidencias con David y el centro. El feedback del 50 % no esta marcado como entregado y no se ha creado la etiqueta `hito-50`.
 - Completar en R08 el recorrido con teclado y movil, la instalacion desde cero y la restauracion de una copia.

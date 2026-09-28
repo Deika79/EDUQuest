@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ArrowRight } from '@lucide/vue';
+import { ArrowRight, BarChart3 } from '@lucide/vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { dashboard } from '@/routes';
@@ -49,9 +49,23 @@ defineOptions({
                 </Link>
             </Button>
         </div>
-        <p class="mt-6 border-y py-6 text-sm text-muted-foreground">
-            Teacher tracking and AI-assisted authoring are planned for later
-            milestones.
+        <div
+            class="mt-6 flex flex-col gap-4 border-y py-6 sm:flex-row sm:items-center"
+        >
+            <div class="min-w-0 flex-1">
+                <p class="font-medium">Student tracking</p>
+                <p class="text-sm text-muted-foreground">
+                    Review progress, points, attempts, and best quiz scores.
+                </p>
+            </div>
+            <Button as-child>
+                <Link href="/teacher/tracking">
+                    <BarChart3 /> Open tracking <ArrowRight />
+                </Link>
+            </Button>
+        </div>
+        <p class="mt-6 text-sm text-muted-foreground">
+            AI-assisted authoring is planned for a later milestone.
         </p>
     </main>
 </template>

@@ -105,8 +105,8 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Mission assignments are managed from each published mission. Teacher
-            tracking is planned for a later milestone.
+            Mission assignments are managed from each published mission. Open
+            Tracking to compare saved student progress.
         </p>
     </main>
 </template>

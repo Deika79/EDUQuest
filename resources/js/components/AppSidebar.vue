@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { LayoutGrid, Map, School } from '@lucide/vue';
+import { BarChart3, LayoutGrid, Map, School } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -37,6 +37,11 @@ const mainNavItems = computed<NavItem[]>(() => {
             title: 'Missions',
             href: '/teacher/missions',
             icon: Map,
+        });
+        items.push({
+            title: 'Tracking',
+            href: '/teacher/tracking',
+            icon: BarChart3,
         });
     }
 

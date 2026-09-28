@@ -1,6 +1,6 @@
 # RFTP - Requisitos, funciones, tareas y pruebas
 
-Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas las tareas y pruebas verificadas.
+Estado general: hito del 80 % en desarrollo, con R06 autorizado. Solo se actualizan como ejecutadas las tareas y pruebas verificadas.
 
 ## R01 Solo deben acceder personas autorizadas y cada una debe tener los permisos de su perfil.
 
@@ -55,12 +55,12 @@ Estado general: hito del 50 % en desarrollo. Solo se actualizan como ejecutadas 
 ## R06 El profesor debe conocer el avance de sus alumnos.
 
 - **R06F01** Mostrar seguimiento individual y de clase.
-- **R06F01T01** Consultar progreso, intentos y mejor nota filtrando por profesor, clase y asignación.
-- **R06F01T01P01** Comparar el panel con resultados de dos alumnos conocidos y denegar datos de otro docente. Estado: planificada.
+- **R06F01T01** Consultar progreso, intentos y mejor nota filtrando por profesor, clase y asignación. Estado: ejecutada; el resumen de clase y el detalle individual se calculan desde inscripciones, finalizaciones e intentos persistidos, incluidos los historicos inactivos.
+- **R06F01T01P01** Comparar el panel con resultados de dos alumnos conocidos y denegar datos de otro docente. Estado: ejecutada y superada con Pest; se verifican dos alumnos con recorridos distintos, datos personales minimos y rechazo de clase, asignacion o inscripcion ajenas o mal anidadas.
 
 - **R06F02** Distinguir avance de calificación.
-- **R06F02T01** Presentar porcentaje completado, nota y estados con etiquetas y filtros comprensibles.
-- **R06F02T01P01** Verificar que un alumno con recursos vistos y quiz pendiente no figura como misión completada. Estado: planificada.
+- **R06F02T01** Presentar porcentaje completado, nota y estados con etiquetas y filtros comprensibles. Estado: ejecutada; progreso, puntos, intentos y mejor nota se muestran por separado, junto con los estados sin empezar, en curso y completada.
+- **R06F02T01P01** Verificar que un alumno con recursos vistos y quiz pendiente no figura como misión completada. Estado: ejecutada y superada con Pest; un quiz suspendido queda pendiente, mientras que un aprobado posterior conserva la mejor nota y permite completar la mision.
 
 ## R07 El profesor debe poder recibir ayuda de IA sin publicar contenido sin revisar.
 

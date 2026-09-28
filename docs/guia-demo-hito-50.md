@@ -24,11 +24,11 @@ Esta guia recorre solo las funciones implementadas hasta R05. No incluye IA ni s
 
 ## Cuentas locales usadas en la revision
 
-| Rol | Username | Observacion |
-| --- | --- | --- |
-| Administrador | `demo50_admin` | Cuenta ficticia local. |
-| Docente | `demo50_teacher` | Cuenta ficticia local creada desde administracion. |
-| Alumno | `demo50_student` | Cuenta ficticia local creada desde la clase. |
+| Rol           | Username         | Observacion                                        |
+| ------------- | ---------------- | -------------------------------------------------- |
+| Administrador | `demo50_admin`   | Cuenta ficticia local.                             |
+| Docente       | `demo50_teacher` | Cuenta ficticia local creada desde administracion. |
+| Alumno        | `demo50_student` | Cuenta ficticia local creada desde la clase.       |
 
 Las contrasenas no se documentan. Para una nueva demo deben definirse localmente mediante el comando interactivo y los formularios protegidos de alta.
 

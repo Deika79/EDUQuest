@@ -2,7 +2,7 @@
 
 EDUQuest es una aplicacion web educativa para que el profesorado convierta repasos en misiones visuales, las asigne a clases y consulte el avance del alumnado.
 
-El desarrollo del hito del 50 % esta en curso. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; R04 y R05 han comenzado con un primer recorrido verificable del alumno y siguen parciales.
+El desarrollo avanza hacia el hito del 80 %. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado y el recorrido manual del alumno y el seguimiento docente de R06 estan implementados. La integracion de IA de R07 no se ha iniciado.
 
 ## Entorno local
 
@@ -90,7 +90,7 @@ Se pueden completar explicaciones, videos de YouTube o Vimeo, conjuntos de flash
 
 Los cuestionarios muestran preguntas y opciones sin indicadores de solucion antes de responder. Al enviar se guardan el intento y sus respuestas, se calcula la nota en servidor sin redondearla para comparar el umbral y se muestran feedback y explicaciones. Se permiten reintentos, con un maximo de cinco envios por minuto; la mejor nota y una aprobacion anterior se conservan. No se guardan borradores a mitad del intento.
 
-Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. Todavia no existen seguimiento docente ni IA.
+Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. Todavia no existe integracion de IA.
 
 ```powershell
 # Pruebas focalizadas del recorrido del alumno
@@ -98,6 +98,17 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Student/Stude
 
 # Pruebas focalizadas de cuestionarios
 docker compose exec -T laravel.test php artisan test tests/Feature/Student/StudentQuizAttemptTest.php
+```
+
+## Seguimiento docente
+
+El docente abre `/teacher/tracking`, elige una clase propia y una mision asignada. El resumen separa porcentaje de nodos, puntos, numero de intentos y mejor nota, y etiqueta cada recorrido como sin empezar, en curso o completado. Las matriculas e inscripciones inactivas siguen visibles como historial.
+
+Desde `Details` se revisan los nodos completados y el historial de intentos de cada cuestionario. Para repetir el recorrido con los datos ficticios de la demo, inicia sesion como `demo50_teacher`, abre `Tracking`, elige `Aula Demo Fracciones` y su mision asignada, y entra en el detalle del alumno. Las contrasenas no se documentan.
+
+```powershell
+# Pruebas focalizadas del seguimiento docente
+docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/TeacherTrackingTest.php
 ```
 
 ## Documentacion

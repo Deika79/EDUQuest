@@ -10,6 +10,7 @@ use App\Http\Controllers\Teacher\MissionNodeController;
 use App\Http\Controllers\Teacher\StudentEnrollmentController;
 use App\Http\Controllers\Teacher\TeacherClassroomController;
 use App\Http\Controllers\Teacher\TeacherMissionController;
+use App\Http\Controllers\Teacher\TeacherTrackingController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
@@ -45,6 +46,14 @@ Route::middleware('auth')->group(function () {
             ->name('classrooms.students.existing.store');
         Route::patch('classes/{classroom}/memberships/{membership}', [StudentEnrollmentController::class, 'update'])
             ->name('classrooms.memberships.update');
+
+        Route::get('tracking', [TeacherTrackingController::class, 'index'])->name('tracking.index');
+        Route::get('tracking/classes/{classroom}/assignments/{assignment}', [TeacherTrackingController::class, 'show'])
+            ->name('tracking.show');
+        Route::get(
+            'tracking/classes/{classroom}/assignments/{assignment}/enrollments/{enrollment}',
+            [TeacherTrackingController::class, 'enrollment'],
+        )->name('tracking.enrollments.show');
 
         Route::get('missions', [TeacherMissionController::class, 'index'])->name('missions.index');
         Route::post('missions', [TeacherMissionController::class, 'store'])->name('missions.store');

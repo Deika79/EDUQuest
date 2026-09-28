@@ -56,6 +56,15 @@
 - La mejor nota se deriva del historial inmutable. Un aprobado crea una unica fila de `node_progress`; los reintentos posteriores, aprobados o suspensos, no cambian los diez puntos ni revocan el desbloqueo.
 - Los cuestionarios admiten reintentos ilimitados funcionalmente, con un limite tecnico de cinco envios por minuto. No se persisten selecciones antes de enviar el intento completo.
 
+## Tomadas durante R06
+
+- El seguimiento no mantiene contadores duplicados ni modifica actividad. El porcentaje, los puntos, los intentos y la mejor nota se calculan al consultar desde `mission_enrollments`, `node_progress` y `quiz_attempts`.
+- El resumen conserva y distingue inscripciones y matriculas inactivas para que una baja no borre el historial academico ya registrado.
+- Los estados se derivan de la actividad persistida: sin empezar cuando no hay progreso ni intentos, en curso cuando existe alguna actividad y completada solo cuando todos los nodos tienen finalizacion.
+- Un intento suspendido cuenta como actividad e intento, pero no como nodo completado. La mejor nota se obtiene de todos los intentos y no sustituye al porcentaje de avance.
+- Las respuestas del seguimiento exponen del alumno solo nombre y `username`; no incluyen email, credenciales ni respuestas concretas del cuestionario.
+- Clase, asignacion e inscripcion se autorizan por rol, propietario y pertenencia anidada antes de consultar sus datos.
+
 ## Cuestiones abiertas
 
 - Fechas oficiales de propuesta, 50 %, 80 % y entrega final.
