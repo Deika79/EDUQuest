@@ -13,7 +13,7 @@ Fecha de revision: 2026-09-29.
 - R04F01 y R04F02 implementadas y probadas para explicacion, video, flashcards y cuestionarios.
 - R05F01 y R05F02 implementadas y probadas para los cuatro tipos, incluida una carrera HTTP simultanea real contra MySQL.
 - R06F01 y R06F02 implementadas y probadas sobre los datos persistidos por R04 y R05.
-- R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado; la llamada externa real queda pendiente por falta de `OPENAI_API_KEY`.
+- R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado y mediante una llamada externa real controlada; R07F01T01P01 queda superada.
 - Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 
@@ -76,6 +76,7 @@ Fecha de revision: 2026-09-29.
 - Validacion defensiva de toda salida antes de guardar: tipos, longitudes, 4-8 nodos, cuestionarios de 1-10 preguntas, 2-4 opciones, una correcta y flashcards completas.
 - Borradores IA creados transaccionalmente sobre las entidades reales, siempre propios, sin publicacion ni asignacion automatica y editables en el flujo de R03.
 - Videos IA guardados sin enlace como sugerencias pendientes; la preparacion bloquea publicacion hasta completar o retirar el nodo y confirmar revision humana.
+- Llamada real R07 completada una sola vez con `gpt-5.4-mini`: creo la mision 7 como borrador propio de cinco nodos, sin asignaciones y con el video pendiente de revision.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 - Guia reproducible y evidencias reales de la revision previa del hito en `docs/guia-demo-hito-50.md` y `docs/evidencias-hito-50.md`.
@@ -105,6 +106,7 @@ Fecha de revision: 2026-09-29.
 | Seguridad focalizada hito  | `55 passed`, `462 assertions`: bloqueos, soluciones, IDs ajenos y propiedad docente.                                                            |
 | Seguimiento R06            | `3 passed`, `111 assertions`: dos alumnos, quiz suspendido/aprobado, historial y propietario.                                                   |
 | Generacion R07 simulada    | `9 passed`, `82 assertions`: salida valida/invalida, cuota, timeout, error, idempotencia, recuperacion, borrador, revision y propietario.       |
+| Generacion R07 real        | Una llamada mediante login, CSRF y formulario real; generacion 1 completada, mision 7 en borrador, 508 tokens de entrada y 1090 de salida.      |
 | Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.         |
 | Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados. |
 | Reproduccion del trailer   | Apertura voluntaria en dialogo, sonido activo, controles, `playsinline`, ausencia de repeticion y cierre final con logo comprobados.            |
@@ -119,7 +121,7 @@ Fecha de revision: 2026-09-29.
 | PHPStan                    | Sin errores en 129 archivos analizados.                                                                                                         |
 | TypeScript                 | `vue-tsc --noEmit` correcto.                                                                                                                    |
 | Frontend                   | TypeScript correcto; formato en 92 archivos y lint en 75 sin avisos; build con `3403 modules transformed`.                                      |
-| Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844: sin desbordamiento; clave ausente, boton desactivado, aviso y creacion manual visibles.         |
+| Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844; despues, el flujo autenticado real abrio el borrador 7 en el editor con HTTP 200.               |
 | Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                                                                 |
 | Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                                                            |
 
@@ -179,7 +181,9 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 - Completar el formulario y enviar una sola vez. Una respuesta valida abre el editor de `/teacher/missions/{id}` con estado borrador y sin asignaciones.
 - Revisar todos los textos y respuestas. Los videos solo muestran terminos sugeridos: deben recibir un recurso YouTube o Vimeo valido, o eliminarse.
 - Confirmar la revision humana y resolver todos los errores de preparacion antes de usar la publicacion normal de R03.
-- La prueba real sigue pendiente: el entorno comprobado no tiene `OPENAI_API_KEY`. No se ha fingido consumo, coste ni exito externo.
+- La prueba real se ejecuto una sola vez el 29 de septiembre de 2026 con `gpt-5.4-mini`. Laravel registro `ai_generations.id=1`, respuesta segura `resp_069fe5317704866f016abb872a724887d2801641cf2c5c3f7f`, 508 tokens de entrada y 1090 de salida.
+- La llamada creo `/teacher/missions/7`: mision propia `source=ai`, estado `draft`, cinco nodos (`explanation`, `video`, `quiz`, `flashcards`, `quiz`), un video sin proveedor ni identificador y marcado para revision, cero asignaciones y revision humana pendiente.
+- La apertura autenticada del editor devolvio HTTP 200 y la comprobacion de preparacion siguio en falso. No se publico ni asigno la mision y no se copio la respuesta completa del proveedor a la documentacion.
 
 ## Identidad visual
 
@@ -197,7 +201,6 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
 - Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
-- Ejecutar y documentar una llamada real de R07 cuando David configure credito y `OPENAI_API_KEY`; hasta entonces R07F01T01P01 permanece parcial.
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - Revisar la demo y las evidencias con David y el centro. El feedback del 50 % no esta marcado como entregado y no se ha creado la etiqueta `hito-50`.
