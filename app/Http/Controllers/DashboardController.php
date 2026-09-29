@@ -12,6 +12,7 @@ class DashboardController extends Controller
         return match (true) {
             $request->user()->isAdministrator() => to_route('admin.dashboard'),
             $request->user()->isTeacher() => to_route('teacher.dashboard'),
+            $request->user()->avatarProfile()->doesntExist() => to_route('student.avatar.setup.edit'),
             default => to_route('student.dashboard'),
         };
     }

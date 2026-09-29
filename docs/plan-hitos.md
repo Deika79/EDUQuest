@@ -12,7 +12,7 @@ Las fechas quedan pendientes hasta que el centro comunique calendario, entregas 
 ## Situacion del 80 % y ampliacion R09
 
 - Del alcance previsto para el 80 % ya estan implementados y verificados el seguimiento docente R06, la generacion asistida R07 con una llamada real, los permisos asociados y la interfaz adaptable documentada. Esto describe estado tecnico; no afirma que el centro haya recibido o aprobado la entrega del 80 %.
-- R09 fue autorizado por David como ampliacion posterior al plan maestro. El plan original situaba tienda y economia virtual fuera del MVP, por lo que R09 no modifica ni da por incompletos R01-R08.
+- R09 fue autorizado por David como ampliacion posterior al plan maestro. R09F01T01 ya esta implementada con dos personajes y su apariencia inicial; el plan original situaba tienda y economia virtual fuera del MVP, por lo que R09 no modifica ni da por incompletos R01-R08.
 - La estimacion original de 200 horas no incluia R09. No se asignan horas ni fechas a la ampliacion hasta conocer el tiempo real disponible y el criterio del centro.
 - El detalle funcional y tecnico se mantiene en [rftp.md](rftp.md) y [decisiones.md](decisiones.md).
 
@@ -20,10 +20,10 @@ Las fechas quedan pendientes hasta que el centro comunique calendario, entregas 
 
 | Entrega | Alcance | Evidencia para considerarla terminada | Ubicacion propuesta |
 |---|---|---|---|
-| R09-A: perfil base | R09F01T01: modelo, opciones iniciales y desvio de primer acceso despues del cambio de contrasena. | Migraciones MySQL, Policies, pruebas de rol/propiedad y registro publico aun bloqueado. | Antes de la entrega final solo si R08 y la estabilidad del MVP no se retrasan; en otro caso, ampliacion posterior. |
-| R09-B: compositor accesible | R09F01T02: capas originales iniciales, editor, persistencia y miniatura propia. | Pruebas de combinaciones, movil, teclado, foco y movimiento reducido; manifiesto de derechos. | Mismo criterio que R09-A y siempre despues de cerrar su modelo. |
+| R09-A: perfil base | R09F01T01: modelo, dos personajes, apariencia inicial completa y desvio de primer acceso despues del cambio de contrasena. | Completada tecnicamente: migracion MySQL, Policy, validacion cerrada, pruebas de rol/propiedad/registro y recorrido adaptable con teclado. No equivale a una entrega academica. | Implementada durante el hito del 80 % autorizado. |
+| R09-B: presencia del avatar | R09F01T02: mostrar el personaje elegido en el area del alumno y preparar apariencias completas compatibles, sin compositor por capas. | Pruebas de persistencia, correspondencia personaje-imagen, movil, teclado, foco y movimiento reducido; manifiesto de derechos. | Antes de la entrega final solo si R08 y la estabilidad del MVP no se retrasan. |
 | R09-C: recompensas | R09F02T01-T02: configuracion limitada, instantaneas, XP, niveles, libro mayor y concesion idempotente. | Pruebas de cuatro actividades, quiz, doble envio, concurrencia, segunda inscripcion y baja/reincorporacion. | Antes de tienda; puede ser la ultima ampliacion previa a entrega final. |
-| R09-D: tienda cosmetica | R09F03T01-T02: catalogo pequeno, compra, inventario y equipamiento. | Pruebas transaccionales, saldo, propiedad, privacidad y ausencia de efectos academicos; recorrido adaptable. | Solo si las anteriores estan cerradas; candidata principal a ampliacion posterior. |
+| R09-D: tienda cosmetica | R09F03T01-T02: catalogo de seis imagenes completas; inicial incluida, arcana comprable desde nivel 2 y espacial desde nivel 3; compra y equipamiento separados. | Pruebas transaccionales, nivel minimo, saldo, propiedad, compatibilidad con personaje, privacidad y ausencia de efectos academicos; recorrido adaptable. | Solo si las anteriores estan cerradas; candidata principal a ampliacion posterior. |
 
 No se iniciara una entrega de R09 sin autorizacion expresa. Si el calendario se estrecha, se conserva completo el MVP actual, se pospone primero la tienda R09-D y cualquier bloque de R09 que no este cerrado pasa a ampliacion posterior.
 

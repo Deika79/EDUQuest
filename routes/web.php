@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminTeacherController;
 use App\Http\Controllers\Auth\RequiredPasswordController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Student\AvatarSetupController;
 use App\Http\Controllers\Student\StudentMissionController;
 use App\Http\Controllers\Teacher\AiMissionGenerationController;
 use App\Http\Controllers\Teacher\MissionAssignmentController;
@@ -86,16 +87,21 @@ Route::middleware('auth')->group(function () {
             ->name('missions.nodes.move');
     });
     Route::middleware('role:student')->prefix('student')->name('student.')->group(function () {
-        Route::get('/', [StudentMissionController::class, 'index'])->name('dashboard');
-        Route::get('missions', [StudentMissionController::class, 'index'])->name('missions.index');
-        Route::get('missions/{enrollment}', [StudentMissionController::class, 'show'])->name('missions.show');
-        Route::get('missions/{enrollment}/nodes/{node}', [StudentMissionController::class, 'activity'])
-            ->name('missions.nodes.show');
-        Route::post('missions/{enrollment}/nodes/{node}/complete', [StudentMissionController::class, 'complete'])
-            ->name('missions.nodes.complete');
-        Route::post('missions/{enrollment}/nodes/{node}/quiz-attempts', [StudentMissionController::class, 'submitQuiz'])
-            ->middleware('throttle:5,1')
-            ->name('missions.nodes.quiz-attempts.store');
+        Route::get('avatar/setup', [AvatarSetupController::class, 'edit'])->name('avatar.setup.edit');
+        Route::post('avatar/setup', [AvatarSetupController::class, 'store'])->name('avatar.setup.store');
+
+        Route::middleware('avatar.configured')->group(function () {
+            Route::get('/', [StudentMissionController::class, 'index'])->name('dashboard');
+            Route::get('missions', [StudentMissionController::class, 'index'])->name('missions.index');
+            Route::get('missions/{enrollment}', [StudentMissionController::class, 'show'])->name('missions.show');
+            Route::get('missions/{enrollment}/nodes/{node}', [StudentMissionController::class, 'activity'])
+                ->name('missions.nodes.show');
+            Route::post('missions/{enrollment}/nodes/{node}/complete', [StudentMissionController::class, 'complete'])
+                ->name('missions.nodes.complete');
+            Route::post('missions/{enrollment}/nodes/{node}/quiz-attempts', [StudentMissionController::class, 'submitQuiz'])
+                ->middleware('throttle:5,1')
+                ->name('missions.nodes.quiz-attempts.store');
+        });
     });
 });
 

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\UserRole;
+use App\Models\AvatarProfile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -53,7 +54,13 @@ class UserFactory extends Factory
 
     public function student(): static
     {
-        return $this->state(fn () => ['role' => UserRole::Student]);
+        return $this
+            ->state(fn () => ['role' => UserRole::Student])
+            ->afterCreating(function (User $user): void {
+                if ($user->avatarProfile()->doesntExist()) {
+                    AvatarProfile::factory()->for($user, 'student')->create();
+                }
+            });
     }
 
     public function inactive(): static

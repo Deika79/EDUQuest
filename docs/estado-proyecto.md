@@ -14,7 +14,7 @@ Fecha de revision: 2026-09-29.
 - R05F01 y R05F02 implementadas y probadas para los cuatro tipos, incluida una carrera HTTP simultanea real contra MySQL.
 - R06F01 y R06F02 implementadas y probadas sobre los datos persistidos por R04 y R05.
 - R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado y mediante una llamada externa real controlada; R07F01T01P01 queda superada.
-- R09 esta autorizado y disenado documentalmente como ampliacion; no se ha iniciado su implementacion.
+- R09 esta autorizado como ampliacion y R09F01T01 esta implementada y probada; R09F01T02, recompensas, niveles, monedas, catalogo, compras y equipamiento siguen pendientes.
 - Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 
@@ -108,6 +108,8 @@ Fecha de revision: 2026-09-29.
 | Seguimiento R06            | `3 passed`, `111 assertions`: dos alumnos, quiz suspendido/aprobado, historial y propietario.                                                   |
 | Generacion R07 simulada    | `9 passed`, `82 assertions`: salida valida/invalida, cuota, timeout, error, idempotencia, recuperacion, borrador, revision y propietario.       |
 | Generacion R07 real        | Una llamada mediante login, CSRF y formulario real; generacion 1 completada, mision 7 en borrador, 508 tokens de entrada y 1090 de salida.      |
+| Perfil inicial R09F01T01   | `9 passed`, `64 assertions`: primer acceso, alumno existente, validacion, propiedad, roles, unicidad, orden tras contrasena y `/register`.      |
+| Interfaz de avatar R09     | Edge a 1440 x 1000 y 390 x 844: dos imagenes cargadas, sin desbordamiento; foco inicial en H1, seleccion A/B con flechas y boton enfocable.     |
 | Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.         |
 | Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados. |
 | Reproduccion del trailer   | Apertura voluntaria en dialogo, sonido activo, controles, `playsinline`, ausencia de repeticion y cierre final con logo comprobados.            |
@@ -117,11 +119,11 @@ Fecha de revision: 2026-09-29.
 | Landing y acceso           | Pruebas focalizadas: `8 passed`, `15 assertions`; `/` y `/login` se renderizan y la autenticacion conserva sus controles.                       |
 | Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.                                                |
 | Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.                                              |
-| Suite Pest completa        | `114 passed`, `832 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                         |
-| Pint                       | Sin problemas de estilo en 157 archivos PHP en la ultima ejecucion.                                                                             |
-| PHPStan                    | Sin errores en 129 archivos analizados.                                                                                                         |
+| Suite Pest completa        | `123 passed`, `896 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                         |
+| Pint                       | Sin problemas de estilo en 166 archivos PHP en la ultima ejecucion.                                                                             |
+| PHPStan                    | Sin errores en 137 archivos analizados.                                                                                                         |
 | TypeScript                 | `vue-tsc --noEmit` correcto.                                                                                                                    |
-| Frontend                   | TypeScript correcto; formato en 92 archivos y lint en 75 sin avisos; build con `3403 modules transformed`.                                      |
+| Frontend                   | TypeScript correcto; formato en 94 archivos y lint en 76 sin avisos; build con `3405 modules transformed`.                                      |
 | Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844; despues, el flujo autenticado real abrio el borrador 7 en el editor con HTTP 200.               |
 | Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                                                                 |
 | Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                                                            |
@@ -135,9 +137,11 @@ El build de R07 pasa dentro del entorno reproducible Docker. El `node_modules` n
 ## Estado de R09
 
 - R09F01, R09F02 y R09F03 estan definidos en [rftp.md](rftp.md), con modelo y reglas en [decisiones.md](decisiones.md) y entregas pequenas en [plan-hitos.md](plan-hitos.md).
-- El diseno separa los puntos educativos actuales de la experiencia no gastable y de las monedas gastables. Tambien preve instantaneas de recompensa, concesiones unicas por alumno-nodo y un libro mayor de monedas inmutable.
-- La estrategia visual propone avatares 2D por capas, opciones iniciales neutrales y tres colecciones originales: fantasia arcana, exploracion espacial y frontera.
-- Todavia no existen tablas de avatar o economia, campos de recompensa, servicios, rutas, Policies, pantallas, catalogo ni recursos graficos de R09. No se han ejecutado pruebas de R09 ni se ha concedido ninguna recompensa.
+- R09F01T01 existe realmente: tabla `avatar_profiles` con una fila unica por alumno, clave cerrada `character-a` o `character-b`, Policy, validacion, middleware de primer acceso y pantalla `/student/avatar/setup`.
+- El cambio obligatorio de contrasena mantiene prioridad. Despues, cualquier alumno sin perfil, incluidas cuentas existentes, debe elegir personaje antes de abrir `/student` o sus misiones. Docentes y administradores no acceden y `/register` sigue cerrado.
+- La pantalla usa las apariencias completas iniciales de los dos personajes. Los seis PNG originales miden 1024 x 1536; sus WebP transparentes de 512 x 768 pesan entre 60.896 y 68.026 bytes. Solo las dos variantes iniciales se referencian en R09F01.
+- El MVP grafico sustituye el compositor por capas por seis imagenes completas: inicial incluida, fantasia arcana comprable desde nivel 2 y exploracion espacial comprable desde nivel 3 para cada personaje. Las compras, el equipamiento, XP, niveles y monedas no estan implementados ni se muestran como disponibles.
+- El diseno pendiente separa los puntos educativos actuales de la experiencia no gastable y de las monedas gastables. Tambien preve instantaneas de recompensa, concesiones unicas por alumno-nodo y un libro mayor de monedas inmutable.
 - La tienda y la economia virtual estaban fuera del MVP del plan maestro original. R09 se planifica antes de la entrega final solo si no compromete R08 ni la estabilidad existente; de lo contrario queda como ampliacion posterior.
 
 ## Herramientas comprobadas
@@ -208,7 +212,7 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 
 ## Pendiente funcional
 
-- Implementar R09 por entregas autorizadas, empezando por R09F01T01; no iniciar recompensas, tienda ni recursos graficos en esta tarea documental.
+- Implementar R09F01T02 para mostrar el personaje elegido en el area del alumno; despues, solo con nueva autorizacion, abordar recompensas y tienda. Peinados, prendas intercambiables, tonos adicionales y mas colecciones quedan como trabajos futuros.
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
 - Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.
