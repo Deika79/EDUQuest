@@ -1,10 +1,10 @@
 # Estado del proyecto
 
-Fecha de revision: 2026-09-28.
+Fecha de revision: 2026-09-29.
 
 ## Fase actual
 
-- Hito autorizado por David: entrega del 80 %; R06 esta implementado y se ha integrado la direccion visual aprobada «Un camino, muchos mundos».
+- Hito autorizado por David: entrega del 80 %; R06 y R07 estan implementados y se ha integrado la direccion visual aprobada «Un camino, muchos mundos».
 - Desarrollo iniciado con la instalacion de la base tecnica.
 - Base tecnica instalada, configurada, arrancada y verificada.
 - Primera parte de R01 implementada y probada; sus controles de propiedad ya cubren tambien las clases de R02.
@@ -13,7 +13,8 @@ Fecha de revision: 2026-09-28.
 - R04F01 y R04F02 implementadas y probadas para explicacion, video, flashcards y cuestionarios.
 - R05F01 y R05F02 implementadas y probadas para los cuatro tipos, incluida una carrera HTTP simultanea real contra MySQL.
 - R06F01 y R06F02 implementadas y probadas sobre los datos persistidos por R04 y R05.
-- Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno, sin anticipar R07.
+- R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado; la llamada externa real queda pendiente por falta de `OPENAI_API_KEY`.
+- Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 
 ## Existe realmente
@@ -69,6 +70,12 @@ Fecha de revision: 2026-09-28.
 - Detalle individual por nodos e historial de intentos de cuestionario, sin exponer email, credenciales ni respuestas concretas.
 - Policies y comprobaciones de pertenencia anidada para clase, asignacion e inscripcion; un docente no recibe datos de otro docente.
 - Consultas de seguimiento de solo lectura: no alteran progreso, puntos, intentos ni estados de matricula o inscripcion.
+- Pantalla docente `/teacher/missions/generate` con tema, asignatura, nivel, objetivos, dificultad, 4-8 nodos e indicaciones, y estado claro cuando falta la configuracion externa.
+- Integracion de servidor con OpenAI Responses API y salida JSON estricta para `gpt-5.4-mini`; clave, modelo, timeout, cuota y maximo de salida configurables por entorno.
+- Registro `ai_generations` por docente con estado, resumen sin datos personales, consumo, error controlado y borrador resultante; una generacion activa, cuota diaria y token idempotente.
+- Validacion defensiva de toda salida antes de guardar: tipos, longitudes, 4-8 nodos, cuestionarios de 1-10 preguntas, 2-4 opciones, una correcta y flashcards completas.
+- Borradores IA creados transaccionalmente sobre las entidades reales, siempre propios, sin publicacion ni asignacion automatica y editables en el flujo de R03.
+- Videos IA guardados sin enlace como sugerencias pendientes; la preparacion bloquea publicacion hasta completar o retirar el nodo y confirmar revision humana.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 - Guia reproducible y evidencias reales de la revision previa del hito en `docs/guia-demo-hito-50.md` y `docs/evidencias-hito-50.md`.
@@ -97,6 +104,7 @@ Fecha de revision: 2026-09-28.
 | Regresion R02-R03 afectada | `20 passed`, `147 assertions`.                                                                                                                  |
 | Seguridad focalizada hito  | `55 passed`, `462 assertions`: bloqueos, soluciones, IDs ajenos y propiedad docente.                                                            |
 | Seguimiento R06            | `3 passed`, `111 assertions`: dos alumnos, quiz suspendido/aprobado, historial y propietario.                                                   |
+| Generacion R07 simulada    | `9 passed`, `82 assertions`: salida valida/invalida, cuota, timeout, error, idempotencia, recuperacion, borrador, revision y propietario.       |
 | Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.         |
 | Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados. |
 | Reproduccion del trailer   | Apertura voluntaria en dialogo, sonido activo, controles, `playsinline`, ausencia de repeticion y cierre final con logo comprobados.            |
@@ -106,17 +114,20 @@ Fecha de revision: 2026-09-28.
 | Landing y acceso           | Pruebas focalizadas: `8 passed`, `15 assertions`; `/` y `/login` se renderizan y la autenticacion conserva sus controles.                       |
 | Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.                                                |
 | Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.                                              |
-| Suite Pest completa        | `105 passed`, `750 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                         |
-| Pint                       | Sin problemas de estilo en 143 archivos PHP en la ultima ejecucion.                                                                             |
-| PHPStan                    | Sin errores en 116 archivos analizados.                                                                                                         |
+| Suite Pest completa        | `114 passed`, `832 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                         |
+| Pint                       | Sin problemas de estilo en 157 archivos PHP en la ultima ejecucion.                                                                             |
+| PHPStan                    | Sin errores en 129 archivos analizados.                                                                                                         |
 | TypeScript                 | `vue-tsc --noEmit` correcto.                                                                                                                    |
-| Frontend                   | TypeScript correcto; formato en 91 archivos y lint en 74 sin avisos; build con `3401 modules transformed`.                                      |
+| Frontend                   | TypeScript correcto; formato en 92 archivos y lint en 75 sin avisos; build con `3403 modules transformed`.                                      |
+| Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844: sin desbordamiento; clave ausente, boton desactivado, aviso y creacion manual visibles.         |
 | Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                                                                 |
 | Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                                                            |
 
 La primera pasada historica de pruebas fallo porque aun no existia `public/build/manifest.json`. Tras compilar el frontend, toda la suite paso. La ejecucion inicial como `root` dejo la cache de vistas sin escritura para el servidor `sail`; se corrigieron los permisos de `storage/` y `bootstrap/cache/` y se limpiaron las caches.
 
 En la revision del hito, el primer `composer ci:check` intento analizar un perfil temporal de Chrome creado dentro de `tmp/`. Se cerro ese navegador, se retiro exclusivamente el temporal generado y la cadena completa se repitio correctamente. La interfaz docente tambien contenia avisos obsoletos sobre actividades y progreso; se corrigieron y el build volvio a pasar.
+
+El build de R07 pasa dentro del entorno reproducible Docker. El `node_modules` nativo de Windows no dispone actualmente del binario opcional `@voidzero-dev/vite-plus-win32-x64-msvc`, por lo que `npm run build` debe ejecutarse con el comando Docker documentado hasta reinstalar voluntariamente esas dependencias locales.
 
 ## Herramientas comprobadas
 
@@ -161,6 +172,15 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 - Una baja se presenta como matricula e inscripcion inactivas, pero conserva el progreso historico.
 - No se han generado capturas nuevas para R06 en esta tarea.
 
+## Operacion de la generacion asistida
+
+- Configurar `OPENAI_API_KEY` exclusivamente en `.env`; no usar variables `VITE_*` ni versionar la clave.
+- Ejecutar `docker compose exec -T laravel.test php artisan config:clear`, iniciar sesion como docente y abrir `/teacher/missions/generate`.
+- Completar el formulario y enviar una sola vez. Una respuesta valida abre el editor de `/teacher/missions/{id}` con estado borrador y sin asignaciones.
+- Revisar todos los textos y respuestas. Los videos solo muestran terminos sugeridos: deben recibir un recurso YouTube o Vimeo valido, o eliminarse.
+- Confirmar la revision humana y resolver todos los errores de preparacion antes de usar la publicacion normal de R03.
+- La prueba real sigue pendiente: el entorno comprobado no tiene `OPENAI_API_KEY`. No se ha fingido consumo, coste ni exito externo.
+
 ## Identidad visual
 
 - La landing publica presenta la marca, las misiones manuales, las actividades disponibles y el progreso que existe realmente.
@@ -177,7 +197,7 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
 - Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
-- Implementar R07 solo cuando se autorice y decidir entonces el proveedor, coste, cuota y tratamiento de errores de IA.
+- Ejecutar y documentar una llamada real de R07 cuando David configure credito y `OPENAI_API_KEY`; hasta entonces R07F01T01P01 permanece parcial.
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - Revisar la demo y las evidencias con David y el centro. El feedback del 50 % no esta marcado como entregado y no se ha creado la etiqueta `hito-50`.

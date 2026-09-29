@@ -12,8 +12,12 @@ class MissionReadiness
     /** @return array{ready: bool, errors: list<string>} */
     public function check(Mission $mission): array
     {
-        $mission->loadMissing(['nodes.questions.options', 'nodes.flashcards']);
+        $mission->loadMissing(['nodes.questions.options', 'nodes.flashcards', 'aiGeneration']);
         $errors = [];
+
+        if ($mission->aiGeneration !== null && $mission->aiGeneration->reviewed_at === null) {
+            $errors[] = 'Confirm the human review of this AI-assisted draft.';
+        }
 
         foreach ([$mission->title, $mission->description, $mission->subject, $mission->level] as $value) {
             if (blank($value)) {
@@ -28,6 +32,10 @@ class MissionReadiness
 
         foreach ($mission->nodes as $node) {
             $prefix = "Node {$node->position} ({$node->title})";
+
+            if ($node->review_required) {
+                $errors[] = "{$prefix}: review the AI suggestion before publishing.";
+            }
 
             if (blank($node->title)) {
                 $errors[] = "Node {$node->position}: a title is required.";

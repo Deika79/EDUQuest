@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+        'model' => env('OPENAI_MODEL', 'gpt-5.4-mini'),
+        'timeout' => (int) env('AI_GENERATION_TIMEOUT', 45),
+        'daily_limit' => (int) env('AI_GENERATION_DAILY_LIMIT', 5),
+        'max_output_tokens' => (int) env('AI_GENERATION_MAX_OUTPUT_TOKENS', 6000),
+    ],
+
 ];

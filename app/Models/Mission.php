@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -52,5 +53,11 @@ class Mission extends Model
     public function assignments(): HasMany
     {
         return $this->hasMany(MissionAssignment::class);
+    }
+
+    /** @return HasOne<AiGeneration, $this> */
+    public function aiGeneration(): HasOne
+    {
+        return $this->hasOne(AiGeneration::class);
     }
 }

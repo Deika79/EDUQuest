@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
-import { ArrowRight, Map } from '@lucide/vue';
+import { ArrowRight, Map, Sparkles } from '@lucide/vue';
 import TeacherMissionController from '@/actions/App/Http/Controllers/Teacher/TeacherMissionController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -17,6 +17,7 @@ type MissionSummary = {
     subject: string;
     level: string;
     status: 'draft' | 'published' | 'archived';
+    source: 'manual' | 'ai';
     nodes_count: number;
     assignments_count: number;
     updated_at: string;
@@ -44,6 +45,17 @@ defineOptions({
                 title="Missions"
                 description="Create, publish and distribute your own content"
             />
+            <div class="flex flex-wrap gap-3 border-y py-5">
+                <Button as-child>
+                    <Link href="/teacher/missions/generate">
+                        <Sparkles /> Generar borrador con IA
+                    </Link>
+                </Button>
+                <p class="self-center text-sm text-muted-foreground">
+                    La creacion manual sigue disponible. La IA nunca publica ni
+                    asigna contenido.
+                </p>
+            </div>
             <Form
                 v-bind="TeacherMissionController.store.form()"
                 :reset-on-success="['title', 'description', 'subject', 'level']"
@@ -116,6 +128,12 @@ defineOptions({
                             <Badge variant="secondary"
                                 >{{ mission.nodes_count }} nodes</Badge
                             >
+                            <Badge
+                                v-if="mission.source === 'ai'"
+                                variant="outline"
+                            >
+                                Borrador IA
+                            </Badge>
                             <Badge variant="outline">
                                 {{ mission.assignments_count }} assignments
                             </Badge>
@@ -138,8 +156,8 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Student progress is available in Tracking. AI-assisted authoring is
-            planned for a later milestone.
+            Student progress is available in Tracking. AI-assisted drafts must
+            always be reviewed before publishing.
         </p>
     </main>
 </template>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminTeacherController;
 use App\Http\Controllers\Auth\RequiredPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Student\StudentMissionController;
+use App\Http\Controllers\Teacher\AiMissionGenerationController;
 use App\Http\Controllers\Teacher\MissionAssignmentController;
 use App\Http\Controllers\Teacher\MissionLifecycleController;
 use App\Http\Controllers\Teacher\MissionNodeController;
@@ -57,7 +58,14 @@ Route::middleware('auth')->group(function () {
 
         Route::get('missions', [TeacherMissionController::class, 'index'])->name('missions.index');
         Route::post('missions', [TeacherMissionController::class, 'store'])->name('missions.store');
+        Route::get('missions/generate', [AiMissionGenerationController::class, 'create'])
+            ->name('missions.generate.create');
+        Route::post('missions/generate', [AiMissionGenerationController::class, 'store'])
+            ->middleware('throttle:ai-generation')
+            ->name('missions.generate.store');
         Route::get('missions/{mission}', [TeacherMissionController::class, 'show'])->name('missions.show');
+        Route::post('missions/{mission}/ai-review', [AiMissionGenerationController::class, 'review'])
+            ->name('missions.ai-review');
         Route::patch('missions/{mission}', [TeacherMissionController::class, 'update'])->name('missions.update');
         Route::post('missions/{mission}/publish', [MissionLifecycleController::class, 'publish'])
             ->name('missions.publish');

@@ -21,12 +21,34 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property VideoProvider|null $video_provider
  * @property string|null $video_id
  * @property int|null $pass_threshold
+ * @property bool $review_required
+ * @property string|null $review_note
  */
-#[Fillable(['title', 'type', 'position', 'body', 'video_provider', 'video_id', 'pass_threshold'])]
+#[Fillable([
+    'title',
+    'type',
+    'position',
+    'body',
+    'video_provider',
+    'video_id',
+    'pass_threshold',
+    'review_required',
+    'review_note',
+])]
 class MissionNode extends Model
 {
     /** @use HasFactory<MissionNodeFactory> */
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        $resetAiReview = function (MissionNode $node): void {
+            $node->mission?->aiGeneration()->update(['reviewed_at' => null]);
+        };
+
+        static::saved($resetAiReview);
+        static::deleted($resetAiReview);
+    }
 
     protected function casts(): array
     {
@@ -35,6 +57,7 @@ class MissionNode extends Model
             'video_provider' => VideoProvider::class,
             'position' => 'integer',
             'pass_threshold' => 'integer',
+            'review_required' => 'boolean',
         ];
     }
 

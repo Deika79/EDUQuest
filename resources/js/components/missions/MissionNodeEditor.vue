@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Form, useForm } from '@inertiajs/vue3';
-import { ArrowDown, ArrowUp, Plus, Save, Trash2, X } from '@lucide/vue';
+import {
+    ArrowDown,
+    ArrowUp,
+    CircleAlert,
+    Plus,
+    Save,
+    Trash2,
+    X,
+} from '@lucide/vue';
 import MissionNodeController from '@/actions/App/Http/Controllers/Teacher/MissionNodeController';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +47,8 @@ export type MissionNode = {
     video_provider: VideoProvider | null;
     video_reference: string | null;
     pass_threshold: number | null;
+    review_required: boolean;
+    review_note: string | null;
     questions: QuizQuestion[];
     flashcards: Flashcard[];
 };
@@ -213,6 +223,18 @@ const addFlashcard = () => {
                     </Button>
                 </Form>
             </div>
+        </div>
+
+        <div
+            v-if="node?.review_required"
+            class="flex items-start gap-3 border-l-4 border-amber-500 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+            role="status"
+        >
+            <CircleAlert class="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+            <p>
+                {{ node.review_note }} Al guardar este nodo con un recurso
+                valido, quedara marcado como revisado.
+            </p>
         </div>
 
         <form class="space-y-6" @submit.prevent="submit">

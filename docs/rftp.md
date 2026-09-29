@@ -1,6 +1,6 @@
 # RFTP - Requisitos, funciones, tareas y pruebas
 
-Estado general: hito del 80 % en desarrollo, con R06 autorizado. Solo se actualizan como ejecutadas las tareas y pruebas verificadas.
+Estado general: hito del 80 % en desarrollo, con R06 y la implementacion de R07 autorizadas. Solo se actualizan como ejecutadas las tareas y pruebas verificadas.
 
 ## R01 Solo deben acceder personas autorizadas y cada una debe tener los permisos de su perfil.
 
@@ -65,12 +65,12 @@ Estado general: hito del 80 % en desarrollo, con R06 autorizado. Solo se actuali
 ## R07 El profesor debe poder recibir ayuda de IA sin publicar contenido sin revisar.
 
 - **R07F01** Generar un borrador estructurado.
-- **R07F01T01** Crear servicio de API, esquema de salida, cuota, timeout y validación del resultado.
-- **R07F01T01P01** Probar salida válida, salida inválida, cuota y error del proveedor; demostrar una llamada real. Estado: planificada.
+- **R07F01T01** Crear servicio de API, esquema de salida, cuota, timeout y validación del resultado. Estado: ejecutada con OpenAI Responses API, Structured Outputs, `gpt-5.4-mini` configurable, cinco solicitudes diarias por docente, una solicitud activa, token idempotente, timeout de 45 segundos y validacion de servidor antes de persistir.
+- **R07F01T01P01** Probar salida válida, salida inválida, cuota y error del proveedor; demostrar una llamada real. Estado: parcial; Pest supera salida valida e invalida, cuota, timeout, error HTTP, idempotencia y recuperacion tras una interrupcion con llamadas externas simuladas. La llamada real no se ha ejecutado porque `OPENAI_API_KEY` no esta configurada y esta prueba no se marca como superada por completo.
 
 - **R07F02** Revisar antes de publicar.
-- **R07F02T01** Convertir la salida válida en borrador editable y exigir completar o retirar vídeos pendientes.
-- **R07F02T01P01** Comprobar que generar no publica y que solo el propietario puede revisar y publicar. Estado: planificada.
+- **R07F02T01** Convertir la salida válida en borrador editable y exigir completar o retirar vídeos pendientes. Estado: ejecutada; usa las entidades y el editor de R03, deja los videos sin URL ni identificador y exige tanto resolver sus avisos como confirmar revision humana.
+- **R07F02T01P01** Comprobar que generar no publica y que solo el propietario puede revisar y publicar. Estado: ejecutada y superada con Pest; el borrador conserva propietario, origen IA y estado borrador, no crea asignaciones, bloquea publicacion antes de revisar y deniega acceso y confirmacion a otro docente.
 
 ## R08 El proyecto debe poder instalarse, probarse y explicarse con evidencias.
 

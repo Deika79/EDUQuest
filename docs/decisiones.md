@@ -65,6 +65,19 @@
 - Las respuestas del seguimiento exponen del alumno solo nombre y `username`; no incluyen email, credenciales ni respuestas concretas del cuestionario.
 - Clase, asignacion e inscripcion se autorizan por rol, propietario y pertenencia anidada antes de consultar sus datos.
 
+## Tomadas durante R07
+
+- El proveedor es OpenAI mediante la Responses API y Structured Outputs. El modelo predeterminado es `gpt-5.4-mini`, configurable con `OPENAI_MODEL`; se eligio por soporte de salida estructurada y equilibrio entre capacidad y coste para una tarea acotada.
+- La aplicacion usa el cliente HTTP de Laravel y un contrato `MissionDraftProvider`; las pruebas interceptan HTTP y no dependen de red ni de una clave real.
+- `OPENAI_API_KEY` solo se lee en servidor. No existe variable `VITE_*`, no se registran prompts, claves ni respuestas crudas de error, y el proveedor recibe exclusivamente los campos del formulario docente.
+- La salida sigue un esquema JSON estricto y vuelve a validarse en Laravel. Se rechazan tipos, longitudes, cantidades, preguntas, opciones o respuestas correctas que no cumplan las reglas de EDUQuest.
+- El limite local predeterminado es de cinco generaciones por docente y dia, una activa por docente, 45 segundos de timeout y 6000 tokens maximos de salida. El token UUID del formulario hace idempotente un doble envio.
+- `ai_generations` conserva propietario, resumen de entrada sin datos de alumnos, estado, codigo de error controlado, consumo reportado y mision resultante. No almacena la clave ni mensajes internos del proveedor.
+- Una respuesta valida se convierte transaccionalmente en una mision `source=ai` y `draft`. Nunca publica ni asigna y reutiliza el editor, `MissionReadiness` y el circuito de publicacion de R03.
+- La IA solo propone terminos de busqueda para video. El nodo queda sin proveedor ni identificador, marcado para revision, y no puede publicarse hasta que el docente lo complete o elimine.
+- Toda mision generada exige confirmacion humana. Editar despues sus datos o nodos invalida esa confirmacion y obliga a revisarla de nuevo.
+- La tarifa oficial consultada para `gpt-5.4-mini` es de 0,75 USD por millon de tokens de entrada y 4,50 USD por millon de salida. No se fija coste por mision hasta medir una llamada real.
+
 ## Cuestiones abiertas
 
 - Fechas oficiales de propuesta, 50 %, 80 % y entrega final.
@@ -73,7 +86,7 @@
 - Normas sobre uso de IA generativa en el proyecto y en la memoria.
 - Tutor asignado y formato definitivo de la propuesta.
 - Título definitivo del proyecto y disponibilidad del nombre si se publica.
-- Proveedor de IA, modelo, coste y límites.
+- Presupuesto o credito disponible para la API y limite economico que autorice el centro.
 - Proveedor de despliegue, dominio y presupuesto real.
 - Política de datos si se llegara a usar con menores reales.
 - Formato exacto de evidencias que pedirá el centro.

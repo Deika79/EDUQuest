@@ -30,7 +30,7 @@ class TeacherMissionController extends Controller
             'missions' => $request->user()->missions()
                 ->withCount(['nodes', 'assignments'])
                 ->latest('updated_at')
-                ->get(['id', 'title', 'description', 'subject', 'level', 'status', 'teacher_id', 'updated_at']),
+                ->get(['id', 'title', 'description', 'subject', 'level', 'status', 'source', 'teacher_id', 'updated_at']),
         ]);
     }
 
@@ -51,6 +51,7 @@ class TeacherMissionController extends Controller
     {
         Gate::authorize('view', $mission);
         $mission->load([
+            'aiGeneration',
             'nodes.questions.options',
             'nodes.flashcards',
             'assignments.classroom',
@@ -61,6 +62,9 @@ class TeacherMissionController extends Controller
             'mission' => [
                 ...$mission->only(['id', 'title', 'description', 'subject', 'level']),
                 'status' => $mission->status->value,
+                'source' => $mission->source->value,
+                'ai_review_required' => $mission->aiGeneration !== null
+                    && $mission->aiGeneration->reviewed_at === null,
             ],
             'nodes' => $mission->nodes->map(fn (MissionNode $node) => [
                 'id' => $node->id,
@@ -71,6 +75,8 @@ class TeacherMissionController extends Controller
                 'video_provider' => $node->video_provider?->value,
                 'video_reference' => $node->video_id,
                 'pass_threshold' => $node->pass_threshold,
+                'review_required' => $node->review_required,
+                'review_note' => $node->review_note,
                 'questions' => $node->questions->map(fn (QuizQuestion $question) => [
                     'id' => $question->id,
                     'statement' => $question->statement,
@@ -110,6 +116,7 @@ class TeacherMissionController extends Controller
     public function update(UpdateMissionRequest $request, Mission $mission): RedirectResponse
     {
         $mission->update($request->validated());
+        $mission->aiGeneration()->update(['reviewed_at' => null]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Mission draft updated.')]);
 

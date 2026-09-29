@@ -30,6 +30,8 @@ type Mission = {
     subject: string;
     level: string;
     status: 'draft' | 'published' | 'archived';
+    source: 'manual' | 'ai';
+    ai_review_required: boolean;
 };
 
 type Classroom = { id: number; name: string; level: string; subject: string };
@@ -90,6 +92,9 @@ defineOptions({
                     "
                 >
                     {{ mission.status }}
+                </Badge>
+                <Badge v-if="mission.source === 'ai'" variant="outline">
+                    Generada con IA · pendiente de revision humana
                 </Badge>
             </div>
 
@@ -183,6 +188,15 @@ defineOptions({
                     </li>
                 </ul>
             </div>
+            <Form
+                v-if="mission.ai_review_required"
+                :action="`/teacher/missions/${mission.id}/ai-review`"
+                method="post"
+            >
+                <Button type="submit" variant="outline">
+                    <CheckCircle2 /> Confirmar revision humana
+                </Button>
+            </Form>
             <Form
                 :action="`/teacher/missions/${mission.id}/publish`"
                 method="post"
@@ -405,9 +419,10 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Student progress is available in Tracking. AI-assisted authoring is
-            planned for a later milestone. Existing open assignments remain
-            recorded when a mission is archived.
+            Student progress is available in Tracking. AI-assisted content is
+            always stored as a draft and uses the same publishing rules.
+            Existing open assignments remain recorded when a mission is
+            archived.
         </p>
     </main>
 </template>

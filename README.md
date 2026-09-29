@@ -2,7 +2,7 @@
 
 EDUQuest es una aplicacion web educativa para que el profesorado convierta repasos en misiones visuales, las asigne a clases y consulte el avance del alumnado.
 
-El desarrollo avanza hacia el hito del 80 %. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado y el recorrido manual del alumno y el seguimiento docente de R06 estan implementados. La integracion de IA de R07 no se ha iniciado.
+El desarrollo avanza hacia el hito del 80 %. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; el recorrido del alumno, el seguimiento docente de R06 y la generacion asistida de borradores de R07 estan implementados. La llamada externa real de R07 sigue pendiente de configurar una clave local.
 
 ## Entorno local
 
@@ -96,7 +96,7 @@ Se pueden completar explicaciones, videos de YouTube o Vimeo, conjuntos de flash
 
 Los cuestionarios muestran preguntas y opciones sin indicadores de solucion antes de responder. Al enviar se guardan el intento y sus respuestas, se calcula la nota en servidor sin redondearla para comparar el umbral y se muestran feedback y explicaciones. Se permiten reintentos, con un maximo de cinco envios por minuto; la mejor nota y una aprobacion anterior se conservan. No se guardan borradores a mitad del intento.
 
-Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. Todavia no existe integracion de IA.
+Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. La IA solo asiste al docente al preparar borradores y no participa en el recorrido del alumno.
 
 ```powershell
 # Pruebas focalizadas del recorrido del alumno
@@ -115,6 +115,33 @@ Desde `Details` se revisan los nodos completados y el historial de intentos de c
 ```powershell
 # Pruebas focalizadas del seguimiento docente
 docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/TeacherTrackingTest.php
+```
+
+## Generacion asistida de misiones
+
+El docente abre `/teacher/missions/generate`, indica tema, asignatura, nivel, objetivos, dificultad, numero de nodos e instrucciones breves. Una respuesta valida crea una mision propia con `source=ai` y estado `draft`, y abre el editor habitual. Nunca publica ni asigna contenido.
+
+El proveedor elegido es OpenAI mediante la Responses API y Structured Outputs, con `gpt-5.4-mini` como modelo predeterminado. La clave solo se lee en servidor. Configuracion local minima:
+
+```dotenv
+OPENAI_API_KEY=valor_local_no_versionado
+```
+
+Tras editar `.env`, limpiar la configuracion y realizar una unica prueba real:
+
+```powershell
+docker compose exec -T laravel.test php artisan config:clear
+```
+
+Inicia sesion como docente, abre <http://localhost:8080/teacher/missions/generate>, completa el formulario y pulsa una vez `Generar borrador`. Verifica que se abre `/teacher/missions/{id}`, que el estado sigue siendo borrador y que no existe ninguna asignacion. No publiques una credencial ni la introduzcas en variables `VITE_*`.
+
+Los limites predeterminados son cinco solicitudes por docente y dia, una solicitud activa por docente, 45 segundos de timeout y 6000 tokens maximos de salida. El formulario admite 4-8 nodos y hasta 1500 caracteres para objetivos y otras indicaciones. Los videos solo reciben terminos de busqueda: el docente debe seleccionar y verificar el recurso. Ademas, toda mision generada exige confirmar revision humana antes de publicar.
+
+La tarifa oficial consultada para `gpt-5.4-mini` es de 0,75 USD por millon de tokens de entrada y 4,50 USD por millon de tokens de salida. El coste de una mision concreta depende del consumo informado por la API; todavia no se ha medido una llamada real en este entorno. Referencias: [modelo GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini) y [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs).
+
+```powershell
+# Pruebas focalizadas de R07 con HTTP simulado
+docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/AiMissionGenerationTest.php
 ```
 
 ## Documentacion
