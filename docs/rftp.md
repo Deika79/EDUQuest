@@ -81,3 +81,25 @@ Estado general: hito del 80 % en desarrollo, con R06 y la implementacion de R07 
 - **R08F02** Verificar e instalar la aplicación.
 - **R08F02T01** Preparar pruebas críticas, interfaz adaptable, README, contenedores, datos de demo y copia/restauración de la BD. Estado: parcial; pruebas criticas, contenedores, README y datos ficticios de demo disponibles. Copia y restauracion siguen pendientes.
 - **R08F02T01P01** Ejecutar pruebas, recorrer la demo con teclado y móvil, instalar desde cero y restaurar una copia. Estado: parcial; recorrido completo verificado en Chrome de escritorio y cadena de calidad superada. Teclado, movil, instalacion limpia y restauracion siguen pendientes.
+
+## R09 El alumno debe poder personalizar una identidad visual y obtener recompensas cosméticas sin alterar su evaluación.
+
+R09 es una ampliacion autorizada por David despues del alcance original. Todo su contenido permanece planificado: todavia no existen migraciones, servicios, pantallas ni recursos graficos de R09.
+
+- **R09F01** Elegir y personalizar un avatar 2D en el primer acceso.
+- **R09F01T01** Crear el perfil de avatar exclusivo del alumno y el desvio de primer acceso, posterior al cambio de contrasena temporal, sin habilitar registro publico. Debe permitir elegir silueta, tono de piel, peinado, color de pelo y vestuario inicial sin campo de genero ni asociaciones entre apariencia y genero. Estado: planificada.
+- **R09F01T01P01** Probar que solo un alumno autenticado configura su perfil, que no altera otro perfil ni envia claves de capa no admitidas, que el alta sigue dependiendo del docente y que `/register` permanece bloqueado. Estado: planificada.
+- **R09F01T02** Componer el avatar con capas compatibles sobre una plantilla comun y crear un editor adaptable, operable con teclado y sin animacion obligatoria. Estado: planificada.
+- **R09F01T02P01** Verificar combinaciones validas e invalidas, orden estable de capas, persistencia al volver a entrar, foco visible, recorrido por teclado, ancho movil y `prefers-reduced-motion`. Estado: planificada.
+
+- **R09F02** Conceder experiencia, niveles y monedas al completar actividades.
+- **R09F02T01** Anadir a cada nodo de borrador una recompensa de monedas configurable entre 0 y 3, con una suma maxima de 20 por mision, y fijar una experiencia no configurable de 10 por actividad. Al asignar, copiar esos valores a una instantanea inmutable por asignacion y nodo. Estado: planificada.
+- **R09F02T01P01** Rechazar valores manipulados o fuera de limite, impedir publicar recompensas invalidas y comprobar que cambiar valores de un nuevo borrador o los limites globales no altera asignaciones ya creadas. Estado: planificada.
+- **R09F02T02** Integrar la concesion transaccional con la primera finalizacion valida del nodo. Los 10 puntos educativos actuales siguen perteneciendo a la inscripcion; la experiencia global no se gasta y el nivel se deriva de ella; las monedas forman un saldo gastable independiente. Estado: planificada.
+- **R09F02T02P01** Probar explicacion, video, flashcards y primer quiz aprobado; suspenso, reintento, doble envio, concurrencia y una segunda inscripcion de la misma mision. Cada alumno y nodo puede recibir experiencia y monedas una sola vez, aunque conserve el progreso academico de cada inscripcion. Estado: planificada.
+
+- **R09F03** Comprar, poseer y equipar articulos exclusivamente esteticos.
+- **R09F03T01** Crear catalogo, propiedad y libro mayor inmutable; comprar bajo transaccion y bloqueo, con precio validado en servidor, saldo suficiente y unicidad alumno-articulo. Estado: planificada.
+- **R09F03T01P01** Probar compra valida, saldo insuficiente, articulo inactivo, precio o propietario manipulados, doble clic y dos compras concurrentes; debe existir un unico debito y una unica propiedad, sin saldo negativo. Estado: planificada.
+- **R09F03T02** Crear tienda, inventario y equipamiento por ranuras, verificando propiedad y compatibilidad en servidor. Ningun articulo modifica preguntas, notas, puntos educativos, experiencia, nivel, progreso o desbloqueos. Estado: planificada.
+- **R09F03T02P01** Probar equipamiento propio y rechazo de articulo ajeno o ranura incompatible; comprobar que comprar y equipar no modifica datos academicos, que bajas y reincorporaciones conservan perfil, saldo e inventario y que otro usuario no puede consultar el perfil privado. Estado: planificada.

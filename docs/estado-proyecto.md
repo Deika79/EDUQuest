@@ -14,6 +14,7 @@ Fecha de revision: 2026-09-29.
 - R05F01 y R05F02 implementadas y probadas para los cuatro tipos, incluida una carrera HTTP simultanea real contra MySQL.
 - R06F01 y R06F02 implementadas y probadas sobre los datos persistidos por R04 y R05.
 - R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado y mediante una llamada externa real controlada; R07F01T01P01 queda superada.
+- R09 esta autorizado y disenado documentalmente como ampliacion; no se ha iniciado su implementacion.
 - Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 
@@ -131,6 +132,14 @@ En la revision del hito, el primer `composer ci:check` intento analizar un perfi
 
 El build de R07 pasa dentro del entorno reproducible Docker. El `node_modules` nativo de Windows no dispone actualmente del binario opcional `@voidzero-dev/vite-plus-win32-x64-msvc`, por lo que `npm run build` debe ejecutarse con el comando Docker documentado hasta reinstalar voluntariamente esas dependencias locales.
 
+## Estado de R09
+
+- R09F01, R09F02 y R09F03 estan definidos en [rftp.md](rftp.md), con modelo y reglas en [decisiones.md](decisiones.md) y entregas pequenas en [plan-hitos.md](plan-hitos.md).
+- El diseno separa los puntos educativos actuales de la experiencia no gastable y de las monedas gastables. Tambien preve instantaneas de recompensa, concesiones unicas por alumno-nodo y un libro mayor de monedas inmutable.
+- La estrategia visual propone avatares 2D por capas, opciones iniciales neutrales y tres colecciones originales: fantasia arcana, exploracion espacial y frontera.
+- Todavia no existen tablas de avatar o economia, campos de recompensa, servicios, rutas, Policies, pantallas, catalogo ni recursos graficos de R09. No se han ejecutado pruebas de R09 ni se ha concedido ninguna recompensa.
+- La tienda y la economia virtual estaban fuera del MVP del plan maestro original. R09 se planifica antes de la entrega final solo si no compromete R08 ni la estabilidad existente; de lo contrario queda como ampliacion posterior.
+
 ## Herramientas comprobadas
 
 | Herramienta | Disponibilidad real                                                                |
@@ -199,6 +208,7 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 
 ## Pendiente funcional
 
+- Implementar R09 por entregas autorizadas, empezando por R09F01T01; no iniciar recompensas, tienda ni recursos graficos en esta tarea documental.
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
 - Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.

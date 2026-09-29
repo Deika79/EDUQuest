@@ -78,6 +78,60 @@
 - Toda mision generada exige confirmacion humana. Editar despues sus datos o nodos invalida esa confirmacion y obliga a revisarla de nuevo.
 - La tarifa oficial consultada para `gpt-5.4-mini` es de 0,75 USD por millon de tokens de entrada y 4,50 USD por millon de salida. No se fija coste por mision hasta medir una llamada real.
 
+## Diseño acordado para R09
+
+Estas decisiones describen la ampliacion autorizada, pero todavia no estan implementadas.
+
+### Separacion de magnitudes y reglas de recompensa
+
+- Los `points_awarded` actuales siguen siendo puntos educativos de una inscripcion concreta: diez por nodo completado y usados para el seguimiento docente. No se convierten en moneda ni se gastan.
+- La experiencia es global para el alumno, no gastable y se concede una sola vez por pareja alumno-nodo. La primera version concede 10 XP fijos por actividad; el docente no puede modificarlos. El nivel se deriva como `min(50, 1 + floor(total_xp / 100))`; llegar al nivel 50 no elimina la experiencia posterior.
+- Las monedas son globales y gastables. Explicacion, video y flashcards las conceden al crear su primera finalizacion valida; un quiz solo al aprobarlo por primera vez. Suspensos, reintentos, revisiones de un nodo completado y reenvios no conceden moneda.
+- El docente puede elegir de 0 a 3 monedas por nodo mientras la mision es borrador. La suma no puede superar 20 monedas por mision. No hay bonificacion por nota, velocidad, racha ni finalizacion total en la primera version.
+- Una segunda inscripcion del mismo alumno en otra clase puede crear su propio `node_progress` y sus puntos educativos, pero no repite XP ni monedas del mismo `mission_node_id`. Una mision duplicada tiene nodos nuevos y se considera contenido nuevo; los limites y la trazabilidad docente reducen el riesgo de inflar recompensas.
+- Al crear una asignacion se copian XP y monedas a una instantanea por asignacion y nodo. Publicacion e instantanea impiden que cambios de valores predeterminados, una duplicacion posterior o una nueva version alteren recompensas ya ofrecidas.
+
+### Modelo de datos propuesto
+
+| Tabla                             | Campos principales propuestos                                                                                                     | Restricciones y finalidad                                                                                                                                                                                                          |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `avatar_profiles`                 | `id`, `student_id`, `silhouette_key`, `skin_tone_key`, `hair_style_key`, `hair_color_key`, `setup_completed_at`                   | `student_id` unico y con rol alumno; no almacena genero, nombre publico, biografia ni fotografia. Sirve tambien como fila a bloquear al comprar.                                                                                   |
+| `cosmetic_items`                  | `id`, `sku`, `name`, `collection`, `slot`, `layer`, `asset_key`, `coin_price`, `minimum_level`, `starter`, `active`, `sort_order` | `sku` y `asset_key` unicos; precio no negativo; ranura y capa limitadas por enum; un articulo inactivo se conserva para propietarios previos pero no se vende.                                                                     |
+| `student_cosmetic_items`          | `id`, `student_id`, `cosmetic_item_id`, `acquisition_type`, `acquired_at`                                                         | Pareja alumno-articulo unica. Registra propiedad obtenida por seleccion inicial, compra o futura recompensa controlada. No se borra al retirar el articulo del catalogo.                                                           |
+| `avatar_equipment`                | `id`, `avatar_profile_id`, `slot`, `cosmetic_item_id`, `equipped_at`                                                              | Una fila por perfil y ranura; el articulo debe ser propiedad del mismo alumno, estar permitido para esa ranura y ser compatible con la silueta.                                                                                    |
+| `mission_assignment_node_rewards` | `id`, `assignment_id`, `node_id`, `experience_reward`, `coin_reward`                                                              | Pareja asignacion-nodo unica. Instantanea creada dentro de la transaccion de asignacion y nunca recalculada desde el borrador.                                                                                                     |
+| `student_reward_grants`           | `id`, `student_id`, `node_id`, `first_progress_id`, `experience_awarded`, `coins_awarded`, `awarded_at`                           | Pareja alumno-nodo unica. Une la primera finalizacion academica valida con una unica concesion global y evita premios repetidos entre inscripciones.                                                                               |
+| `coin_ledger_entries`             | `id`, `student_id`, `amount`, `reason`, `reward_grant_id`, `cosmetic_item_id`, `created_at`                                       | Libro mayor solo de insercion; `amount` positivo para premio y negativo para compra. Referencias unicas y comprobaciones impiden dos abonos por concesion o dos debitos por la misma compra. El saldo se deriva con `SUM(amount)`. |
+
+`experience_total` se deriva sumando `student_reward_grants.experience_awarded`; el nivel no se persiste como valor editable. La propiedad y el movimiento de compra se crean juntos: la fila unica de `student_cosmetic_items` identifica la compra y el asiento negativo referencia ese articulo y alumno. No se aceptan saldo, precio, nivel, XP ni moneda calculados por el navegador.
+
+### Transacciones, concurrencia y ciclo de matricula
+
+- La finalizacion conserva el bloqueo actual de inscripcion y nodo. En la misma transaccion, intenta crear `student_reward_grants` y su abono de monedas; la restriccion unica alumno-nodo convierte dobles clics, carreras y una segunda asignacion en una sola recompensa.
+- La compra bloquea `avatar_profiles`, calcula el saldo desde el libro mayor, vuelve a consultar articulo, precio, nivel y estado, e inserta propiedad y debito en una transaccion. Restricciones unicas y captura de colision devuelven una respuesta controlada, nunca saldo negativo ni error 500.
+- El historial de monedas no se actualiza ni elimina. Una correccion administrativa futura exigiria un asiento compensatorio identificado, no editar el movimiento original.
+- Dar de baja una matricula desactiva el acceso y la obtencion de recompensas de esa clase, pero no borra perfil, XP, monedas, propiedad ni equipamiento. Si el alumno conserva otra matricula activa puede seguir usando su perfil. Sin ninguna matricula activa, conserva todo pero no puede ganar ni gastar hasta reincorporarse.
+- Reincorporar reactiva las inscripciones existentes. El progreso previo y `student_reward_grants` siguen presentes, por lo que no se conceden otra vez XP o monedas.
+- Desactivar globalmente la cuenta bloquea tambien avatar, inventario y tienda mediante el middleware existente.
+
+### Estrategia grafica y catalogo inicial
+
+- El avatar sera 2D por capas sobre una plantilla comun cuadrada, con el mismo lienzo, puntos de anclaje y orden de composicion para todos los recursos. Capas iniciales: fondo opcional, silueta/base, tono de piel, pelo trasero, vestuario, pelo delantero y accesorio.
+- Las siluetas se nombran de forma neutra (`silueta-1`, `silueta-2`, `silueta-3`). Tono de piel, peinado, color y ropa se eligen por separado; no existe selector de genero ni se filtran prendas por genero.
+- La configuracion inicial gratuita ofrece tres siluetas, seis tonos de piel, seis peinados, cinco colores de pelo y un conjunto basico con variantes de color. Estos elementos se registran como articulos iniciales o claves base, no como compras.
+- El primer catalogo de pago tendra doce articulos, cuatro por coleccion: fantasia arcana (tunica, sombrero estelar, capa y cristal), exploracion espacial (chaqueta de cadete, botas, casco y mochila propulsora) y frontera (chaleco, panuelo, sombrero y alforja). Precios iniciales entre 5 y 15 monedas; todos son esteticos.
+- Los recursos seran originales creados para EDUQuest o encargados con cesion/licencia comercial escrita, o bien CC0/dominio publico con procedencia archivada. No se usaran licencias solo personales, `NC`, recursos extraidos de juegos ni material con autoria o licencia inciertas. Cada recurso conservara autor, fuente, licencia, fecha y version en un manifiesto.
+- Los editables maestros permaneceran en documentacion o almacenamiento de trabajo; la web publicara solo variantes optimizadas necesarias. No se generaran recursos graficos hasta autorizar la implementacion correspondiente.
+
+### Recorrido y privacidad
+
+- Tras cambiar la contrasena temporal, un alumno sin `setup_completed_at` ira a `/student/avatar/setup`. Elegira opciones iniciales, confirmara una vista previa y despues entrara en `/student/missions`. Las cuentas siguen creadas por docentes y `/register` permanece cerrado.
+- El panel del alumno mostrara miniatura propia, nivel, XP hacia el siguiente nivel y saldo de monedas sin desplazar mision, progreso o siguiente actividad. `/student/avatar` gestionara apariencia e inventario y `/student/shop` mostrara catalogo, precio, propiedad y confirmacion de compra.
+- El editor docente de mision mostrara monedas por nodo y total de la mision, con limites y explicacion de que XP y puntos no son configurables. El seguimiento puede mostrar XP, nivel y monedas concedidas por esa mision, pero no saldo disponible, compras ni inventario.
+- El perfil es privado por defecto: solo el alumno ve saldo, inventario e historial de compras. Docentes no reciben catalogo adquirido ni movimientos, y otros alumnos no disponen de ruta para consultar perfiles. No hay nombre publico, fotografia, chat, ranking ni galeria de menores.
+- En movil, el avatar mantiene proporcion estable y los catalogos usan lista o rejilla sin desplazamiento horizontal. Selecciones y ranuras son controles nativos o botones con nombre accesible, foco visible y estado textual; no dependen solo del color ni de arrastrar.
+- `prefers-reduced-motion` elimina transiciones de equipamiento, celebraciones y movimiento ambiental. La compra y el equipamiento siguen siendo totalmente utilizables con teclado y lectores de pantalla.
+
 ## Cuestiones abiertas
 
 - Fechas oficiales de propuesta, 50 %, 80 % y entrega final.
@@ -90,3 +144,5 @@
 - Proveedor de despliegue, dominio y presupuesto real.
 - Política de datos si se llegara a usar con menores reales.
 - Formato exacto de evidencias que pedirá el centro.
+- Confirmacion del centro sobre si R09 entra en la entrega final evaluable o queda como ampliacion posterior.
+- Presupuesto y procedimiento para producir recursos graficos originales con derechos comerciales documentados.
