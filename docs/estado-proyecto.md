@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Fecha de revision: 2026-09-29.
+Fecha de revision: 2026-10-04.
 
 ## Fase actual
 
@@ -14,7 +14,7 @@ Fecha de revision: 2026-09-29.
 - R05F01 y R05F02 implementadas y probadas para los cuatro tipos, incluida una carrera HTTP simultanea real contra MySQL.
 - R06F01 y R06F02 implementadas y probadas sobre los datos persistidos por R04 y R05.
 - R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado y mediante una llamada externa real controlada; R07F01T01P01 queda superada.
-- R09 esta autorizado como ampliacion y R09F01T01 esta implementada y probada; R09F01T02, recompensas, niveles, monedas, catalogo, compras y equipamiento siguen pendientes.
+- R09 esta autorizado como ampliacion; R09F01T01 y el nucleo de R09F02 estan implementados y probados. R09F01T02, la carrera simultanea especifica de recompensas y R09F03 siguen pendientes.
 - Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 
@@ -109,6 +109,10 @@ Fecha de revision: 2026-09-29.
 | Generacion R07 simulada    | `9 passed`, `82 assertions`: salida valida/invalida, cuota, timeout, error, idempotencia, recuperacion, borrador, revision y propietario.       |
 | Generacion R07 real        | Una llamada mediante login, CSRF y formulario real; generacion 1 completada, mision 7 en borrador, 508 tokens de entrada y 1090 de salida.      |
 | Perfil inicial R09F01T01   | `9 passed`, `64 assertions`: primer acceso, alumno existente, validacion, propiedad, roles, unicidad, orden tras contrasena y `/register`.      |
+| Recompensas R09F02         | `8 passed`, `76 assertions`: cuatro actividades, quiz, repeticion, segunda asignacion, limites, instantanea, baja/reincorporacion y nivel.      |
+| Regresion afectada R09F02  | `45 passed`, `392 assertions`: borradores, publicacion/asignacion, recorrido del alumno y cuestionarios.                                        |
+| Instantaneas MySQL R09F02  | 6 parejas asignacion-nodo existentes y 6 instantaneas migradas; todas conservan 10 XP y 0 monedas.                                              |
+| Progreso previo R09F02     | 6 progresos existentes convertidos en 6 concesiones unicas, 60 XP totales y ninguna moneda retroactiva.                                         |
 | Interfaz de avatar R09     | Edge a 1440 x 1000 y 390 x 844: dos imagenes cargadas, sin desbordamiento; foco inicial en H1, seleccion A/B con flechas y boton enfocable.     |
 | Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.         |
 | Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados. |
@@ -119,9 +123,9 @@ Fecha de revision: 2026-09-29.
 | Landing y acceso           | Pruebas focalizadas: `8 passed`, `15 assertions`; `/` y `/login` se renderizan y la autenticacion conserva sus controles.                       |
 | Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.                                                |
 | Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.                                              |
-| Suite Pest completa        | `123 passed`, `896 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                         |
-| Pint                       | Sin problemas de estilo en 166 archivos PHP en la ultima ejecucion.                                                                             |
-| PHPStan                    | Sin errores en 137 archivos analizados.                                                                                                         |
+| Suite Pest completa        | `131 passed`, `972 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                         |
+| Pint                       | Sin problemas de estilo en 172 archivos PHP en la ultima ejecucion.                                                                             |
+| PHPStan                    | Sin errores en 142 archivos analizados.                                                                                                         |
 | TypeScript                 | `vue-tsc --noEmit` correcto.                                                                                                                    |
 | Frontend                   | TypeScript correcto; formato en 94 archivos y lint en 76 sin avisos; build con `3405 modules transformed`.                                      |
 | Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844; despues, el flujo autenticado real abrio el borrador 7 en el editor con HTTP 200.               |
@@ -140,8 +144,13 @@ El build de R07 pasa dentro del entorno reproducible Docker. El `node_modules` n
 - R09F01T01 existe realmente: tabla `avatar_profiles` con una fila unica por alumno, clave cerrada `character-a` o `character-b`, Policy, validacion, middleware de primer acceso y pantalla `/student/avatar/setup`.
 - El cambio obligatorio de contrasena mantiene prioridad. Despues, cualquier alumno sin perfil, incluidas cuentas existentes, debe elegir personaje antes de abrir `/student` o sus misiones. Docentes y administradores no acceden y `/register` sigue cerrado.
 - La pantalla usa las apariencias completas iniciales de los dos personajes. Los seis PNG originales miden 1024 x 1536; sus WebP transparentes de 512 x 768 pesan entre 60.896 y 68.026 bytes. Solo las dos variantes iniciales se referencian en R09F01.
-- El MVP grafico sustituye el compositor por capas por seis imagenes completas: inicial incluida, fantasia arcana comprable desde nivel 2 y exploracion espacial comprable desde nivel 3 para cada personaje. Las compras, el equipamiento, XP, niveles y monedas no estan implementados ni se muestran como disponibles.
-- El diseno pendiente separa los puntos educativos actuales de la experiencia no gastable y de las monedas gastables. Tambien preve instantaneas de recompensa, concesiones unicas por alumno-nodo y un libro mayor de monedas inmutable.
+- R09F02 existe realmente: cada nodo de borrador admite de 0 a 3 monedas y la mision un maximo de 20; cada asignacion fija 10 XP y las monedas por nodo en `mission_assignment_node_rewards`.
+- La migracion conserva el historial anterior: crea instantaneas de 10 XP y 0 monedas para asignaciones existentes, y reconoce 10 XP por primera finalizacion historica alumno-nodo sin inventar monedas que nunca estuvieron configuradas.
+- La primera finalizacion valida crea, dentro de la transaccion de progreso, una unica concesion global por alumno y nodo. `student_reward_grants` conserva el XP y `coin_ledger_entries` registra el abono auditable; repetir, reintentar un quiz o completar otra asignacion del mismo nodo no duplica el premio.
+- Los puntos educativos permanecen separados por inscripcion. El XP y el saldo se calculan desde sus registros persistidos, y el nivel se deriva como `min(50, 1 + floor(XP / 100))`. El panel `/student/missions` muestra las tres magnitudes reales sin compras ni desbloqueos simulados.
+- La baja de matricula bloquea acceso y nuevos premios mediante las comprobaciones existentes. La reincorporacion conserva progreso, puntos, XP y monedas.
+- El MVP grafico sustituye el compositor por capas por seis imagenes completas: inicial incluida, fantasia arcana comprable desde nivel 2 y exploracion espacial comprable desde nivel 3 para cada personaje. Las compras y el equipamiento no estan implementados ni se muestran como disponibles.
+- Las restricciones unicas y los bloqueos transaccionales de R09F02 estan implementados y el doble envio secuencial esta probado. Falta ejecutar una carrera HTTP simultanea especifica sobre XP y monedas; la prueba de concurrencia previa solo verifico progreso y puntos educativos de R05.
 - La tienda y la economia virtual estaban fuera del MVP del plan maestro original. R09 se planifica antes de la entrega final solo si no compromete R08 ni la estabilidad existente; de lo contrario queda como ampliacion posterior.
 
 ## Herramientas comprobadas
@@ -212,7 +221,7 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 
 ## Pendiente funcional
 
-- Implementar R09F01T02 para mostrar el personaje elegido en el area del alumno; despues, solo con nueva autorizacion, abordar recompensas y tienda. Peinados, prendas intercambiables, tonos adicionales y mas colecciones quedan como trabajos futuros.
+- Implementar R09F01T02 para mostrar el personaje elegido en el area del alumno. Completar la evidencia de R09F02 con una carrera HTTP simultanea especifica y abordar R09F03 solo con nueva autorizacion. Peinados, prendas intercambiables, tonos adicionales y mas colecciones quedan como trabajos futuros.
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
 - Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.

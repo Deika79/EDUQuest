@@ -21,6 +21,7 @@ class MissionNodeFactory extends Factory
             'video_provider' => null,
             'video_id' => null,
             'pass_threshold' => null,
+            'coin_reward' => 0,
         ];
     }
 }

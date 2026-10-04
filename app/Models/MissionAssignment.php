@@ -51,4 +51,10 @@ class MissionAssignment extends Model
     {
         return $this->hasMany(MissionEnrollment::class, 'assignment_id');
     }
+
+    /** @return HasMany<MissionAssignmentNodeReward, $this> */
+    public function nodeRewards(): HasMany
+    {
+        return $this->hasMany(MissionAssignmentNodeReward::class, 'assignment_id');
+    }
 }

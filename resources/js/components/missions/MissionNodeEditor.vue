@@ -47,6 +47,7 @@ export type MissionNode = {
     video_provider: VideoProvider | null;
     video_reference: string | null;
     pass_threshold: number | null;
+    coin_reward: number;
     review_required: boolean;
     review_note: string | null;
     questions: QuizQuestion[];
@@ -72,6 +73,7 @@ const form = useForm({
     video_provider: props.node?.video_provider ?? ('youtube' as VideoProvider),
     video_reference: props.node?.video_reference ?? '',
     pass_threshold: props.node?.pass_threshold ?? 70,
+    coin_reward: props.node?.coin_reward ?? 0,
     questions: props.node?.questions.map((question) => ({
         statement: question.statement,
         explanation: question.explanation,
@@ -264,6 +266,24 @@ const addFlashcard = () => {
                     </select>
                     <InputError :message="fieldError('type')" />
                 </div>
+            </div>
+
+            <div class="grid max-w-xs gap-2">
+                <Label :for="`coin-reward-${node?.id ?? 'new'}`"
+                    >Recompensa en monedas</Label
+                >
+                <Input
+                    :id="`coin-reward-${node?.id ?? 'new'}`"
+                    v-model="form.coin_reward"
+                    type="number"
+                    min="0"
+                    max="3"
+                    required
+                />
+                <p class="text-sm text-muted-foreground">
+                    Entre 0 y 3 por actividad; máximo 20 en toda la misión.
+                </p>
+                <InputError :message="fieldError('coin_reward')" />
             </div>
 
             <div v-if="form.type === 'explanation'" class="grid gap-2">

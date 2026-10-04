@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class NodeProgressService
 {
-    public function __construct(private readonly StudentMissionAccess $access) {}
+    public function __construct(
+        private readonly StudentMissionAccess $access,
+        private readonly StudentRewardService $rewards,
+    ) {}
 
     public function complete(User $student, MissionEnrollment $enrollment, MissionNode $node): NodeProgress
     {
@@ -65,6 +68,8 @@ class NodeProgressService
                 'completed_at' => now(),
                 'points_awarded' => 10,
             ]);
+
+            $this->rewards->grantForFirstCompletion($student, $lockedEnrollment, $lockedNode, $progress);
 
             $completedNodes = $lockedEnrollment->progress()->count();
             $totalNodes = $lockedEnrollment->assignment->mission()->firstOrFail()->nodes()->count();

@@ -75,6 +75,7 @@ class TeacherMissionController extends Controller
                 'video_provider' => $node->video_provider?->value,
                 'video_reference' => $node->video_id,
                 'pass_threshold' => $node->pass_threshold,
+                'coin_reward' => $node->coin_reward,
                 'review_required' => $node->review_required,
                 'review_note' => $node->review_note,
                 'questions' => $node->questions->map(fn (QuizQuestion $question) => [

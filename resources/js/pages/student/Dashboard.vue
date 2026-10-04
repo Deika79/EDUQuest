@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ArrowRight, Map } from '@lucide/vue';
+import { ArrowRight, Coins, Map, Sparkles, Trophy } from '@lucide/vue';
 import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +20,13 @@ type Mission = {
     points: number;
 };
 
-const props = defineProps<{ missions: Mission[] }>();
+type Rewards = {
+    experience: number;
+    level: number;
+    coins: number;
+};
+
+const props = defineProps<{ missions: Mission[]; rewards: Rewards }>();
 const nextMission = computed(() => props.missions[0] ?? null);
 
 defineOptions({
@@ -88,6 +94,52 @@ defineOptions({
                         Cuando tu docente asigne una misión, aparecerá aquí.
                     </p>
                 </template>
+            </div>
+        </section>
+
+        <section aria-labelledby="rewards-title" class="border-y py-5">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div class="min-w-0 flex-1">
+                    <h2 id="rewards-title" class="font-semibold">
+                        Tu recorrido
+                    </h2>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        La experiencia marca tu nivel. Las monedas se guardan
+                        por separado para futuras recompensas cosméticas.
+                    </p>
+                </div>
+                <dl class="grid grid-cols-3 gap-2 text-center sm:min-w-80">
+                    <div class="border px-3 py-3">
+                        <dt
+                            class="flex items-center justify-center gap-1 text-xs text-muted-foreground"
+                        >
+                            <Trophy class="size-4" aria-hidden="true" /> Nivel
+                        </dt>
+                        <dd class="mt-1 text-lg font-semibold">
+                            {{ rewards.level }}
+                        </dd>
+                    </div>
+                    <div class="border px-3 py-3">
+                        <dt
+                            class="flex items-center justify-center gap-1 text-xs text-muted-foreground"
+                        >
+                            <Sparkles class="size-4" aria-hidden="true" /> XP
+                        </dt>
+                        <dd class="mt-1 text-lg font-semibold">
+                            {{ rewards.experience }}
+                        </dd>
+                    </div>
+                    <div class="border px-3 py-3">
+                        <dt
+                            class="flex items-center justify-center gap-1 text-xs text-muted-foreground"
+                        >
+                            <Coins class="size-4" aria-hidden="true" /> Monedas
+                        </dt>
+                        <dd class="mt-1 text-lg font-semibold">
+                            {{ rewards.coins }}
+                        </dd>
+                    </div>
+                </dl>
             </div>
         </section>
 

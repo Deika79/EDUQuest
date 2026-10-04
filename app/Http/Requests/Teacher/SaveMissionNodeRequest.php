@@ -14,6 +14,13 @@ use Illuminate\Validation\Validator;
 
 class SaveMissionNodeRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        if (! $this->has('coin_reward')) {
+            $this->merge(['coin_reward' => 0]);
+        }
+    }
+
     public function authorize(): bool
     {
         $mission = $this->route('mission');
@@ -35,6 +42,7 @@ class SaveMissionNodeRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:160'],
             'type' => ['required', Rule::enum(MissionNodeType::class)],
+            'coin_reward' => ['required', 'integer', 'between:0,3'],
             'body' => [Rule::excludeIf($type !== MissionNodeType::Explanation->value), 'required', 'string', 'max:10000'],
             'video_provider' => [Rule::excludeIf($type !== MissionNodeType::Video->value), 'required', Rule::enum(VideoProvider::class)],
             'video_reference' => [Rule::excludeIf($type !== MissionNodeType::Video->value), 'required', 'string', 'max:500', new ValidVideoReference($provider)],
@@ -55,6 +63,23 @@ class SaveMissionNodeRequest extends FormRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
+            $mission = $this->route('mission');
+            $node = $this->route('node');
+            $nodeId = $node instanceof MissionNode ? $node->id : null;
+
+            if ($mission instanceof Mission && ! $validator->errors()->has('coin_reward')) {
+                $configured = $mission->nodes()
+                    ->when($nodeId !== null, fn ($query) => $query->whereKeyNot($nodeId))
+                    ->sum('coin_reward');
+
+                if ($configured + (int) $this->input('coin_reward') > 20) {
+                    $validator->errors()->add(
+                        'coin_reward',
+                        'The mission can award at most 20 coins in total.',
+                    );
+                }
+            }
+
             if ($this->input('type') !== MissionNodeType::Quiz->value || ! is_array($this->input('questions'))) {
                 return;
             }

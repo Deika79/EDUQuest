@@ -17,6 +17,7 @@ use App\Models\QuizQuestion;
 use App\Services\NodeProgressService;
 use App\Services\QuizGradingService;
 use App\Services\StudentMissionAccess;
+use App\Services\StudentRewardService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ use Inertia\Response;
 
 class StudentMissionController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, StudentRewardService $rewards): Response
     {
         $student = $request->user();
         $enrollments = MissionEnrollment::query()
@@ -43,6 +44,7 @@ class StudentMissionController extends Controller
             ->get();
 
         return Inertia::render('student/Dashboard', [
+            'rewards' => $rewards->summary($student),
             'missions' => $enrollments->map(function (MissionEnrollment $enrollment): array {
                 $totalNodes = $enrollment->assignment->mission->nodes()->count();
 
@@ -132,7 +134,10 @@ class StudentMissionController extends Controller
     ): RedirectResponse {
         $progress->complete($request->user(), $enrollment, $node);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Activity completed. Ten points awarded once.')]);
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => __('Activity completed. Points, XP and coins are awarded only on the first valid completion.'),
+        ]);
 
         return to_route('student.missions.show', $enrollment);
     }
@@ -153,7 +158,7 @@ class StudentMissionController extends Controller
         Inertia::flash('toast', [
             'type' => $attempt->passed ? 'success' : 'info',
             'message' => $attempt->passed
-                ? __('Questionnaire passed. Ten points awarded once.')
+                ? __('Questionnaire passed. Points, XP and coins are awarded only on the first valid completion.')
                 : __('Attempt saved. Review the feedback and try again.'),
         ]);
 

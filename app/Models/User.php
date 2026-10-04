@@ -123,4 +123,16 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->hasOne(AvatarProfile::class, 'student_id');
     }
+
+    /** @return HasMany<StudentRewardGrant, $this> */
+    public function rewardGrants(): HasMany
+    {
+        return $this->hasMany(StudentRewardGrant::class, 'student_id');
+    }
+
+    /** @return HasMany<CoinLedgerEntry, $this> */
+    public function coinLedgerEntries(): HasMany
+    {
+        return $this->hasMany(CoinLedgerEntry::class, 'student_id');
+    }
 }

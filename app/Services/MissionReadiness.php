@@ -30,6 +30,10 @@ class MissionReadiness
             $errors[] = 'Add at least one node.';
         }
 
+        if ($mission->nodes->sum('coin_reward') > 20) {
+            $errors[] = 'The mission can award at most 20 coins in total.';
+        }
+
         foreach ($mission->nodes as $node) {
             $prefix = "Node {$node->position} ({$node->title})";
 
@@ -39,6 +43,10 @@ class MissionReadiness
 
             if (blank($node->title)) {
                 $errors[] = "Node {$node->position}: a title is required.";
+            }
+
+            if ($node->coin_reward < 0 || $node->coin_reward > 3) {
+                $errors[] = "{$prefix}: the coin reward must be between 0 and 3.";
             }
 
             switch ($node->type) {

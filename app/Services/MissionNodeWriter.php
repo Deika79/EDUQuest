@@ -35,6 +35,7 @@ class MissionNodeWriter
                     ? VideoReference::extractId($provider, (string) $data['video_reference'])
                     : null,
                 'pass_threshold' => $type === MissionNodeType::Quiz ? $data['pass_threshold'] : null,
+                'coin_reward' => $data['coin_reward'] ?? 0,
                 'review_required' => false,
                 'review_note' => null,
             ]);

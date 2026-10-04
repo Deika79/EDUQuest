@@ -52,6 +52,17 @@ class MissionAssignmentManager
                 $assignment->classroom()->associate($classroom);
                 $assignment->save();
 
+                $assignment->nodeRewards()->createMany(
+                    $lockedMission->nodes()
+                        ->get(['id', 'coin_reward'])
+                        ->map(fn ($node): array => [
+                            'node_id' => $node->id,
+                            'experience_reward' => StudentRewardService::EXPERIENCE_PER_ACTIVITY,
+                            'coin_reward' => $node->coin_reward,
+                        ])
+                        ->all(),
+                );
+
                 $classroom->memberships()
                     ->where('active', true)
                     ->lockForUpdate()

@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property VideoProvider|null $video_provider
  * @property string|null $video_id
  * @property int|null $pass_threshold
+ * @property int $coin_reward
  * @property bool $review_required
  * @property string|null $review_note
  */
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'video_provider',
     'video_id',
     'pass_threshold',
+    'coin_reward',
     'review_required',
     'review_note',
 ])]
@@ -57,6 +59,7 @@ class MissionNode extends Model
             'video_provider' => VideoProvider::class,
             'position' => 'integer',
             'pass_threshold' => 'integer',
+            'coin_reward' => 'integer',
             'review_required' => 'boolean',
         ];
     }
@@ -89,5 +92,17 @@ class MissionNode extends Model
     public function attempts(): HasMany
     {
         return $this->hasMany(QuizAttempt::class, 'node_id');
+    }
+
+    /** @return HasMany<MissionAssignmentNodeReward, $this> */
+    public function assignmentRewards(): HasMany
+    {
+        return $this->hasMany(MissionAssignmentNodeReward::class, 'node_id');
+    }
+
+    /** @return HasMany<StudentRewardGrant, $this> */
+    public function rewardGrants(): HasMany
+    {
+        return $this->hasMany(StudentRewardGrant::class, 'node_id');
     }
 }

@@ -192,6 +192,7 @@ class MissionDraftGenerator
             'title' => $data['title'],
             'body' => $type === MissionNodeType::Explanation ? $data['body'] : null,
             'pass_threshold' => $type === MissionNodeType::Quiz ? $data['pass_threshold'] : null,
+            'coin_reward' => 0,
             'review_required' => $reviewRequired,
             'review_note' => $reviewRequired
                 ? "Sugerencia de busqueda: {$searchTerms}. Selecciona y verifica un video antes de publicar."
