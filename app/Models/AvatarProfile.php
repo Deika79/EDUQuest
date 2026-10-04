@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $student_id
  * @property string $character_key
+ * @property int|null $equipped_cosmetic_item_id
  * @property Carbon $setup_completed_at
  */
 #[Fillable([
@@ -35,5 +36,11 @@ class AvatarProfile extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(User::class, 'student_id');
+    }
+
+    /** @return BelongsTo<CosmeticItem, $this> */
+    public function equippedAppearance(): BelongsTo
+    {
+        return $this->belongsTo(CosmeticItem::class, 'equipped_cosmetic_item_id');
     }
 }

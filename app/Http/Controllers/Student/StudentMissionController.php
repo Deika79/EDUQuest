@@ -29,6 +29,7 @@ class StudentMissionController extends Controller
     public function index(Request $request, StudentRewardService $rewards): Response
     {
         $student = $request->user();
+        $profile = $student->avatarProfile()->with('equippedAppearance')->firstOrFail();
         $enrollments = MissionEnrollment::query()
             ->where('student_id', $student->id)
             ->where('active', true)
@@ -45,6 +46,10 @@ class StudentMissionController extends Controller
 
         return Inertia::render('student/Dashboard', [
             'rewards' => $rewards->summary($student),
+            'avatar' => [
+                'name' => $profile->equippedAppearance?->name,
+                'image' => $profile->equippedAppearance?->asset_path,
+            ],
             'missions' => $enrollments->map(function (MissionEnrollment $enrollment): array {
                 $totalNodes = $enrollment->assignment->mission->nodes()->count();
 

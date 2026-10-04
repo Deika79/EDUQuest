@@ -135,4 +135,10 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->hasMany(CoinLedgerEntry::class, 'student_id');
     }
+
+    /** @return HasMany<StudentCosmeticItem, $this> */
+    public function cosmeticItems(): HasMany
+    {
+        return $this->hasMany(StudentCosmeticItem::class, 'student_id');
+    }
 }

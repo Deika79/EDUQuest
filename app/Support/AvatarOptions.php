@@ -16,6 +16,11 @@ final class AvatarOptions
         'character-b' => '/brand/avatars/assets/personaje-b-nivel-1.webp',
     ];
 
+    public static function initialImage(?string $characterKey): ?string
+    {
+        return $characterKey === null ? null : (self::INITIAL_IMAGES[$characterKey] ?? null);
+    }
+
     /** @return list<array{key: string, label: string, image: string}> */
     public static function forFrontend(): array
     {

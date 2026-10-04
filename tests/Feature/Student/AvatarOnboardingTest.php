@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\CosmeticItem;
 use App\Models\User;
 use App\Support\AvatarOptions;
+use Database\Seeders\CosmeticCatalogSeeder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -9,6 +11,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
     $this->withoutVite();
+    $this->seed(CosmeticCatalogSeeder::class);
 });
 
 test('a student without a profile is sent to avatar setup before missions', function () {
@@ -41,10 +44,14 @@ test('an existing student can save one valid avatar and then open missions', fun
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('student.dashboard'));
 
-    $profile = $student->avatarProfile()->sole();
+    $profile = $student->avatarProfile()->with('equippedAppearance')->sole();
 
     expect($profile->character_key)->toBe('character-b')
-        ->and($profile->setup_completed_at)->not->toBeNull();
+        ->and($profile->setup_completed_at)->not->toBeNull()
+        ->and($profile->equippedAppearance->sku)->toBe('character-b-inicial')
+        ->and($student->cosmeticItems()->count())->toBe(1)
+        ->and($student->cosmeticItems()->firstOrFail()->cosmetic_item_id)
+        ->toBe(CosmeticItem::query()->where('sku', 'character-b-inicial')->value('id'));
 
     $this->actingAs($student)
         ->get(route('student.missions.index'))

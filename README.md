@@ -2,7 +2,7 @@
 
 EDUQuest es una aplicacion web educativa para que el profesorado convierta repasos en misiones visuales, las asigne a clases y consulte el avance del alumnado.
 
-El desarrollo avanza hacia el hito del 80 %. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; el recorrido del alumno, el seguimiento docente de R06, la generacion asistida de borradores de R07 y el nucleo de recompensas de R09F02 estan implementados. R07 tambien se verifico con una llamada externa real controlada.
+El desarrollo avanza hacia el hito del 80 %. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; el recorrido del alumno, el seguimiento docente de R06, la generacion asistida de borradores de R07 y el MVP de avatares, recompensas y tienda cosmetica de R09 estan implementados. R07 tambien se verifico con una llamada externa real controlada.
 
 ## Entorno local
 
@@ -19,6 +19,9 @@ docker compose up -d
 
 # Ejecutar migraciones
 docker compose exec -T laravel.test php artisan migrate --force
+
+# Cargar o actualizar el catalogo cosmetico reproducible
+docker compose exec -T laravel.test php artisan db:seed --class=CosmeticCatalogSeeder --force
 
 # Ejecutar la suite Pest
 docker compose exec -T laravel.test php artisan test
@@ -98,7 +101,7 @@ Los cuestionarios muestran preguntas y opciones sin indicadores de solucion ante
 
 Cada consulta y finalizacion vuelve a comprobar cuenta, matricula, inscripcion, asignacion, mision, nodo y etapa anterior. La baja impide el acceso sin borrar progreso, y la reincorporacion lo recupera. La IA solo asiste al docente al preparar borradores y no participa en el recorrido del alumno.
 
-Los puntos educativos siguen perteneciendo a cada inscripcion. Aparte, la primera finalizacion valida de cada nodo concede 10 XP globales y las monedas configuradas por el docente entre 0 y 3, con un maximo de 20 por mision. La asignacion conserva una instantanea del premio y la pareja alumno-nodo solo puede recibirlo una vez, aunque exista en otra clase. El panel del alumno muestra XP, nivel derivado y saldo real; la tienda y el gasto de monedas todavia no existen.
+Los puntos educativos siguen perteneciendo a cada inscripcion. Aparte, la primera finalizacion valida de cada nodo concede 10 XP globales y las monedas configuradas por el docente entre 0 y 3, con un maximo de 20 por mision. La asignacion conserva una instantanea del premio y la pareja alumno-nodo solo puede recibirlo una vez, aunque exista en otra clase. El panel del alumno muestra XP, nivel derivado y saldo real.
 
 ```powershell
 # Pruebas focalizadas del recorrido del alumno
@@ -109,6 +112,19 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Student/Stude
 
 # Pruebas focalizadas de recompensas y niveles
 docker compose exec -T laravel.test php artisan test tests/Feature/Student/StudentRewardsTest.php
+```
+
+## Avatar y tienda cosmetica
+
+Tras cambiar la contrasena temporal, un alumno sin perfil elige `character-a` o `character-b` en `/student/avatar/setup`. Recibe gratuitamente la apariencia inicial correspondiente. En `/student/avatar` consulta su apariencia equipada, nivel, XP, saldo, inventario y las tres apariencias completas de su personaje.
+
+El catalogo reproducible fija la apariencia arcana en 6 monedas y nivel 2, y la espacial en 12 monedas y nivel 3. Alcanzar el nivel solo habilita la compra: no regala ni equipa una apariencia. Comprar y equipar son acciones separadas y exclusivamente esteticas; no modifican puntos, XP, nivel, notas, progreso ni actividades.
+
+Las monedas legitimas se obtienen al completar por primera vez actividades de misiones cuyo docente haya configurado entre 0 y 3 monedas por nodo. No existe saldo inicial ni comando de demo que altere el libro mayor. Una baja de matricula conserva perfil, inventario y saldo, pero impide comprar hasta la reincorporacion.
+
+```powershell
+# Pruebas focalizadas de primer acceso y tienda
+docker compose exec -T laravel.test php artisan test tests/Feature/Student/AvatarOnboardingTest.php tests/Feature/Student/AvatarShopTest.php
 ```
 
 ## Seguimiento docente

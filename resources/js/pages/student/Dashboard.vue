@@ -26,7 +26,16 @@ type Rewards = {
     coins: number;
 };
 
-const props = defineProps<{ missions: Mission[]; rewards: Rewards }>();
+type Avatar = {
+    name: string | null;
+    image: string | null;
+};
+
+const props = defineProps<{
+    missions: Mission[];
+    rewards: Rewards;
+    avatar: Avatar;
+}>();
 const nextMission = computed(() => props.missions[0] ?? null);
 
 defineOptions({
@@ -99,6 +108,22 @@ defineOptions({
 
         <section aria-labelledby="rewards-title" class="border-y py-5">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <Link
+                    href="/student/avatar"
+                    class="group flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+                    aria-label="Abrir avatar y tienda"
+                >
+                    <span
+                        class="grid size-20 place-items-center overflow-hidden border bg-muted"
+                    >
+                        <img
+                            v-if="avatar.image"
+                            :src="avatar.image"
+                            :alt="avatar.name ?? 'Apariencia equipada'"
+                            class="h-full w-full object-contain"
+                        />
+                    </span>
+                </Link>
                 <div class="min-w-0 flex-1">
                     <h2 id="rewards-title" class="font-semibold">
                         Tu recorrido

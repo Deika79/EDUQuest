@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\StoreAvatarProfileRequest;
 use App\Models\AvatarProfile;
 use App\Models\User;
+use App\Services\AvatarShopService;
 use App\Support\AvatarOptions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,9 +31,9 @@ class AvatarSetupController extends Controller
         ]);
     }
 
-    public function store(StoreAvatarProfileRequest $request): RedirectResponse
+    public function store(StoreAvatarProfileRequest $request, AvatarShopService $shop): RedirectResponse
     {
-        DB::transaction(function () use ($request): void {
+        DB::transaction(function () use ($request, $shop): void {
             $student = User::query()->lockForUpdate()->findOrFail($request->user()->id);
 
             if ($student->avatarProfile()->exists()) {
@@ -45,6 +46,7 @@ class AvatarSetupController extends Controller
             ]);
             $profile->student()->associate($student);
             $profile->save();
+            $shop->grantStarter($student, $profile);
         });
 
         Inertia::flash('toast', [

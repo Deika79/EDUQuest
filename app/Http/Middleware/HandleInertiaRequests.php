@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\AvatarOptions;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,11 +36,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $serializedUser = $user?->toArray();
+
+        if ($user?->isStudent()) {
+            $profile = $user->avatarProfile()->first();
+            $equipped = $profile?->equippedAppearance()->first();
+            $serializedUser['avatar'] = $equipped->asset_path
+                ?? AvatarOptions::initialImage($profile?->character_key);
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $serializedUser,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

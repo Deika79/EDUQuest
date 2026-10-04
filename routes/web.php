@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminTeacherController;
 use App\Http\Controllers\Auth\RequiredPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Student\AvatarSetupController;
+use App\Http\Controllers\Student\AvatarShopController;
 use App\Http\Controllers\Student\StudentMissionController;
 use App\Http\Controllers\Teacher\AiMissionGenerationController;
 use App\Http\Controllers\Teacher\MissionAssignmentController;
@@ -92,6 +93,13 @@ Route::middleware('auth')->group(function () {
 
         Route::middleware('avatar.configured')->group(function () {
             Route::get('/', [StudentMissionController::class, 'index'])->name('dashboard');
+            Route::get('avatar', [AvatarShopController::class, 'index'])->name('avatar.index');
+            Route::post('avatar/catalog/{cosmeticItem}/purchase', [AvatarShopController::class, 'purchase'])
+                ->middleware('throttle:10,1')
+                ->name('avatar.catalog.purchase');
+            Route::patch('avatar/inventory/{studentCosmeticItem}/equip', [AvatarShopController::class, 'equip'])
+                ->middleware('throttle:20,1')
+                ->name('avatar.inventory.equip');
             Route::get('missions', [StudentMissionController::class, 'index'])->name('missions.index');
             Route::get('missions/{enrollment}', [StudentMissionController::class, 'show'])->name('missions.show');
             Route::get('missions/{enrollment}/nodes/{node}', [StudentMissionController::class, 'activity'])
