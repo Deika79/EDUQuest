@@ -16,6 +16,7 @@ Fecha de revision: 2026-10-05.
 - R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado y mediante una llamada externa real controlada; R07F01T01P01 queda superada.
 - R09 esta autorizado como ampliacion; R09F01, R09F02 y el MVP funcional de R09F03 estan implementados. Permanecen pendientes las carreras HTTP simultaneas especificas de recompensas y compras.
 - Documentacion de auditoria del 80 % preparada en `docs/estado-hito-80.md`, `docs/guia-demo-hito-80.md`, `docs/capturas-hito-80.md` y `docs/memoria-borrador-hito-80.md`.
+- R08F02 cuenta con una prueba local aislada de instalacion limpia, copia MySQL y restauracion en una segunda base, documentada en `docs/r08-instalacion-copia-restauracion.md`.
 - Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 - La demo local reproducible dispone de cinco misiones de ciencias y 20 actividades distintas; no implica que el hito del 80 % este entregado.
@@ -28,6 +29,7 @@ Fecha de revision: 2026-10-05.
 - Docker Compose con Sail sobre PHP `8.4.26` y MySQL `8.4.11`.
 - Composer `2.10.3` disponible dentro del contenedor de la aplicacion.
 - Entorno local en `http://localhost:8080/login`.
+- Entorno limpio aislado de R08F02 verificado en `http://localhost:18080/login` con proyecto Compose `eduquest_r08_clean`, puerto MySQL `13306` y volumen `eduquest_r08_clean_sail-mysql`.
 - Migraciones base aplicadas sobre la base MySQL `eduquest`.
 - Registro publico desactivado en Fortify; `GET /register` y `POST /register` no estan disponibles.
 - Pantalla y enlaces de alta publica retirados del frontend.
@@ -125,6 +127,8 @@ Fecha de revision: 2026-10-05.
 | Tienda adaptable R09F03    | Chrome/CDP a 1440 x 1000 y 390 x 844: tres apariencias del personaje elegido, imagenes 512 x 768 y `scrollWidth = viewport = 390` en movil.                                            |
 | Preparacion demo local     | Verificada de nuevo el 2026-10-05: docente `carlinchis`, clase `Clase demo EDUQuest`, alumno `alumno_demo`, 5 misiones, 20 nodos, 5 asignaciones e inscripciones; 200 XP y 45 monedas disponibles. |
 | Conservacion alumno demo   | En la revision del 2026-10-05: 0 progresos, 0 XP, 0 monedas y 0 compras. No se completaron actividades ni compras con esta cuenta durante la auditoria documental.                      |
+| Instalacion limpia R08F02  | Proyecto Compose aislado `eduquest_r08_clean`: `migrate --force`, `CosmeticCatalogSeeder`, docente ficticio `carlinchis`, `eduquest:prepare-demo`, HTTP 200 en `http://localhost:18080/login`. |
+| Copia/restauracion R08F02  | Dump privado en `storage/app/private/r08-backups/eduquest-r08-clean.sql`; restaurado en `eduquest_r08_restore` con 2 usuarios, 1 clase, 5 misiones/asignaciones/inscripciones, 1 progreso, 1 recompensa, 1 movimiento de monedas, avatar e inventario. |
 | Recorrido niveles y tienda | Cuenta aislada de testing: 20 finalizaciones por rutas reales, 200 XP, nivel 3, compra y equipamiento arcano y espacial; imagen equipada persistente en cabecera y panel tras recarga. |
 | Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.                                                |
 | Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados.                                        |
@@ -245,7 +249,7 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - Revisar la demo y las evidencias con David y el centro. El feedback del 50 % no esta marcado como entregado y no se ha creado la etiqueta `hito-50`.
-- Completar en R08 el recorrido con teclado y movil, la instalacion desde cero y la restauracion de una copia.
+- Completar en R08 el recorrido con teclado y movil, las capturas finales, las horas reales y la revision academica. La instalacion limpia y la restauracion de una copia ya estan probadas en local aislado, pero no equivalen a despliegue de produccion.
 - El repositorio remoto `origin/main` esta configurado; no hay entrega academica marcada como realizada.
 
 ## Datos pendientes del centro

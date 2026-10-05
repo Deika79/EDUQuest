@@ -6,7 +6,7 @@ El desarrollo avanza hacia el hito del 80 %. La base tecnica usa Laravel 13, Vue
 
 ## Entorno local
 
-Requisitos comprobados: Docker Desktop y Node.js/npm. PHP 8.4 y Composer se ejecutan dentro del contenedor Sail, por lo que no es necesaria una instalacion nativa.
+Requisitos comprobados: Docker Desktop y Node.js/npm. PHP 8.4 y Composer se ejecutan dentro del contenedor Sail, por lo que no es necesaria una instalacion nativa cuando `vendor/laravel/sail` ya esta disponible. En un clon sin `vendor`, hay que ejecutar `composer install` o usar un mecanismo oficial equivalente para obtener Sail antes de construir la imagen.
 
 Comandos que han funcionado en PowerShell desde la raiz del proyecto:
 
@@ -32,6 +32,8 @@ docker compose exec -T laravel.test npm run build
 ```
 
 Aplicacion local: <http://localhost:8080/login>
+
+Para validar una instalacion limpia sin tocar la demo habitual, usar un proyecto Compose y puertos aislados. El procedimiento probado de R08F02, con copia y restauracion de MySQL, esta documentado en `docs/r08-instalacion-copia-restauracion.md`.
 
 ## Datos locales de demostracion
 
@@ -202,5 +204,6 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/AiMis
 - `docs/guia-demo-hito-80.md`: guion de demo de 10-15 minutos con acciones que modifican datos.
 - `docs/capturas-hito-80.md`: inventario de capturas necesarias y pendientes.
 - `docs/memoria-borrador-hito-80.md`: borrador de memoria actualizado con diagramas logicos del 80 %.
+- `docs/r08-instalacion-copia-restauracion.md`: instalacion limpia aislada, copia MySQL y restauracion local comprobada para R08F02.
 
 El trabajo debe limitarse siempre al hito autorizado en `AGENTS.md`.

@@ -24,14 +24,14 @@ R09 se trata aparte porque fue una ampliacion posterior al plan maestro. El plan
 
 | RFTP | Estado | Pendiente real |
 |---|---|---|
-| R08 | Parcial. | Faltan horas reales, instalacion limpia documentada como prueba ejecutada, restauracion de copia de MySQL, cierre de memoria final, capturas finales y validacion academica. |
+| R08 | Parcial. | Instalacion limpia local, copia MySQL y restauracion aislada documentadas en `docs/r08-instalacion-copia-restauracion.md`. Faltan horas reales, cierre de memoria final, capturas finales, validacion academica y despliegue/copia de produccion. |
 | R09 | Parcial como ampliacion posterior. | R09F01, R09F02 y R09F03 MVP existen, pero siguen pendientes carreras HTTP simultaneas especificas para recompensas/monedas y compras. Los avatares adicionales recibidos quedan fuera de seguimiento. |
 
 ## Requisitos pendientes o fuera de alcance actual
 
 - No hay despliegue definitivo verificado con HTTPS ni proveedor de alojamiento elegido. `docs/diagramas-hito-80.md` distingue el despliegue local comprobado del despliegue definitivo pendiente.
 - No hay registro real de horas totalizado ni Gantt real con fechas academicas.
-- No hay informe de copia/restauracion de base de datos ejecutado.
+- La copia/restauracion de base de datos esta ejecutada solo en local aislado; no hay despliegue definitivo ni politica de copias de produccion.
 - No se ha registrado aprobacion del centro, feedback oficial ni entrega academica del 50 % o del 80 %.
 - No se han implementado ramificaciones, multijugador, rankings, chat, familias, app movil, SCORM, marketplace, suscripciones ni tutor conversacional.
 - No existe vista previa docente que genere progreso separado; el recorrido de finalizacion sigue siendo de alumno.
@@ -46,4 +46,6 @@ R09 debe presentarse como mejora adicional, no como requisito original del MVP. 
 
 - `docker compose exec -T laravel.test composer ci:check`: correcto. Formato/lint frontend, `vue-tsc`, Pint y PHPStan pasaron; Pest termino con `143 passed`, `1217 assertions` y `9 skipped` por verificacion de email desactivada.
 - `docker compose exec -T laravel.test php artisan eduquest:prepare-demo`: correcto. Resultado: docente `carlinchis`, clase `Clase demo EDUQuest`, alumno `alumno_demo`, 5 misiones, 20 actividades, 200 XP disponibles, 45 monedas disponibles, 5 asignaciones abiertas, 5 inscripciones activas, preparadas `yes`, 0 progresos, 0 XP, 0 monedas y 0 compras.
+- Instalacion limpia R08F02 en proyecto Compose aislado `eduquest_r08_clean`: migraciones, `CosmeticCatalogSeeder`, docente ficticio `carlinchis`, `eduquest:prepare-demo` y HTTP 200 en `http://localhost:18080/login`.
+- Copia/restauracion R08F02: dump privado `storage/app/private/r08-backups/eduquest-r08-clean.sql`, restaurado en `eduquest_r08_restore`; recuperados 2 usuarios, 1 clase, 5 misiones, 5 asignaciones, 5 inscripciones, 1 progreso, 1 recompensa, 1 movimiento de monedas, avatar e inventario. La demo habitual mantuvo los mismos conteos antes y despues.
 - Diagramas Mermaid del hito 80 revisados en `docs/diagramas-hito-80.md` contra rutas, modelos, servicios, Policies y migraciones actuales. Los 9 bloques se renderizaron a SVG con Mermaid CLI 12.0.0 usando Chrome local, y los 9 enlaces desde la memoria se comprobaron contra anclajes existentes.

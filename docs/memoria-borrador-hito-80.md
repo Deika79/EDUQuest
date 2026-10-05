@@ -32,7 +32,7 @@ Desde el borrador del 50 % se han incorporado el seguimiento docente R06, la gen
 | R05 | Desbloqueo y progreso persistente | Implementado y probado, con concurrencia MySQL registrada para progreso educativo. |
 | R06 | Seguimiento docente | Implementado y probado. |
 | R07 | Borradores asistidos por IA con revision | Implementado y probado; existe una llamada real controlada registrada. |
-| R08 | Instalacion, pruebas, documentacion y evidencias | Parcial; quedan horas, capturas finales, instalacion limpia, copia/restauracion y cierre academico. |
+| R08 | Instalacion, pruebas, documentacion y evidencias | Parcial; instalacion limpia local y copia/restauracion MySQL aislada ya documentadas; quedan horas, capturas finales, despliegue/copia de produccion y cierre academico. |
 | R09 | Avatar, recompensas y tienda cosmetica | Ampliacion posterior parcialmente cerrada; MVP implementado, faltan carreras HTTP especificas de recompensas/compras. |
 
 ## 4. Descripcion de la solucion
@@ -83,7 +83,7 @@ Los diagramas del hito del 80 % se han separado en [diagramas-hito-80.md](diagra
 
 ### Diseno futuro explicito
 
-El despliegue definitivo con HTTPS, proveedor, dominio, copias y restauracion sigue siendo diseno futuro. El diagrama local si representa lo comprobado con Docker Compose; el diagrama final es una arquitectura objetivo pendiente de proveedor. Tambien son futuro las colecciones adicionales de avatar, piezas por capas, ramificaciones de misiones, multijugador, rankings, chat, familias, app movil, SCORM y tutor conversacional.
+El despliegue definitivo con HTTPS, proveedor, dominio, copias programadas y restauracion de produccion sigue siendo diseno futuro. El diagrama local si representa lo comprobado con Docker Compose; el diagrama final es una arquitectura objetivo pendiente de proveedor. Tambien son futuro las colecciones adicionales de avatar, piezas por capas, ramificaciones de misiones, multijugador, rankings, chat, familias, app movil, SCORM y tutor conversacional.
 
 ## 6. Tecnologias
 
@@ -103,6 +103,8 @@ La cadena `composer ci:check` se ejecuto durante esta revision: formato/lint fro
 
 Tambien se ejecuto `php artisan eduquest:prepare-demo`: la demo quedo con 5 misiones, 20 actividades, 200 XP disponibles y 45 monedas disponibles para `alumno_demo`, conservando 0 progresos, 0 XP, 0 monedas y 0 compras en esa cuenta.
 
+Para R08F02 se reprodujo una instalacion limpia local en un proyecto Docker Compose aislado (`eduquest_r08_clean`) con migraciones, catalogo cosmetico y datos ficticios de demo. Despues se genero una copia MySQL privada y se restauro en la base aislada `eduquest_r08_restore`. La restauracion recupero usuarios, clase, misiones, asignaciones, inscripciones, progreso, recompensa, movimiento de monedas, avatar e inventario inicial. Esta evidencia queda detallada en `docs/r08-instalacion-copia-restauracion.md` y no equivale a un despliegue de produccion.
+
 Las capturas necesarias estan inventariadas en `docs/capturas-hito-80.md`. No se han fabricado capturas autenticadas ni se han incluido contrasenas.
 
 ## 9. Planificacion, horas y presupuesto
@@ -111,7 +113,7 @@ La estimacion inicial del plan maestro sigue siendo 200 horas como hipotesis aca
 
 ## 10. Trabajo pendiente
 
-- Completar R08: instalacion limpia, copia/restauracion, capturas finales, memoria final, anexos y horas reales.
+- Completar R08: capturas finales, memoria final, anexos, horas reales y decisiones de produccion. La instalacion limpia y la copia/restauracion ya estan probadas solo en local aislado.
 - Revisar si R09 entra en la entrega evaluable o queda como ampliacion.
 - Ejecutar carreras HTTP simultaneas especificas para recompensas/compras si se quiere cerrar toda la evidencia de R09.
 - Decidir despliegue final y documentarlo cuando exista.
@@ -132,3 +134,4 @@ Estas conclusiones son provisionales. No hay entrega academica marcada como real
 - [guia-demo-hito-80.md](guia-demo-hito-80.md)
 - [capturas-hito-80.md](capturas-hito-80.md)
 - [diagramas-hito-80.md](diagramas-hito-80.md)
+- [r08-instalacion-copia-restauracion.md](r08-instalacion-copia-restauracion.md)
