@@ -1,0 +1,340 @@
+# Diagramas del hito del 80 %
+
+> Diagramas revisados contra rutas, modelos, servicios, Policies y migraciones actuales. Fecha: 2026-10-05. No representan una infraestructura de produccion contratada.
+
+## 1. Casos de uso
+
+```mermaid
+flowchart LR
+    Admin[Administrador]
+    Teacher[Docente]
+    Student[Alumno]
+
+    CU01[CU01 Acceder y cambiar contrasena temporal]
+    CU02[CU02 Gestionar clase y matriculas]
+    CU03[CU03 Crear mision manual]
+    CU04[CU04 Generar borrador asistido]
+    CU05[CU05 Publicar y asignar mision]
+    CU06[CU06 Completar actividad]
+    CU07[CU07 Consultar seguimiento]
+    CU08[CU08 Administrar docentes]
+    CU09[CU09 Configurar avatar y tienda]
+
+    Admin --> CU01
+    Admin --> CU08
+    Teacher --> CU01
+    Teacher --> CU02
+    Teacher --> CU03
+    Teacher --> CU04
+    Teacher --> CU05
+    Teacher --> CU07
+    Student --> CU01
+    Student --> CU06
+    Student --> CU09
+
+    CU04 -->|crea borrador, no publica| CU03
+    CU03 --> CU05
+    CU05 -->|crea inscripciones| CU06
+    CU06 -->|genera progreso e intentos| CU07
+    CU06 -->|concede XP y monedas| CU09
+```
+
+## 2. Navegacion y rutas implementadas
+
+```mermaid
+flowchart TD
+    Home["GET /"] --> Login["GET /login"]
+    Login --> Dashboard["GET /dashboard"]
+    Dashboard --> Role{Rol}
+
+    Role --> AdminPanel["GET /admin"]
+    AdminPanel --> AdminTeachers["POST/PATCH /admin/teachers"]
+
+    Role --> TeacherPanel["GET /teacher"]
+    TeacherPanel --> Classes["GET/POST /teacher/classes"]
+    Classes --> ClassShow["GET/PATCH /teacher/classes/{classroom}"]
+    ClassShow --> StudentEnrollment["POST /teacher/classes/{classroom}/students"]
+    ClassShow --> ExistingEnrollment["POST /teacher/classes/{classroom}/students/existing"]
+    ClassShow --> MembershipUpdate["PATCH /teacher/classes/{classroom}/memberships/{membership}"]
+
+    TeacherPanel --> Missions["GET/POST /teacher/missions"]
+    Missions --> Generate["GET/POST /teacher/missions/generate"]
+    Missions --> MissionShow["GET/PATCH /teacher/missions/{mission}"]
+    MissionShow --> AiReview["POST /teacher/missions/{mission}/ai-review"]
+    MissionShow --> Lifecycle["POST publish, duplicate, archive"]
+    MissionShow --> Assignments["POST/DELETE assignments"]
+    MissionShow --> Nodes["POST/PATCH/DELETE nodes and PATCH position"]
+
+    TeacherPanel --> Tracking["GET /teacher/tracking"]
+    Tracking --> TrackingShow["GET /teacher/tracking/classes/{classroom}/assignments/{assignment}"]
+    TrackingShow --> TrackingEnrollment["GET /teacher/tracking/classes/{classroom}/assignments/{assignment}/enrollments/{enrollment}"]
+
+    Role --> StudentPanel["GET /student"]
+    StudentPanel --> AvatarSetup["GET/POST /student/avatar/setup"]
+    StudentPanel --> StudentMissions["GET /student/missions"]
+    StudentPanel --> AvatarShop["GET /student/avatar"]
+    AvatarShop --> Purchase["POST /student/avatar/catalog/{cosmeticItem}/purchase"]
+    AvatarShop --> Equip["PATCH /student/avatar/inventory/{studentCosmeticItem}/equip"]
+    StudentMissions --> MissionMap["GET /student/missions/{enrollment}"]
+    MissionMap --> Activity["GET /student/missions/{enrollment}/nodes/{node}"]
+    Activity --> Complete["POST complete"]
+    Activity --> QuizAttempt["POST quiz-attempts"]
+```
+
+## 3. Clases principales
+
+```mermaid
+classDiagram
+    class User
+    class Classroom
+    class ClassroomMembership
+    class Mission
+    class MissionNode
+    class MissionAssignment
+    class MissionEnrollment
+    class NodeProgress
+    class QuizAttempt
+    class AiGeneration
+    class AvatarProfile
+    class CosmeticItem
+    class StudentCosmeticItem
+    class StudentRewardGrant
+    class CoinLedgerEntry
+
+    class TeacherMissionController
+    class AiMissionGenerationController
+    class TeacherTrackingController
+    class StudentMissionController
+    class AvatarSetupController
+    class AvatarShopController
+
+    class MissionLifecycle
+    class MissionAssignmentManager
+    class MissionEnrollmentSynchronizer
+    class MissionNodeWriter
+    class MissionReadiness
+    class MissionDraftGenerator
+    class OpenAiMissionDraftProvider
+    class AiMissionOutputValidator
+    class StudentMissionAccess
+    class QuizGradingService
+    class NodeProgressService
+    class StudentRewardService
+    class AvatarShopService
+
+    class UserPolicy
+    class ClassroomPolicy
+    class ClassroomMembershipPolicy
+    class MissionPolicy
+    class MissionAssignmentPolicy
+    class MissionEnrollmentPolicy
+    class AvatarProfilePolicy
+    class CosmeticItemPolicy
+    class StudentCosmeticItemPolicy
+
+    User "1" --> "many" Classroom : teacher owns
+    User "1" --> "many" Mission : teacher owns
+    User "1" --> "many" ClassroomMembership : student joins
+    Mission "1" --> "many" MissionNode : nodes
+    Mission "1" --> "many" MissionAssignment : assignments
+    Mission "1" --> "0..1" AiGeneration : generated by
+    MissionAssignment "1" --> "many" MissionEnrollment : enrollments
+    MissionEnrollment "1" --> "many" NodeProgress : progress
+    MissionEnrollment "1" --> "many" QuizAttempt : attempts
+    User "1" --> "0..1" AvatarProfile : avatar
+    User "1" --> "many" StudentRewardGrant : rewards
+    User "1" --> "many" CoinLedgerEntry : ledger
+    User "1" --> "many" StudentCosmeticItem : owns
+    CosmeticItem "1" --> "many" StudentCosmeticItem : ownership
+
+    TeacherMissionController --> MissionNodeWriter
+    TeacherMissionController --> MissionReadiness
+    AiMissionGenerationController --> MissionDraftGenerator
+    MissionDraftGenerator --> OpenAiMissionDraftProvider
+    MissionDraftGenerator --> AiMissionOutputValidator
+    TeacherTrackingController --> MissionEnrollment
+    StudentMissionController --> StudentMissionAccess
+    StudentMissionController --> QuizGradingService
+    StudentMissionController --> NodeProgressService
+    NodeProgressService --> StudentRewardService
+    AvatarSetupController --> AvatarShopService
+    AvatarShopController --> AvatarShopService
+    AvatarShopService --> StudentRewardService
+
+    TeacherMissionController ..> MissionPolicy
+    TeacherTrackingController ..> ClassroomPolicy
+    TeacherTrackingController ..> MissionAssignmentPolicy
+    TeacherTrackingController ..> MissionEnrollmentPolicy
+    AvatarSetupController ..> AvatarProfilePolicy
+    AvatarShopController ..> CosmeticItemPolicy
+    AvatarShopController ..> StudentCosmeticItemPolicy
+```
+
+## 4. Modelo E/R logico
+
+```mermaid
+erDiagram
+    USERS ||--o{ CLASSROOMS : owns
+    USERS ||--o{ MISSIONS : owns
+    USERS ||--o{ CLASSROOM_MEMBERSHIPS : joins
+    USERS ||--o{ MISSION_ENROLLMENTS : performs
+    USERS ||--o{ AI_GENERATIONS : requests
+    USERS ||--o| AVATAR_PROFILES : has
+    USERS ||--o{ STUDENT_REWARD_GRANTS : earns
+    USERS ||--o{ COIN_LEDGER_ENTRIES : has
+    USERS ||--o{ STUDENT_COSMETIC_ITEMS : owns
+
+    CLASSROOMS ||--o{ CLASSROOM_MEMBERSHIPS : contains
+    CLASSROOMS ||--o{ MISSION_ASSIGNMENTS : receives
+
+    MISSIONS ||--|{ MISSION_NODES : contains
+    MISSIONS ||--o{ MISSION_ASSIGNMENTS : assigned_as
+    MISSIONS ||--o| AI_GENERATIONS : result
+
+    MISSION_NODES ||--o{ QUIZ_QUESTIONS : contains
+    QUIZ_QUESTIONS ||--|{ QUIZ_OPTIONS : offers
+    MISSION_NODES ||--o{ FLASHCARDS : contains
+    MISSION_NODES ||--o{ NODE_PROGRESS : completed_by
+    MISSION_NODES ||--o{ QUIZ_ATTEMPTS : attempted_by
+    MISSION_NODES ||--o{ MISSION_ASSIGNMENT_NODE_REWARDS : rewarded_by
+    MISSION_NODES ||--o{ STUDENT_REWARD_GRANTS : grants
+
+    MISSION_ASSIGNMENTS ||--o{ MISSION_ENROLLMENTS : enrolls
+    MISSION_ASSIGNMENTS ||--o{ MISSION_ASSIGNMENT_NODE_REWARDS : snapshots
+    MISSION_ENROLLMENTS ||--o{ NODE_PROGRESS : records
+    MISSION_ENROLLMENTS ||--o{ QUIZ_ATTEMPTS : submits
+    QUIZ_ATTEMPTS ||--|{ QUIZ_ANSWERS : contains
+    QUIZ_QUESTIONS ||--o{ QUIZ_ANSWERS : answered
+    QUIZ_OPTIONS ||--o{ QUIZ_ANSWERS : selected
+
+    STUDENT_REWARD_GRANTS ||--o| COIN_LEDGER_ENTRIES : credit
+    STUDENT_REWARD_GRANTS ||--|| NODE_PROGRESS : first_progress
+    COSMETIC_ITEMS ||--o{ STUDENT_COSMETIC_ITEMS : acquired_as
+    COSMETIC_ITEMS ||--o{ COIN_LEDGER_ENTRIES : purchase_debit
+    COSMETIC_ITEMS ||--o{ AVATAR_PROFILES : equipped_as
+```
+
+## 5. Secuencia R07: generacion asistida revisable
+
+```mermaid
+sequenceDiagram
+    actor Docente
+    participant Vue as Generate.vue
+    participant Controller as AiMissionGenerationController
+    participant Request as GenerateMissionDraftRequest
+    participant Generator as MissionDraftGenerator
+    participant Provider as OpenAiMissionDraftProvider
+    participant Validator as AiMissionOutputValidator
+    participant DB as MySQL
+    participant Editor as TeacherMissionController
+
+    Docente->>Vue: Completa formulario
+    Vue->>Controller: POST /teacher/missions/generate
+    Controller->>Request: valida tema, nivel, dificultad y nodos
+    Controller->>Generator: generate(teacher, input, requestToken)
+    Generator->>DB: bloquea User, crea AiGeneration processing
+    Generator->>Provider: llama Responses API si hay configuracion
+    Provider-->>Generator: ProviderMissionDraft
+    Generator->>Validator: valida JSON estructurado
+    Generator->>DB: crea Mission source=ai status=draft
+    Generator->>DB: crea MissionNode y contenido
+    Generator->>DB: video queda review_required sin video_id
+    Generator->>DB: AiGeneration completed con tokens y response_id
+    Generator-->>Controller: Mission draft
+    Controller-->>Editor: redirige a /teacher/missions/{mission}
+    Editor-->>Docente: muestra borrador editable y revision humana pendiente
+```
+
+## 6. Secuencia R09: finalizacion y recompensa
+
+```mermaid
+sequenceDiagram
+    actor Alumno
+    participant Activity as StudentMissionController
+    participant Access as StudentMissionAccess
+    participant Quiz as QuizGradingService
+    participant Progress as NodeProgressService
+    participant Rewards as StudentRewardService
+    participant DB as MySQL
+
+    Alumno->>Activity: POST complete o quiz-attempts
+    Activity->>Access: assertNode(student, enrollment, node)
+    Access->>DB: comprueba cuenta, matricula, asignacion y nodo previo
+    alt Nodo quiz
+        Activity->>Quiz: grade(enrollment, node, answers)
+        Quiz->>DB: guarda QuizAttempt y QuizAnswer
+        Quiz-->>Activity: resultado passed o failed
+        Activity->>Progress: completePassedQuiz si passed
+    else Explicacion, video o flashcards
+        Activity->>Progress: complete(student, enrollment, node)
+    end
+    Progress->>DB: bloquea MissionEnrollment y MissionNode
+    Progress->>DB: crea NodeProgress si no existe
+    Progress->>Rewards: grantForFirstCompletion
+    Rewards->>DB: bloquea User
+    Rewards->>DB: lee MissionAssignmentNodeReward
+    Rewards->>DB: crea StudentRewardGrant unico alumno-nodo
+    Rewards->>DB: crea CoinLedgerEntry si coins_awarded mayor que 0
+    Progress->>DB: actualiza activity_started_at y completed_at
+    Activity-->>Alumno: redirige con progreso actualizado
+```
+
+## 7. Secuencia R09: compra y equipamiento cosmetico
+
+```mermaid
+sequenceDiagram
+    actor Alumno
+    participant Shop as AvatarShopController
+    participant Service as AvatarShopService
+    participant Rewards as StudentRewardService
+    participant DB as MySQL
+
+    Alumno->>Shop: POST /student/avatar/catalog/{cosmeticItem}/purchase
+    Shop->>Service: purchase(student, cosmeticItem)
+    Service->>DB: bloquea User, AvatarProfile y CosmeticItem
+    Service->>DB: comprueba matricula activa, personaje, nivel, saldo y item activo
+    Service->>Rewards: summary(student)
+    Rewards->>DB: suma XP y ledger
+    Service->>DB: crea StudentCosmeticItem si no existe
+    Service->>DB: crea CoinLedgerEntry negativo
+    Service-->>Shop: ownership, purchased
+    Shop-->>Alumno: vuelve a /student/avatar
+
+    Alumno->>Shop: PATCH /student/avatar/inventory/{studentCosmeticItem}/equip
+    Shop->>Service: equip(student, ownership)
+    Service->>DB: bloquea User, AvatarProfile y StudentCosmeticItem
+    Service->>DB: verifica propiedad y character_key
+    Service->>DB: actualiza AvatarProfile.equipped_cosmetic_item_id
+    Shop-->>Alumno: apariencia equipada
+```
+
+## 8. Despliegue local comprobado
+
+```mermaid
+flowchart LR
+    Browser[Navegador local] -->|http://localhost:8080| Nginx[laravel.test / Sail]
+    Browser -->|http://localhost:5173 en desarrollo| Vite[Vite dev server opcional]
+    Nginx --> PHP[PHP 8.4 Laravel 13]
+    PHP --> MySQL[(MySQL 8.4 contenedor)]
+    PHP --> Storage[storage y bootstrap/cache]
+    PHP --> Mailpit[Mailpit opcional local]
+    PHP --> OpenAI[OpenAI Responses API opcional si OPENAI_API_KEY existe]
+    PHP --> Public[public/build y public/brand]
+```
+
+## 9. Despliegue definitivo pendiente
+
+```mermaid
+flowchart LR
+    Users[Usuarios con navegador] --> HTTPS[HTTPS y dominio pendientes]
+    HTTPS --> Web[Servidor Linux con PHP 8.4 y servidor web por decidir]
+    Web --> App[Aplicacion Laravel 13]
+    App --> DB[(MySQL 8.4 persistente)]
+    App --> Files[Almacenamiento persistente para public/build, brand y logs]
+    App --> Mail[Correo transaccional pendiente]
+    App --> AI[Proveedor IA con clave en servidor]
+    Backups[Copias y restauracion pendientes] --> DB
+```
+
+Este ultimo diagrama es provisional: no hay proveedor, dominio, HTTPS, correo ni politica de copias verificados todavia.
+

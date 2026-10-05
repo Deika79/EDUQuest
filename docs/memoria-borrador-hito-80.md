@@ -69,61 +69,21 @@ La arquitectura real mantiene un unico repositorio y no crea API REST separada. 
 
 ## 5. Disenos y diagramas
 
-### Navegacion implementada
+Los diagramas del hito del 80 % se han separado en [diagramas-hito-80.md](diagramas-hito-80.md) para poder revisarlos y renderizarlos de forma independiente.
 
-```mermaid
-flowchart TD
-    A[Acceso] --> B{Rol}
-    B --> C[Administracion]
-    B --> D[Panel docente]
-    B --> E[Panel alumno]
-    C --> C1[Docentes]
-    D --> D1[Clases y alumnos]
-    D --> D2[Misiones]
-    D2 --> D3[Editor manual]
-    D2 --> D4[Generacion asistida]
-    D2 --> D5[Publicar y asignar]
-    D --> D6[Seguimiento]
-    E --> E1[Misiones asignadas]
-    E1 --> E2[Mapa lineal]
-    E2 --> E3[Actividad]
-    E3 --> E2
-    E --> E4[Avatar y tienda]
-```
-
-### Modelo de datos logico actualizado
-
-```mermaid
-erDiagram
-    USERS ||--o{ CLASSROOMS : owns
-    USERS ||--o{ MISSIONS : owns
-    USERS ||--o{ CLASSROOM_MEMBERSHIPS : joins
-    USERS ||--o| AVATAR_PROFILES : has
-    USERS ||--o{ STUDENT_REWARD_GRANTS : earns
-    USERS ||--o{ COIN_LEDGER_ENTRIES : has
-    USERS ||--o{ STUDENT_COSMETIC_ITEMS : owns
-    CLASSROOMS ||--o{ CLASSROOM_MEMBERSHIPS : contains
-    MISSIONS ||--|{ MISSION_NODES : contains
-    MISSION_NODES ||--o{ QUIZ_QUESTIONS : contains
-    QUIZ_QUESTIONS ||--|{ QUIZ_OPTIONS : offers
-    MISSION_NODES ||--o{ FLASHCARDS : contains
-    MISSIONS ||--o{ MISSION_ASSIGNMENTS : assigned_as
-    CLASSROOMS ||--o{ MISSION_ASSIGNMENTS : receives
-    MISSION_ASSIGNMENTS ||--o{ MISSION_ENROLLMENTS : enrolls
-    MISSION_ASSIGNMENTS ||--o{ MISSION_ASSIGNMENT_NODE_REWARDS : snapshots
-    MISSION_ENROLLMENTS ||--o{ NODE_PROGRESS : records
-    MISSION_ENROLLMENTS ||--o{ QUIZ_ATTEMPTS : submits
-    QUIZ_ATTEMPTS ||--|{ QUIZ_ANSWERS : contains
-    AI_GENERATIONS }o--|| USERS : requested_by
-    AI_GENERATIONS }o--o| MISSIONS : creates
-    COSMETIC_ITEMS ||--o{ STUDENT_COSMETIC_ITEMS : acquired_as
-    COSMETIC_ITEMS ||--o{ COIN_LEDGER_ENTRIES : purchased_with
-    AVATAR_PROFILES }o--o| COSMETIC_ITEMS : equipped
-```
+- [Casos de uso](diagramas-hito-80.md#1-casos-de-uso): incorpora CU04 de IA revisable, CU07 de seguimiento y CU09 de avatar/tienda como ampliacion.
+- [Navegacion y rutas implementadas](diagramas-hito-80.md#2-navegacion-y-rutas-implementadas): refleja las rutas reales de `routes/web.php`.
+- [Clases principales](diagramas-hito-80.md#3-clases-principales): usa controladores, servicios, modelos y Policies existentes.
+- [Modelo E/R logico](diagramas-hito-80.md#4-modelo-er-logico): anade `ai_generations`, recompensas, ledger, catalogo cosmetico y perfil de avatar.
+- [Secuencia R07](diagramas-hito-80.md#5-secuencia-r07-generacion-asistida-revisable): muestra generacion asistida sin publicacion automatica.
+- [Secuencia R09 de finalizacion y recompensa](diagramas-hito-80.md#6-secuencia-r09-finalizacion-y-recompensa): separa progreso educativo, XP y monedas.
+- [Secuencia R09 de compra y equipamiento](diagramas-hito-80.md#7-secuencia-r09-compra-y-equipamiento-cosmetico): muestra compra y equipamiento como acciones distintas.
+- [Despliegue local comprobado](diagramas-hito-80.md#8-despliegue-local-comprobado): Docker/Sail, Laravel, MySQL y proveedor IA opcional.
+- [Despliegue definitivo pendiente](diagramas-hito-80.md#9-despliegue-definitivo-pendiente): mantiene proveedor, dominio, HTTPS, correo y copias como decisiones futuras.
 
 ### Diseno futuro explicito
 
-El despliegue definitivo con HTTPS, proveedor, dominio, copias y restauracion sigue siendo diseno futuro. Tambien son futuro las colecciones adicionales de avatar, piezas por capas, ramificaciones de misiones, multijugador, rankings, chat, familias, app movil, SCORM y tutor conversacional.
+El despliegue definitivo con HTTPS, proveedor, dominio, copias y restauracion sigue siendo diseno futuro. El diagrama local si representa lo comprobado con Docker Compose; el diagrama final es una arquitectura objetivo pendiente de proveedor. Tambien son futuro las colecciones adicionales de avatar, piezas por capas, ramificaciones de misiones, multijugador, rankings, chat, familias, app movil, SCORM y tutor conversacional.
 
 ## 6. Tecnologias
 
@@ -171,3 +131,4 @@ Estas conclusiones son provisionales. No hay entrega academica marcada como real
 - [estado-hito-80.md](estado-hito-80.md)
 - [guia-demo-hito-80.md](guia-demo-hito-80.md)
 - [capturas-hito-80.md](capturas-hito-80.md)
+- [diagramas-hito-80.md](diagramas-hito-80.md)

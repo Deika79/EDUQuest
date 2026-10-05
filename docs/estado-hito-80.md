@@ -29,7 +29,7 @@ R09 se trata aparte porque fue una ampliacion posterior al plan maestro. El plan
 
 ## Requisitos pendientes o fuera de alcance actual
 
-- No hay despliegue definitivo verificado con HTTPS ni proveedor de alojamiento elegido. El diagrama de despliegue final sigue siendo diseno futuro.
+- No hay despliegue definitivo verificado con HTTPS ni proveedor de alojamiento elegido. `docs/diagramas-hito-80.md` distingue el despliegue local comprobado del despliegue definitivo pendiente.
 - No hay registro real de horas totalizado ni Gantt real con fechas academicas.
 - No hay informe de copia/restauracion de base de datos ejecutado.
 - No se ha registrado aprobacion del centro, feedback oficial ni entrega academica del 50 % o del 80 %.
@@ -46,3 +46,4 @@ R09 debe presentarse como mejora adicional, no como requisito original del MVP. 
 
 - `docker compose exec -T laravel.test composer ci:check`: correcto. Formato/lint frontend, `vue-tsc`, Pint y PHPStan pasaron; Pest termino con `143 passed`, `1217 assertions` y `9 skipped` por verificacion de email desactivada.
 - `docker compose exec -T laravel.test php artisan eduquest:prepare-demo`: correcto. Resultado: docente `carlinchis`, clase `Clase demo EDUQuest`, alumno `alumno_demo`, 5 misiones, 20 actividades, 200 XP disponibles, 45 monedas disponibles, 5 asignaciones abiertas, 5 inscripciones activas, preparadas `yes`, 0 progresos, 0 XP, 0 monedas y 0 compras.
+- Diagramas Mermaid del hito 80 revisados en `docs/diagramas-hito-80.md` contra rutas, modelos, servicios, Policies y migraciones actuales. Los 9 bloques se renderizaron a SVG con Mermaid CLI 12.0.0 usando Chrome local, y los 9 enlaces desde la memoria se comprobaron contra anclajes existentes.
