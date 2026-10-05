@@ -33,6 +33,30 @@ docker compose exec -T laravel.test npm run build
 
 Aplicacion local: <http://localhost:8080/login>
 
+## Datos locales de demostracion
+
+El comando local idempotente prepara la clase `Clase demo EDUQuest`, el alumno `alumno_demo` y cinco misiones manuales publicadas para el docente existente `carlinchis`. Reutiliza los servicios normales de publicacion, asignacion y matricula, no elimina otros datos y conserva contrasena, avatar, progreso, recompensas y compras existentes.
+
+En la primera ejecucion solicita la contrasena del alumno mediante una entrada oculta. Tambien puede leerla desde `EDUQUEST_DEMO_STUDENT_PASSWORD` en el `.env` local, que esta excluido de Git. Las ejecuciones posteriores no cambian esa contrasena salvo que se indique expresamente `--reset-student-password`.
+
+```powershell
+# Primera preparacion o repeticion idempotente
+docker compose exec laravel.test php artisan eduquest:prepare-demo
+
+# Restablecer de forma segura la contrasena del alumno demo
+docker compose exec laravel.test php artisan eduquest:prepare-demo --reset-student-password
+```
+
+Accesos locales:
+
+- Inicio de sesion: <http://localhost:8080/login>.
+- Docente `carlinchis`: <http://localhost:8080/teacher/classes> y <http://localhost:8080/teacher/missions>.
+- Alumno `alumno_demo`: <http://localhost:8080/student/missions> y tienda en <http://localhost:8080/student/avatar>.
+
+El recorrido contiene `Exploradores del sistema solar`, `Guardianes del ciclo del agua`, `Detectives de los ecosistemas`, `Viaje al interior de la Tierra` y `Laboratorio de la materia`. Son 20 actividades distintas que permiten obtener 200 XP y 45 monedas como maximo. Cada nodo concede 10 XP y entre 2 y 3 monedas al completarse validamente por primera vez. Los puntos, XP y monedas se generan exclusivamente al completar las actividades desde el recorrido real; el comando no marca progreso ni concede saldos.
+
+Al llegar a 100 XP (nivel 2), el alumno puede comprar la apariencia arcana por 6 monedas. Al llegar a 200 XP (nivel 3), puede comprar la espacial por 12. Comprar no equipa automaticamente: la accion `Equipar` esta en la tienda. La limitacion de cuestionarios permite cinco envios por minuto, por lo que una demostracion automatizada debe respetar ese ritmo.
+
 ## Landing y trailer
 
 La portada publica en `/` mantiene una imagen estatica y no solicita el archivo de video durante la carga inicial. El boton `Ver trailer` abre un reproductor adaptable con sonido, controles nativos de reproduccion, volumen y pantalla completa. El reproductor no repite el video; se cierra con su boton o con `Escape`, detiene la reproduccion y devuelve el foco al boton de apertura.

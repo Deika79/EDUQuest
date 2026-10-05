@@ -1,6 +1,6 @@
 # Estado del proyecto
 
-Fecha de revision: 2026-10-04.
+Fecha de revision: 2026-10-05.
 
 ## Fase actual
 
@@ -17,6 +17,7 @@ Fecha de revision: 2026-10-04.
 - R09 esta autorizado como ampliacion; R09F01, R09F02 y el MVP funcional de R09F03 estan implementados. Permanecen pendientes las carreras HTTP simultaneas especificas de recompensas y compras.
 - Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
+- La demo local reproducible dispone de cinco misiones de ciencias y 20 actividades distintas; no implica que el hito del 80 % este entregado.
 
 ## Existe realmente
 
@@ -89,50 +90,55 @@ Fecha de revision: 2026-10-04.
 - Trailer integrado en `public/brand/eduquest-trailer.mp4` mediante un dialogo que mantiene el poster visible y solo asigna la fuente del video tras pulsar `Ver trailer`.
 - El reproductor abre con sonido por la interaccion de la persona, usa controles nativos de reproduccion, volumen y pantalla completa, admite cierre con boton o `Escape`, detiene y libera el video al cerrar y devuelve el foco al boton de apertura. No usa reproduccion automatica ni repeticion.
 - Variante web verificada: MP4 H.264 `yuv420p`, 1600 x 900, 30 fps, 24,29 segundos, inicio rapido, audio AAC estereo a 44,1 kHz y 5.513.692 bytes. El original HEVC de 26.733.433 bytes se conserva fuera de `public/` y de Git.
+- Comando local `eduquest:prepare-demo` restringido a entornos local y testing. Reutiliza al docente `carlinchis`, la clase y `alumno_demo`, y prepara cinco misiones manuales publicadas con 20 nodos, cinco asignaciones abiertas y cinco inscripciones activas mediante los servicios de dominio existentes.
+- La demo ofrece como maximo 200 XP y 45 monedas. El comando no crea progreso, concesiones, movimientos de monedas ni compras y conserva la contrasena, el avatar y todo el estado previo del alumno.
 
 ## Verificaciones realizadas
 
-| Verificacion               | Resultado real                                                                                                                                     |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Contenedores               | `laravel.test` y `mysql` arrancados; MySQL saludable.                                                                                              |
-| Migraciones                | Ejecutadas correctamente con `php artisan migrate --force`.                                                                                        |
-| Pruebas focalizadas R01    | `23 passed`, `76 assertions`.                                                                                                                      |
-| Pruebas focalizadas R02    | `10 passed`, `70 assertions`.                                                                                                                      |
-| Pruebas focalizadas R03F01 | `14 passed`, `100 assertions`.                                                                                                                     |
-| Pruebas focalizadas R03F02 | `10 passed`, `77 assertions`.                                                                                                                      |
-| Integracion R02-R03        | `33 passed`, `226 assertions`.                                                                                                                     |
-| Recorrido alumno R04-R05   | `21 passed`, `215 assertions`.                                                                                                                     |
-| Cuestionarios R04F02       | `11 passed`, `87 assertions`.                                                                                                                      |
-| Regresion R02-R03 afectada | `20 passed`, `147 assertions`.                                                                                                                     |
-| Seguridad focalizada hito  | `55 passed`, `462 assertions`: bloqueos, soluciones, IDs ajenos y propiedad docente.                                                               |
-| Seguimiento R06            | `3 passed`, `111 assertions`: dos alumnos, quiz suspendido/aprobado, historial y propietario.                                                      |
-| Generacion R07 simulada    | `9 passed`, `82 assertions`: salida valida/invalida, cuota, timeout, error, idempotencia, recuperacion, borrador, revision y propietario.          |
-| Generacion R07 real        | Una llamada mediante login, CSRF y formulario real; generacion 1 completada, mision 7 en borrador, 508 tokens de entrada y 1090 de salida.         |
-| Perfil inicial R09F01T01   | `9 passed`, `64 assertions`: primer acceso, alumno existente, validacion, propiedad, roles, unicidad, orden tras contrasena y `/register`.         |
-| Recompensas R09F02         | `8 passed`, `76 assertions`: cuatro actividades, quiz, repeticion, segunda asignacion, limites, instantanea, baja/reincorporacion y nivel.         |
-| Regresion afectada R09F02  | `45 passed`, `392 assertions`: borradores, publicacion/asignacion, recorrido del alumno y cuestionarios.                                           |
-| Catalogo y tienda R09F03   | `18 passed`, `136 assertions` junto con onboarding: seeder idempotente, compra, saldo/nivel, repeticion, rol, propiedad, personaje y equipamiento. |
-| Instantaneas MySQL R09F02  | 6 parejas asignacion-nodo existentes y 6 instantaneas migradas; todas conservan 10 XP y 0 monedas.                                                 |
-| Progreso previo R09F02     | 6 progresos existentes convertidos en 6 concesiones unicas, 60 XP totales y ninguna moneda retroactiva.                                            |
-| Interfaz de avatar R09     | Edge a 1440 x 1000 y 390 x 844: dos imagenes cargadas, sin desbordamiento; foco inicial en H1, seleccion A/B con flechas y boton enfocable.        |
-| Tienda adaptable R09F03    | Chrome/CDP a 1440 x 1000 y 390 x 844: tres apariencias del personaje elegido, imagenes 512 x 768 y `scrollWidth = viewport = 390` en movil.        |
-| Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.            |
-| Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados.    |
-| Reproduccion del trailer   | Apertura voluntaria en dialogo, sonido activo, controles, `playsinline`, ausencia de repeticion y cierre final con logo comprobados.               |
-| Carga bajo demanda         | Cero solicitudes al MP4 antes de pulsar `Ver trailer`; al cerrar se pausa, se elimina `src` y se libera el recurso.                                |
-| Accesibilidad del trailer  | Cierre por boton y `Escape`, foco contenido en el dialogo y devuelto al disparador; boton de acceso permanece visible fuera del dialogo.           |
-| Preferencias del trailer   | Emulacion movil a 390 x 844: ancho de documento 390 px; movimiento reducido y ahorro de datos mantienen el poster sin solicitar el video.          |
-| Landing y acceso           | Pruebas focalizadas: `8 passed`, `15 assertions`; `/` y `/login` se renderizan y la autenticacion conserva sus controles.                          |
-| Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.                                                   |
-| Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.                                                 |
-| Suite Pest completa        | `140 passed`, `1044 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                           |
-| Pint                       | Sin problemas de estilo en 183 archivos PHP en la ultima ejecucion.                                                                                |
-| PHPStan                    | Sin errores en 152 archivos analizados.                                                                                                            |
-| TypeScript                 | `vue-tsc --noEmit` correcto.                                                                                                                       |
-| Frontend                   | TypeScript correcto; formato en 95 archivos y lint en 77 sin avisos; build con `3407 modules transformed`.                                         |
-| Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844; despues, el flujo autenticado real abrio el borrador 7 en el editor con HTTP 200.                  |
-| Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                                                                    |
-| Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                                                               |
+| Verificacion               | Resultado real                                                                                                                                                                         |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Contenedores               | `laravel.test` y `mysql` arrancados; MySQL saludable.                                                                                                                                  |
+| Migraciones                | Ejecutadas correctamente con `php artisan migrate --force`.                                                                                                                            |
+| Pruebas focalizadas R01    | `23 passed`, `76 assertions`.                                                                                                                                                          |
+| Pruebas focalizadas R02    | `10 passed`, `70 assertions`.                                                                                                                                                          |
+| Pruebas focalizadas R03F01 | `14 passed`, `100 assertions`.                                                                                                                                                         |
+| Pruebas focalizadas R03F02 | `10 passed`, `77 assertions`.                                                                                                                                                          |
+| Integracion R02-R03        | `33 passed`, `226 assertions`.                                                                                                                                                         |
+| Recorrido alumno R04-R05   | `21 passed`, `215 assertions`.                                                                                                                                                         |
+| Cuestionarios R04F02       | `11 passed`, `87 assertions`.                                                                                                                                                          |
+| Regresion R02-R03 afectada | `20 passed`, `147 assertions`.                                                                                                                                                         |
+| Seguridad focalizada hito  | `55 passed`, `462 assertions`: bloqueos, soluciones, IDs ajenos y propiedad docente.                                                                                                   |
+| Seguimiento R06            | `3 passed`, `111 assertions`: dos alumnos, quiz suspendido/aprobado, historial y propietario.                                                                                          |
+| Generacion R07 simulada    | `9 passed`, `82 assertions`: salida valida/invalida, cuota, timeout, error, idempotencia, recuperacion, borrador, revision y propietario.                                              |
+| Generacion R07 real        | Una llamada mediante login, CSRF y formulario real; generacion 1 completada, mision 7 en borrador, 508 tokens de entrada y 1090 de salida.                                             |
+| Perfil inicial R09F01T01   | `9 passed`, `64 assertions`: primer acceso, alumno existente, validacion, propiedad, roles, unicidad, orden tras contrasena y `/register`.                                             |
+| Recompensas R09F02         | `8 passed`, `76 assertions`: cuatro actividades, quiz, repeticion, segunda asignacion, limites, instantanea, baja/reincorporacion y nivel.                                             |
+| Regresion afectada R09F02  | `45 passed`, `392 assertions`: borradores, publicacion/asignacion, recorrido del alumno y cuestionarios.                                                                               |
+| Catalogo y tienda R09F03   | `18 passed`, `136 assertions` junto con onboarding: seeder idempotente, compra, saldo/nivel, repeticion, rol, propiedad, personaje y equipamiento.                                     |
+| Instantaneas MySQL R09F02  | 6 parejas asignacion-nodo existentes y 6 instantaneas migradas; todas conservan 10 XP y 0 monedas.                                                                                     |
+| Progreso previo R09F02     | 6 progresos existentes convertidos en 6 concesiones unicas, 60 XP totales y ninguna moneda retroactiva.                                                                                |
+| Interfaz de avatar R09     | Edge a 1440 x 1000 y 390 x 844: dos imagenes cargadas, sin desbordamiento; foco inicial en H1, seleccion A/B con flechas y boton enfocable.                                            |
+| Tienda adaptable R09F03    | Chrome/CDP a 1440 x 1000 y 390 x 844: tres apariencias del personaje elegido, imagenes 512 x 768 y `scrollWidth = viewport = 390` en movil.                                            |
+| Preparacion demo local     | Dos ejecuciones consecutivas: 1 clase, 1 alumno, 5 misiones, 20 nodos, 5 asignaciones e inscripciones; 200 XP y 45 monedas disponibles, sin duplicados.                                |
+| Conservacion alumno demo   | Antes y despues: 0 progresos, 0 XP, nivel 1, 0 monedas, 0 compras y personaje A inicial equipado. No se completaron actividades ni compras con esta cuenta.                            |
+| Recorrido niveles y tienda | Cuenta aislada de testing: 20 finalizaciones por rutas reales, 200 XP, nivel 3, compra y equipamiento arcano y espacial; imagen equipada persistente en cabecera y panel tras recarga. |
+| Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.                                                |
+| Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados.                                        |
+| Reproduccion del trailer   | Apertura voluntaria en dialogo, sonido activo, controles, `playsinline`, ausencia de repeticion y cierre final con logo comprobados.                                                   |
+| Carga bajo demanda         | Cero solicitudes al MP4 antes de pulsar `Ver trailer`; al cerrar se pausa, se elimina `src` y se libera el recurso.                                                                    |
+| Accesibilidad del trailer  | Cierre por boton y `Escape`, foco contenido en el dialogo y devuelto al disparador; boton de acceso permanece visible fuera del dialogo.                                               |
+| Preferencias del trailer   | Emulacion movil a 390 x 844: ancho de documento 390 px; movimiento reducido y ahorro de datos mantienen el poster sin solicitar el video.                                              |
+| Landing y acceso           | Pruebas focalizadas: `8 passed`, `15 assertions`; `/` y `/login` se renderizan y la autenticacion conserva sus controles.                                                              |
+| Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.                                                                                       |
+| Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.                                                                                     |
+| Suite Pest completa        | `143 passed`, `1217 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                                                               |
+| Pint                       | Sin problemas de estilo en 185 archivos PHP en la ultima ejecucion.                                                                                                                    |
+| PHPStan                    | Sin errores en 153 archivos analizados.                                                                                                                                                |
+| TypeScript                 | `vue-tsc --noEmit` correcto.                                                                                                                                                           |
+| Frontend                   | TypeScript correcto; formato en 95 archivos y lint en 77 sin avisos; build con `3407 modules transformed`.                                                                             |
+| Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844; despues, el flujo autenticado real abrio el borrador 7 en el editor con HTTP 200.                                                      |
+| Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                                                                                                        |
+| Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                                                                                                   |
 
 La primera pasada historica de pruebas fallo porque aun no existia `public/build/manifest.json`. Tras compilar el frontend, toda la suite paso. La ejecucion inicial como `root` dejo la cache de vistas sin escritura para el servidor `sail`; se corrigieron los permisos de `storage/` y `bootstrap/cache/` y se limpiaron las caches.
 
