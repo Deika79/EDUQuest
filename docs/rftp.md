@@ -75,8 +75,8 @@ Estado general: hito del 80 % en desarrollo, con R06 y la implementacion de R07 
 ## R08 El proyecto debe poder instalarse, probarse y explicarse con evidencias.
 
 - **R08F01** Diseñar y documentar la solución.
-- **R08F01T01** Mantener RFTP, casos de uso, diagramas, planificación, horas reales y memoria por hitos. Estado: parcial; RFTP, estado, guia de demo y evidencias del recorrido estan actualizados. Diagramas, memoria y totalizacion de horas siguen pendientes.
-- **R08F01T01P01** Contrastar tareas cerradas con commits y evidencias, y totalizar horas y desviaciones. Estado: parcial; funciones R01-R05 contrastadas con pruebas y capturas reales, sin inventar horas. Falta la revision academica y la totalizacion cuando existan registros reales.
+- **R08F01T01** Mantener RFTP, casos de uso, diagramas, planificación, horas reales y memoria por hitos. Estado: parcial; RFTP, estado, guia de demo, inventario de capturas, diagramas logicos del 80 % y borrador de memoria del 80 % estan actualizados. Horas reales, capturas finales, instalacion limpia, restauracion y cierre academico siguen pendientes.
+- **R08F01T01P01** Contrastar tareas cerradas con commits y evidencias, y totalizar horas y desviaciones. Estado: parcial; funciones R01-R07 y la ampliacion R09 estan contrastadas con codigo, pruebas y estado documental. No se inventan horas ni capturas autenticadas. Falta la revision academica y la totalizacion cuando existan registros reales.
 
 - **R08F02** Verificar e instalar la aplicación.
 - **R08F02T01** Preparar pruebas críticas, interfaz adaptable, README, contenedores, datos de demo y copia/restauración de la BD. Estado: parcial; pruebas criticas, contenedores, README y datos ficticios de demo disponibles. Copia y restauracion siguen pendientes.

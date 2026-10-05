@@ -15,6 +15,7 @@ Fecha de revision: 2026-10-05.
 - R06F01 y R06F02 implementadas y probadas sobre los datos persistidos por R04 y R05.
 - R07F01 y R07F02 implementadas y probadas con proveedor HTTP simulado y mediante una llamada externa real controlada; R07F01T01P01 queda superada.
 - R09 esta autorizado como ampliacion; R09F01, R09F02 y el MVP funcional de R09F03 estan implementados. Permanecen pendientes las carreras HTTP simultaneas especificas de recompensas y compras.
+- Documentacion de auditoria del 80 % preparada en `docs/estado-hito-80.md`, `docs/guia-demo-hito-80.md`, `docs/capturas-hito-80.md` y `docs/memoria-borrador-hito-80.md`.
 - Identidad visual EDUQuest integrada en la landing, el acceso, la navegacion compartida y el panel del alumno.
 - El feedback del 50 % no consta como entregado ni aprobado y no se ha creado la etiqueta `hito-50`.
 - La demo local reproducible dispone de cinco misiones de ciencias y 20 actividades distintas; no implica que el hito del 80 % este entregado.
@@ -82,6 +83,9 @@ Fecha de revision: 2026-10-05.
 - `.env` local excluido de Git y `.env.example` con valores reproducibles sin secretos reales.
 - Documentacion inicial, plan maestro, `AGENTS.md` y repositorio Git local conservados.
 - Guia reproducible y evidencias reales de la revision previa del hito en `docs/guia-demo-hito-50.md` y `docs/evidencias-hito-50.md`.
+- Guia de demostracion del 80 % con el docente `carlinchis` y el alumno `alumno_demo`, sin contrasenas versionadas.
+- Inventario de capturas necesarias para memoria del 80 %, separando capturas pendientes de capturas ya existentes.
+- Borrador de memoria del 80 % con arquitectura, decisiones, implementacion, pruebas, trabajo pendiente y diagramas logicos actualizados.
 - Landing publica en `/` con identidad EDUQuest, contenido en espanol y acceso por las rutas reales; no incluye registro, credenciales de prueba ni mensajes que presenten la IA como disponible.
 - Logotipo, simbolo y favicon propios en la plantilla, el acceso y la navegacion compartida, con variantes legibles para fondos claros y oscuros.
 - Portada de alumno en `/student/missions` sin ocultar la siguiente mision, el avance, los puntos ni la accion principal.
@@ -119,8 +123,8 @@ Fecha de revision: 2026-10-05.
 | Progreso previo R09F02     | 6 progresos existentes convertidos en 6 concesiones unicas, 60 XP totales y ninguna moneda retroactiva.                                                                                |
 | Interfaz de avatar R09     | Edge a 1440 x 1000 y 390 x 844: dos imagenes cargadas, sin desbordamiento; foco inicial en H1, seleccion A/B con flechas y boton enfocable.                                            |
 | Tienda adaptable R09F03    | Chrome/CDP a 1440 x 1000 y 390 x 844: tres apariencias del personaje elegido, imagenes 512 x 768 y `scrollWidth = viewport = 390` en movil.                                            |
-| Preparacion demo local     | Dos ejecuciones consecutivas: 1 clase, 1 alumno, 5 misiones, 20 nodos, 5 asignaciones e inscripciones; 200 XP y 45 monedas disponibles, sin duplicados.                                |
-| Conservacion alumno demo   | Antes y despues: 0 progresos, 0 XP, nivel 1, 0 monedas, 0 compras y personaje A inicial equipado. No se completaron actividades ni compras con esta cuenta.                            |
+| Preparacion demo local     | Verificada de nuevo el 2026-10-05: docente `carlinchis`, clase `Clase demo EDUQuest`, alumno `alumno_demo`, 5 misiones, 20 nodos, 5 asignaciones e inscripciones; 200 XP y 45 monedas disponibles. |
+| Conservacion alumno demo   | En la revision del 2026-10-05: 0 progresos, 0 XP, 0 monedas y 0 compras. No se completaron actividades ni compras con esta cuenta durante la auditoria documental.                      |
 | Recorrido niveles y tienda | Cuenta aislada de testing: 20 finalizaciones por rutas reales, 200 XP, nivel 3, compra y equipamiento arcano y espacial; imagen equipada persistente en cabecera y panel tras recarga. |
 | Identidad visual           | `/`, `/login` y `/student/missions` revisadas en Chrome a 1440 x 1000 y 390 x 844; sin desbordamiento horizontal ni solapes observados.                                                |
 | Accesibilidad visual       | Recorrido por teclado comprobado en landing, acceso y panel de alumno; foco visible, textos alternativos y reduccion de movimiento comprobados.                                        |
@@ -131,11 +135,13 @@ Fecha de revision: 2026-10-05.
 | Landing y acceso           | Pruebas focalizadas: `8 passed`, `15 assertions`; `/` y `/login` se renderizan y la autenticacion conserva sus controles.                                                              |
 | Demo completa en Chrome    | Administrador, docente y alumno ficticios; cuatro nodos; suspenso, reintento, 40 puntos y 100 %.                                                                                       |
 | Concurrencia MySQL         | Dos `POST` simultaneos: dos respuestas finales HTTP 200, una fila de progreso y 10 puntos totales.                                                                                     |
-| Suite Pest completa        | `143 passed`, `1217 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                                                                               |
+| Suite Pest completa        | Ejecutada de nuevo el 2026-10-05 dentro de `composer ci:check`: `143 passed`, `1217 assertions`; 9 omitidas porque la verificacion de email de Fortify esta desactivada.                 |
+| Revision documental 80 %   | Documentos `estado-hito-80`, `guia-demo-hito-80`, `capturas-hito-80` y `memoria-borrador-hito-80` preparados sin marcar entrega academica ni capturas pendientes como realizadas.     |
 | Pint                       | Sin problemas de estilo en 185 archivos PHP en la ultima ejecucion.                                                                                                                    |
 | PHPStan                    | Sin errores en 153 archivos analizados.                                                                                                                                                |
 | TypeScript                 | `vue-tsc --noEmit` correcto.                                                                                                                                                           |
 | Frontend                   | TypeScript correcto; formato en 95 archivos y lint en 77 sin avisos; build con `3407 modules transformed`.                                                                             |
+| Cadena documental 80 %     | `composer ci:check` ejecutado el 2026-10-05: formato/lint frontend, `vue-tsc`, Pint, PHPStan y Pest correctos.                                                                         |
 | Interfaz R07               | Revisada en Chrome en escritorio y a 390 x 844; despues, el flujo autenticado real abrio el borrador 7 en el editor con HTTP 200.                                                      |
 | Login                      | Verificado visualmente con Chrome; `GET /login` devuelve `200`.                                                                                                                        |
 | Registro publico           | Sin enlace visible y `GET /register` devuelve `404`.                                                                                                                                   |
@@ -235,6 +241,7 @@ docker compose exec -T laravel.test php artisan test --filter=RoleAccessTest
 - Completar la evidencia de R09F02 y R09F03 con carreras HTTP simultaneas especificas. Peinados, prendas intercambiables, tonos adicionales, los avatares adicionales recibidos y mas colecciones quedan como trabajos futuros.
 - Completar R01F02 con las Policies de progreso y los demas recursos con propietario de hitos posteriores.
 - Revisar R06 con datos de demo y preparar sus evidencias visuales cuando se soliciten; no se inventan capturas.
+- Tomar las capturas autenticadas inventariadas en `docs/capturas-hito-80.md` desde localhost con las credenciales locales de David, sin versionar contrasenas.
 - Completar el resto de R08, incluidos informes o exportaciones si el centro confirma que forman parte del alcance.
 - No se han implementado equipos de WorkOS ni equipos de aplicacion.
 - Revisar la demo y las evidencias con David y el centro. El feedback del 50 % no esta marcado como entregado y no se ha creado la etiqueta `hito-50`.

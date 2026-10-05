@@ -182,7 +182,7 @@ Inicia sesion como docente, abre <http://localhost:8080/teacher/missions/generat
 
 Los limites predeterminados son cinco solicitudes por docente y dia, una solicitud activa por docente, 45 segundos de timeout y 6000 tokens maximos de salida. El formulario admite 4-8 nodos y hasta 1500 caracteres para objetivos y otras indicaciones. Los videos solo reciben terminos de busqueda: el docente debe seleccionar y verificar el recurso. Ademas, toda mision generada exige confirmar revision humana antes de publicar.
 
-La tarifa oficial consultada para `gpt-5.4-mini` es de 0,75 USD por millon de tokens de entrada y 4,50 USD por millon de tokens de salida. El coste de una mision concreta depende del consumo informado por la API; todavia no se ha medido una llamada real en este entorno. Referencias: [modelo GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini) y [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs).
+La tarifa oficial consultada para `gpt-5.4-mini` es de 0,75 USD por millon de tokens de entrada y 4,50 USD por millon de tokens de salida. La revision R07 registro una llamada real controlada el 29 de septiembre de 2026 con 508 tokens de entrada y 1090 de salida; no se fija un coste general por mision porque depende de cada peticion y de la tarifa vigente. Referencias: [modelo GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini) y [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs).
 
 ```powershell
 # Pruebas focalizadas de R07 con HTTP simulado
@@ -198,5 +198,9 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/AiMis
 - `docs/registro-horas.md`: plantilla para registrar trabajo real.
 - `docs/estado-proyecto.md`: estado tecnico comprobado y trabajo pendiente.
 - `docs/propuesta-resumen.md`: resumen de la propuesta academica.
+- `docs/estado-hito-80.md`: auditoria de requisitos implementados, parciales y pendientes del 80 %.
+- `docs/guia-demo-hito-80.md`: guion de demo de 10-15 minutos con acciones que modifican datos.
+- `docs/capturas-hito-80.md`: inventario de capturas necesarias y pendientes.
+- `docs/memoria-borrador-hito-80.md`: borrador de memoria actualizado con diagramas logicos del 80 %.
 
 El trabajo debe limitarse siempre al hito autorizado en `AGENTS.md`.
