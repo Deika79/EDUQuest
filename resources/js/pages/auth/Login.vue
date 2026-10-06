@@ -63,12 +63,12 @@ defineProps<{
             </div>
 
             <div class="grid gap-2">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-wrap items-center justify-between gap-2">
                     <Label for="password">Contraseña</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
-                        class="text-sm"
+                        class="min-w-0 text-right text-sm whitespace-normal"
                     >
                         ¿Has olvidado tu contraseña?
                     </TextLink>

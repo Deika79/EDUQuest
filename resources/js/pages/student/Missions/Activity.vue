@@ -280,7 +280,7 @@ defineOptions({
                     <label
                         v-for="option in question.options"
                         :key="option.id"
-                        class="flex items-start gap-3 border p-3 text-sm"
+                        class="flex items-start gap-3 border p-3 text-sm focus-within:ring-2 focus-within:ring-ring focus-within:outline-none"
                         :class="optionFeedbackClass(question.id, option.id)"
                     >
                         <input
@@ -288,7 +288,7 @@ defineOptions({
                             type="radio"
                             :name="`question-${question.id}`"
                             :value="option.id"
-                            class="mt-0.5 size-4"
+                            class="mt-0.5 size-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                         />
                         <span>{{ option.text }}</span>
                     </label>
@@ -344,7 +344,7 @@ defineOptions({
                 <input
                     v-model="form.confirmed"
                     type="checkbox"
-                    class="mt-1 size-4"
+                    class="mt-1 size-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 />
                 <span>
                     I confirm that I reviewed this resource. This records my

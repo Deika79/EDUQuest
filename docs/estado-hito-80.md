@@ -10,22 +10,22 @@ R09 se trata aparte porque fue una ampliacion posterior al plan maestro. El plan
 
 ## Requisitos implementados
 
-| RFTP | Estado | Evidencia contrastada |
-|---|---|---|
-| R01 | Implementado para acceso, roles, cuenta activa, cambio obligatorio y Policies de los recursos actuales. | Rutas protegidas por middleware de rol, `UserPolicy`, pruebas de autenticacion y acceso por rol. |
-| R02 | Implementado. | Clases, alumnos, matriculas activas/inactivas y sincronizacion con inscripciones abiertas en controladores, Policies, servicios y pruebas. |
-| R03 | Implementado. | Editor manual, cuatro tipos de nodo, validacion de preparacion, publicacion inmutable, duplicacion, archivo y asignacion a clases propias. |
-| R04 | Implementado. | Actividades de explicacion, video, cuestionario y flashcards; quiz corregido en servidor; intentos y feedback persistidos. |
-| R05 | Implementado. | Mapa lineal, contenido bloqueado no enviado, progreso persistente, puntos unicos y prueba registrada de concurrencia MySQL para progreso educativo. |
-| R06 | Implementado. | Seguimiento docente en `/teacher/tracking`, resumen por clase/asignacion, detalle individual, filtros por propietario y pruebas focalizadas. |
-| R07 | Implementado en alcance del hito. | Generacion asistida con OpenAI Responses API, salida estructurada, cuota, timeout, validacion defensiva, borrador revisable y una llamada real registrada el 2026-09-29. |
+| RFTP | Estado                                                                                                  | Evidencia contrastada                                                                                                                                                    |
+| ---- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| R01  | Implementado para acceso, roles, cuenta activa, cambio obligatorio y Policies de los recursos actuales. | Rutas protegidas por middleware de rol, `UserPolicy`, pruebas de autenticacion y acceso por rol.                                                                         |
+| R02  | Implementado.                                                                                           | Clases, alumnos, matriculas activas/inactivas y sincronizacion con inscripciones abiertas en controladores, Policies, servicios y pruebas.                               |
+| R03  | Implementado.                                                                                           | Editor manual, cuatro tipos de nodo, validacion de preparacion, publicacion inmutable, duplicacion, archivo y asignacion a clases propias.                               |
+| R04  | Implementado.                                                                                           | Actividades de explicacion, video, cuestionario y flashcards; quiz corregido en servidor; intentos y feedback persistidos.                                               |
+| R05  | Implementado.                                                                                           | Mapa lineal, contenido bloqueado no enviado, progreso persistente, puntos unicos y prueba registrada de concurrencia MySQL para progreso educativo.                      |
+| R06  | Implementado.                                                                                           | Seguimiento docente en `/teacher/tracking`, resumen por clase/asignacion, detalle individual, filtros por propietario y pruebas focalizadas.                             |
+| R07  | Implementado en alcance del hito.                                                                       | Generacion asistida con OpenAI Responses API, salida estructurada, cuota, timeout, validacion defensiva, borrador revisable y una llamada real registrada el 2026-09-29. |
 
 ## Requisitos parcialmente implementados
 
-| RFTP | Estado | Pendiente real |
-|---|---|---|
-| R08 | Parcial. | Instalacion limpia local, copia MySQL y restauracion aislada documentadas en `docs/r08-instalacion-copia-restauracion.md`. Faltan horas reales, cierre de memoria final, capturas finales, validacion academica y despliegue/copia de produccion. |
-| R09 | Parcial como ampliacion posterior. | R09F01, R09F02 y R09F03 MVP existen, pero siguen pendientes carreras HTTP simultaneas especificas para recompensas/monedas y compras. Los avatares adicionales recibidos quedan fuera de seguimiento. |
+| RFTP | Estado                             | Pendiente real                                                                                                                                                                                                                                    |
+| ---- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R08  | Parcial.                           | Instalacion limpia local, copia MySQL y restauracion aislada documentadas en `docs/r08-instalacion-copia-restauracion.md`. Faltan horas reales, cierre de memoria final, capturas finales, validacion academica y despliegue/copia de produccion. |
+| R09  | Parcial como ampliacion posterior. | R09F01, R09F02 y R09F03 MVP existen, pero siguen pendientes carreras HTTP simultaneas especificas para recompensas/monedas y compras. Los avatares adicionales recibidos quedan fuera de seguimiento.                                             |
 
 ## Requisitos pendientes o fuera de alcance actual
 

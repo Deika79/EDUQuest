@@ -23,17 +23,17 @@ Desde el borrador del 50 % se han incorporado el seguimiento docente R06, la gen
 
 ## 3. Objetivos y RFTP
 
-| RFTP | Objetivo | Estado hito 80 |
-|---|---|---|
-| R01 | Acceso autorizado, roles y propiedad | Implementado en los recursos actuales. |
-| R02 | Clases, alumnos y matriculas | Implementado y probado. |
-| R03 | Preparar y distribuir misiones | Implementado y probado. |
-| R04 | Actividades de repaso | Implementado y probado. |
-| R05 | Desbloqueo y progreso persistente | Implementado y probado, con concurrencia MySQL registrada para progreso educativo. |
-| R06 | Seguimiento docente | Implementado y probado. |
-| R07 | Borradores asistidos por IA con revision | Implementado y probado; existe una llamada real controlada registrada. |
-| R08 | Instalacion, pruebas, documentacion y evidencias | Parcial; instalacion limpia local y copia/restauracion MySQL aislada ya documentadas; quedan horas, capturas finales, despliegue/copia de produccion y cierre academico. |
-| R09 | Avatar, recompensas y tienda cosmetica | Ampliacion posterior parcialmente cerrada; MVP implementado, faltan carreras HTTP especificas de recompensas/compras. |
+| RFTP | Objetivo                                         | Estado hito 80                                                                                                                                                           |
+| ---- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| R01  | Acceso autorizado, roles y propiedad             | Implementado en los recursos actuales.                                                                                                                                   |
+| R02  | Clases, alumnos y matriculas                     | Implementado y probado.                                                                                                                                                  |
+| R03  | Preparar y distribuir misiones                   | Implementado y probado.                                                                                                                                                  |
+| R04  | Actividades de repaso                            | Implementado y probado.                                                                                                                                                  |
+| R05  | Desbloqueo y progreso persistente                | Implementado y probado, con concurrencia MySQL registrada para progreso educativo.                                                                                       |
+| R06  | Seguimiento docente                              | Implementado y probado.                                                                                                                                                  |
+| R07  | Borradores asistidos por IA con revision         | Implementado y probado; existe una llamada real controlada registrada.                                                                                                   |
+| R08  | Instalacion, pruebas, documentacion y evidencias | Parcial; instalacion limpia local y copia/restauracion MySQL aislada ya documentadas; quedan horas, capturas finales, despliegue/copia de produccion y cierre academico. |
+| R09  | Avatar, recompensas y tienda cosmetica           | Ampliacion posterior parcialmente cerrada; MVP implementado, faltan carreras HTTP especificas de recompensas/compras.                                                    |
 
 ## 4. Descripcion de la solucion
 

@@ -75,7 +75,7 @@ defineOptions({
                         id="mission-description"
                         name="description"
                         rows="4"
-                        class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs"
+                        class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                         required
                     />
                     <InputError :message="errors.description" />

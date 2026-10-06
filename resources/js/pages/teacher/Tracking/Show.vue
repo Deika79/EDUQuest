@@ -81,7 +81,7 @@ defineOptions({
         </section>
 
         <section v-if="enrollments.length" class="overflow-x-auto border-y">
-            <table class="w-full min-w-5xl text-left text-sm">
+            <table class="w-full min-w-[64rem] text-left text-sm">
                 <thead class="border-b text-xs text-muted-foreground uppercase">
                     <tr>
                         <th class="px-3 py-3 font-medium">Student</th>

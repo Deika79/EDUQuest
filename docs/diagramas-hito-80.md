@@ -337,4 +337,3 @@ flowchart LR
 ```
 
 Este ultimo diagrama es provisional: no hay proveedor, dominio, HTTPS, correo ni politica de copias verificados todavia.
-

@@ -237,7 +237,9 @@ defineOptions({
                             v-if="node.quiz.attempts.length"
                             class="overflow-x-auto border-y"
                         >
-                            <table class="w-full min-w-xl text-left text-sm">
+                            <table
+                                class="w-full min-w-[40rem] text-left text-sm"
+                            >
                                 <thead
                                     class="border-b text-xs text-muted-foreground uppercase"
                                 >

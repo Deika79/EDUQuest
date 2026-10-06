@@ -14,18 +14,18 @@ La prueba se ejecuto en Docker Compose con un proyecto aislado para no reutiliza
 
 La base de demo habitual se verifico antes y despues con los mismos conteos:
 
-| Tabla | Antes | Despues |
-|---|---:|---:|
-| `users` | 7 | 7 |
-| `classrooms` | 2 | 2 |
-| `missions` | 10 | 10 |
-| `mission_assignments` | 8 | 8 |
-| `mission_enrollments` | 8 | 8 |
-| `node_progress` | 10 | 10 |
-| `student_reward_grants` | 10 | 10 |
-| `coin_ledger_entries` | 4 | 4 |
-| `avatar_profiles` | 1 | 1 |
-| `student_cosmetic_items` | 1 | 1 |
+| Tabla                    | Antes | Despues |
+| ------------------------ | ----: | ------: |
+| `users`                  |     7 |       7 |
+| `classrooms`             |     2 |       2 |
+| `missions`               |    10 |      10 |
+| `mission_assignments`    |     8 |       8 |
+| `mission_enrollments`    |     8 |       8 |
+| `node_progress`          |    10 |      10 |
+| `student_reward_grants`  |    10 |      10 |
+| `coin_ledger_entries`    |     4 |       4 |
+| `avatar_profiles`        |     1 |       1 |
+| `student_cosmetic_items` |     1 |       1 |
 
 ## Dependencias observadas
 
@@ -69,21 +69,21 @@ docker compose -p eduquest_r08_clean --env-file .env.example exec -T -e EDUQUEST
 
 Resultado real del comando de demo en la instalacion aislada:
 
-| Dato | Valor |
-|---|---:|
-| Docente | `carlinchis` |
-| Clase | `Clase demo EDUQuest` |
-| Alumno | `alumno_demo` |
-| Misiones | 5 |
-| Actividades disponibles | 20 |
-| XP disponible | 200 |
-| Monedas disponibles | 45 |
-| Asignaciones abiertas | 5 |
-| Inscripciones activas | 5 |
-| Progreso conservado inicial | 0 |
-| XP inicial | 0 |
-| Monedas iniciales | 0 |
-| Compras iniciales | 0 |
+| Dato                        |                 Valor |
+| --------------------------- | --------------------: |
+| Docente                     |          `carlinchis` |
+| Clase                       | `Clase demo EDUQuest` |
+| Alumno                      |         `alumno_demo` |
+| Misiones                    |                     5 |
+| Actividades disponibles     |                    20 |
+| XP disponible               |                   200 |
+| Monedas disponibles         |                    45 |
+| Asignaciones abiertas       |                     5 |
+| Inscripciones activas       |                     5 |
+| Progreso conservado inicial |                     0 |
+| XP inicial                  |                     0 |
+| Monedas iniciales           |                     0 |
+| Compras iniciales           |                     0 |
 
 Para que la restauracion pudiera comprobar progreso, recompensas e inventario, se completo en la base aislada el primer nodo disponible con el servicio real `NodeProgressService`:
 
@@ -136,19 +136,19 @@ Para una restauracion manual futura, sustituir `eduquest_r08_restore` por otro n
 
 Los conteos restaurados coincidieron con la fuente aislada:
 
-| Tabla | Origen aislado | Restaurada |
-|---|---:|---:|
-| `users` | 2 | 2 |
-| `classrooms` | 1 | 1 |
-| `missions` | 5 | 5 |
-| `mission_assignments` | 5 | 5 |
-| `mission_enrollments` | 5 | 5 |
-| `node_progress` | 1 | 1 |
-| `student_reward_grants` | 1 | 1 |
-| `coin_ledger_entries` | 1 | 1 |
-| `avatar_profiles` | 1 | 1 |
-| `student_cosmetic_items` | 1 | 1 |
-| `cosmetic_items` | 6 | 6 |
+| Tabla                    | Origen aislado | Restaurada |
+| ------------------------ | -------------: | ---------: |
+| `users`                  |              2 |          2 |
+| `classrooms`             |              1 |          1 |
+| `missions`               |              5 |          5 |
+| `mission_assignments`    |              5 |          5 |
+| `mission_enrollments`    |              5 |          5 |
+| `node_progress`          |              1 |          1 |
+| `student_reward_grants`  |              1 |          1 |
+| `coin_ledger_entries`    |              1 |          1 |
+| `avatar_profiles`        |              1 |          1 |
+| `student_cosmetic_items` |              1 |          1 |
+| `cosmetic_items`         |              6 |          6 |
 
 Datos concretos recuperados:
 
