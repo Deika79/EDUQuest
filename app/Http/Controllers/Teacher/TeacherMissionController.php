@@ -30,7 +30,7 @@ class TeacherMissionController extends Controller
             'missions' => $request->user()->missions()
                 ->withCount(['nodes', 'assignments'])
                 ->latest('updated_at')
-                ->get(['id', 'title', 'description', 'subject', 'level', 'status', 'source', 'teacher_id', 'updated_at']),
+                ->get(['id', 'title', 'description', 'subject', 'level', 'map_theme', 'status', 'source', 'teacher_id', 'updated_at']),
         ]);
     }
 
@@ -61,6 +61,7 @@ class TeacherMissionController extends Controller
         return Inertia::render('teacher/Missions/Show', [
             'mission' => [
                 ...$mission->only(['id', 'title', 'description', 'subject', 'level']),
+                'map_theme' => $mission->map_theme->value,
                 'status' => $mission->status->value,
                 'source' => $mission->source->value,
                 'ai_review_required' => $mission->aiGeneration !== null

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MissionMapTheme;
 use App\Enums\MissionSource;
 use App\Enums\MissionStatus;
 use Database\Factories\MissionFactory;
@@ -19,10 +20,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $description
  * @property string $subject
  * @property string $level
+ * @property MissionMapTheme $map_theme
  * @property MissionStatus $status
  * @property MissionSource $source
  */
-#[Fillable(['title', 'description', 'subject', 'level'])]
+#[Fillable(['title', 'description', 'subject', 'level', 'map_theme'])]
 class Mission extends Model
 {
     /** @use HasFactory<MissionFactory> */
@@ -33,6 +35,7 @@ class Mission extends Model
         return [
             'status' => MissionStatus::class,
             'source' => MissionSource::class,
+            'map_theme' => MissionMapTheme::class,
             'published_at' => 'datetime',
         ];
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MissionMapTheme;
 use App\Enums\MissionNodeType;
 use App\Enums\MissionStatus;
 use App\Models\Classroom;
@@ -93,6 +94,7 @@ test('a ready draft can be published and its content becomes immutable', functio
             'description' => $mission->description,
             'subject' => $mission->subject,
             'level' => $mission->level,
+            'map_theme' => $mission->map_theme->value,
         ])
         ->assertForbidden();
     $this->actingAs($teacher)
@@ -115,6 +117,7 @@ test('a ready draft can be published and its content becomes immutable', functio
 test('a published mission is duplicated faithfully as an independent draft', function () {
     $teacher = User::factory()->teacher()->create();
     $mission = r03ReadyMission($teacher, array_column(MissionNodeType::cases(), 'value'));
+    $mission->forceFill(['map_theme' => MissionMapTheme::OldWest])->save();
     app(MissionLifecycle::class)->publish($mission);
 
     $this->actingAs($teacher)
@@ -127,6 +130,7 @@ test('a published mission is duplicated faithfully as an independent draft', fun
     expect($copy->status)->toBe(MissionStatus::Draft)
         ->and($copy->published_at)->toBeNull()
         ->and($copy->title)->toBe($mission->title.' (copy)')
+        ->and($copy->map_theme)->toBe(MissionMapTheme::OldWest)
         ->and($copy->nodes->pluck('type')->all())->toBe(MissionNodeType::cases())
         ->and($copy->nodes->pluck('position')->all())->toBe([1, 2, 3, 4])
         ->and($copy->nodes[1]->video_id)->toBe('dQw4w9WgXcQ')

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\AiGenerationStatus;
+use App\Enums\MissionMapTheme;
 use App\Enums\MissionSource;
 use App\Enums\MissionStatus;
 use App\Models\AiGeneration;
@@ -141,6 +142,7 @@ test('a valid provider response creates one owned AI draft with validated conten
     expect($mission->teacher_id)->toBe($teacher->id)
         ->and($mission->status)->toBe(MissionStatus::Draft)
         ->and($mission->source)->toBe(MissionSource::Ai)
+        ->and($mission->map_theme)->toBe(MissionMapTheme::Fantasy)
         ->and($mission->nodes()->count())->toBe(4)
         ->and($mission->assignments()->count())->toBe(0)
         ->and($generation->status)->toBe(AiGenerationStatus::Completed)
@@ -154,6 +156,18 @@ test('a valid provider response creates one owned AI draft with validated conten
         ->and($video->video_id)->toBeNull()
         ->and($video->review_required)->toBeTrue()
         ->and($video->review_note)->toContain('Sugerencia de busqueda');
+
+    $this->actingAs($teacher)
+        ->patch(route('teacher.missions.update', $mission), [
+            'title' => $mission->title,
+            'description' => $mission->description,
+            'subject' => $mission->subject,
+            'level' => $mission->level,
+            'map_theme' => MissionMapTheme::Science->value,
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($mission->refresh()->map_theme)->toBe(MissionMapTheme::Science);
 
     Http::assertSent(function (Request $request) use ($teacher): bool {
         $payload = $request->data();

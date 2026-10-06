@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\MissionMapTheme;
 use App\Enums\MissionNodeType;
 use App\Enums\MissionSource;
 use App\Enums\MissionStatus;
@@ -58,6 +59,7 @@ test('teachers create and list only their own manual drafts', function () {
             'description' => 'Recover the missing fraction pieces.',
             'subject' => 'Mathematics',
             'level' => '5 Primary',
+            'map_theme' => MissionMapTheme::Science->value,
             'teacher_id' => $otherTeacher->id,
             'status' => MissionStatus::Published->value,
             'source' => MissionSource::Ai->value,
@@ -68,7 +70,8 @@ test('teachers create and list only their own manual drafts', function () {
 
     expect($mission->teacher_id)->toBe($teacher->id)
         ->and($mission->status)->toBe(MissionStatus::Draft)
-        ->and($mission->source)->toBe(MissionSource::Manual);
+        ->and($mission->source)->toBe(MissionSource::Manual)
+        ->and($mission->map_theme)->toBe(MissionMapTheme::Science);
 
     $this->actingAs($teacher)
         ->get(route('teacher.missions.index'))
@@ -76,7 +79,37 @@ test('teachers create and list only their own manual drafts', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('teacher/Missions/Index')
             ->has('missions', 1)
-            ->where('missions.0.id', $mission->id));
+            ->where('missions.0.id', $mission->id)
+            ->where('missions.0.map_theme', MissionMapTheme::Science->value));
+});
+
+test('a teacher can update a draft map scenario without changing node order', function () {
+    $teacher = User::factory()->teacher()->create();
+    $mission = Mission::factory()->for($teacher, 'teacher')->create();
+    $first = MissionNode::factory()->for($mission)->create(['position' => 1]);
+    $second = MissionNode::factory()->for($mission)->create(['position' => 2]);
+
+    $this->actingAs($teacher)
+        ->patch(route('teacher.missions.update', $mission), [
+            'title' => 'Western route',
+            'description' => $mission->description,
+            'subject' => $mission->subject,
+            'level' => $mission->level,
+            'map_theme' => MissionMapTheme::OldWest->value,
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('teacher.missions.show', $mission));
+
+    expect($mission->refresh()->map_theme)->toBe(MissionMapTheme::OldWest)
+        ->and($mission->nodes()->pluck('id')->all())->toBe([$first->id, $second->id]);
+
+    $this->actingAs($teacher)
+        ->get(route('teacher.missions.show', $mission))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('mission.map_theme', MissionMapTheme::OldWest->value)
+            ->where('nodes.0.id', $first->id)
+            ->where('nodes.1.id', $second->id));
 });
 
 test('all four node types are saved and available when reopening a draft', function () {
@@ -262,6 +295,7 @@ test('a teacher cannot view or modify another teachers mission or nodes', functi
             'description' => 'Not allowed',
             'subject' => 'Science',
             'level' => '5 Primary',
+            'map_theme' => MissionMapTheme::Science->value,
         ])
         ->assertForbidden();
 
@@ -300,6 +334,7 @@ test('non draft missions cannot be edited through the draft editor', function ()
             'description' => $mission->description,
             'subject' => $mission->subject,
             'level' => $mission->level,
+            'map_theme' => MissionMapTheme::Science->value,
         ])
         ->assertForbidden();
 });

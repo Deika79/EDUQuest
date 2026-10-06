@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Teacher;
 
+use App\Enums\MissionMapTheme;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateMissionRequest extends FormRequest
 {
@@ -20,6 +22,7 @@ class UpdateMissionRequest extends FormRequest
             'description' => ['required', 'string', 'max:5000'],
             'subject' => ['required', 'string', 'max:120'],
             'level' => ['required', 'string', 'max:80'],
+            'map_theme' => ['required', Rule::enum(MissionMapTheme::class)],
         ];
     }
 }

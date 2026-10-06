@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\MissionMapTheme;
 use App\Enums\MissionSource;
 use App\Enums\MissionStatus;
 use App\Models\Mission;
@@ -19,6 +20,7 @@ class MissionFactory extends Factory
             'description' => fake()->paragraph(),
             'subject' => fake()->randomElement(['Mathematics', 'Science', 'Language']),
             'level' => fake()->randomElement(['4 Primary', '5 Primary', '6 Primary']),
+            'map_theme' => MissionMapTheme::Fantasy,
             'status' => MissionStatus::Draft,
             'source' => MissionSource::Manual,
             'published_at' => null,

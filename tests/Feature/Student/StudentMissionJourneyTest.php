@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\MissionAssignmentStatus;
+use App\Enums\MissionMapTheme;
 use App\Models\Classroom;
 use App\Models\ClassroomMembership;
 use App\Models\Mission;
@@ -65,7 +66,9 @@ function createStudentJourney(array $types = ['explanation', 'video', 'flashcard
     $student = User::factory()->student()->create();
     $classroom = Classroom::factory()->for($teacher, 'teacher')->create();
     $membership = ClassroomMembership::factory()->for($classroom)->for($student, 'student')->create();
-    $mission = Mission::factory()->for($teacher, 'teacher')->create();
+    $mission = Mission::factory()->for($teacher, 'teacher')->create([
+        'map_theme' => MissionMapTheme::Science,
+    ]);
     $writer = app(MissionNodeWriter::class);
 
     foreach ($types as $type) {
@@ -117,6 +120,8 @@ test('the mission map exposes node metadata but no locked content', function () 
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('student/Missions/Show')
+            ->where('enrollment.mission.id', $journey['mission']->id)
+            ->where('enrollment.mission.map_theme', MissionMapTheme::Science->value)
             ->has('nodes', 3)
             ->where('nodes.0.status', 'available')
             ->where('nodes.1.status', 'locked')

@@ -16,6 +16,7 @@ type MissionSummary = {
     description: string;
     subject: string;
     level: string;
+    map_theme: MapTheme;
     status: 'draft' | 'published' | 'archived';
     source: 'manual' | 'ai';
     nodes_count: number;
@@ -24,6 +25,14 @@ type MissionSummary = {
 };
 
 defineProps<{ missions: MissionSummary[] }>();
+
+type MapTheme = 'fantasy' | 'science' | 'old_west';
+
+const mapThemes: Record<MapTheme, string> = {
+    fantasy: 'Fantasía',
+    science: 'Ciencia ficción',
+    old_west: 'Oeste',
+};
 
 defineOptions({
     layout: {
@@ -90,6 +99,19 @@ defineOptions({
                     <Input id="mission-level" name="level" required />
                     <InputError :message="errors.level" />
                 </div>
+                <div class="grid gap-2 md:col-span-2">
+                    <Label for="mission-map-theme">Escenario del mapa</Label>
+                    <select
+                        id="mission-map-theme"
+                        name="map_theme"
+                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                    >
+                        <option value="fantasy">Fantasía</option>
+                        <option value="science">Ciencia ficción</option>
+                        <option value="old_west">Oeste</option>
+                    </select>
+                    <InputError :message="errors.map_theme" />
+                </div>
                 <div class="md:col-span-2">
                     <Button type="submit" :disabled="processing">
                         <Map />
@@ -128,6 +150,9 @@ defineOptions({
                             <Badge variant="secondary"
                                 >{{ mission.nodes_count }} nodes</Badge
                             >
+                            <Badge variant="outline">
+                                {{ mapThemes[mission.map_theme] }}
+                            </Badge>
                             <Badge
                                 v-if="mission.source === 'ai'"
                                 variant="outline"

@@ -84,7 +84,10 @@ class StudentMissionController extends Controller
                 'id' => $enrollment->id,
                 'mission' => $enrollment->assignment->mission->only([
                     'title', 'description', 'subject', 'level',
-                ]),
+                ]) + [
+                    'id' => $enrollment->assignment->mission->id,
+                    'map_theme' => $enrollment->assignment->mission->map_theme->value,
+                ],
                 'classroom' => $enrollment->assignment->classroom->only(['name']),
                 'completed_nodes' => $completedNodes,
                 'total_nodes' => $totalNodes,
