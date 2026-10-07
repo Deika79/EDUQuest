@@ -1,0 +1,22 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+!.env.production.example
+node_modules
+vendor
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+tmp
+docs/evidencias/hito-80
+public/brand/Aventura EDUQuest entre mundos.png
+public/build
+public/brand/avatars/assets/personaje-a-nivel-2-espacial.png
+public/brand/avatars/assets/personaje-a-nivel-2-espacial.webp
+public/brand/avatars/assets/personaje-a-nivel-3-arcano.png
+public/brand/avatars/assets/personaje-b-nivel-2-espacial.png
+public/brand/avatars/assets/personaje-b-nivel-2-espacial.webp
+public/brand/avatars/assets/personaje-b-nivel-3-arcano.png

@@ -35,6 +35,20 @@ Aplicacion local: <http://localhost:8080/login>
 
 Para validar una instalacion limpia sin tocar la demo habitual, usar un proyecto Compose y puertos aislados. El procedimiento probado de R08F02, con copia y restauracion de MySQL, esta documentado en `docs/r08-instalacion-copia-restauracion.md`.
 
+## Preparacion de produccion aislada
+
+El repositorio incluye una configuracion separada para ensayar produccion sin Sail: `Dockerfile.prod`, `compose.prod.yml`, `.env.production.example` y `docker/production/`. Sirve Laravel con Apache y frontend compilado, y usa MySQL 8.4 en una red interna sin publicar el puerto de base de datos.
+
+```powershell
+copy .env.production.example .env.production
+# Editar APP_KEY, APP_URL y credenciales locales antes de arrancar.
+docker compose --env-file .env.production -f compose.prod.yml -p eduquest_prod_rehearsal up -d --build
+docker compose --env-file .env.production -f compose.prod.yml -p eduquest_prod_rehearsal exec -T app php artisan migrate --force
+docker compose --env-file .env.production -f compose.prod.yml -p eduquest_prod_rehearsal exec -T app php artisan db:seed --class=CosmeticCatalogSeeder --force
+```
+
+Esta preparacion no equivale a despliegue externo. El ensayo, las limitaciones ARM64 y los pasos pendientes para una futura VM gratuita estan documentados en `docs/despliegue-final.md`.
+
 ## Datos locales de demostracion
 
 El comando local idempotente prepara la clase `Clase demo EDUQuest`, el alumno `alumno_demo` y cinco misiones manuales publicadas para el docente existente `carlinchis`. Reutiliza los servicios normales de publicacion, asignacion y matricula, no elimina otros datos y conserva contrasena, avatar, progreso, recompensas y compras existentes.
@@ -213,5 +227,6 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/AiMis
 - `docs/memoria-borrador-final.md`: borrador documental final pendiente de Word, capturas, horas y revision academica.
 - `docs/guia-demo-final.md`: guion de demo de 10-15 minutos con acciones que modifican datos.
 - `docs/capturas-final.md`: inventario de capturas finales existentes y pendientes.
+- `docs/despliegue-final.md`: preparacion tecnica de produccion aislada y pasos pendientes para una futura VM externa.
 
 El trabajo debe limitarse siempre al hito autorizado en `AGENTS.md`.
