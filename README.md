@@ -2,7 +2,7 @@
 
 EDUQuest es una aplicacion web educativa para que el profesorado convierta repasos en misiones visuales, las asigne a clases y consulte el avance del alumnado.
 
-El desarrollo avanza hacia el hito del 80 %. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; el recorrido del alumno, el seguimiento docente de R06, la generacion asistida de borradores de R07 y el MVP de avatares, recompensas y tienda cosmetica de R09 estan implementados. R07 tambien se verifico con una llamada externa real controlada.
+El desarrollo prepara la documentacion de entrega final sin declarar el proyecto entregado ni aprobado. La base tecnica usa Laravel 13, Vue, TypeScript, Inertia, Tailwind CSS, autenticacion propia de Laravel, Pest y MySQL 8.4 mediante Docker Compose. El registro publico esta desactivado; el recorrido del alumno, el seguimiento docente de R06, la generacion asistida de borradores de R07 y el MVP de avatares, recompensas y tienda cosmetica de R09 estan implementados. R07 tambien se verifico con una llamada externa real controlada.
 
 ## Entorno local
 
@@ -207,5 +207,11 @@ docker compose exec -T laravel.test php artisan test tests/Feature/Teacher/AiMis
 - `docs/capturas-hito-80.md`: inventario de capturas necesarias y pendientes.
 - `docs/memoria-borrador-hito-80.md`: borrador de memoria actualizado con diagramas logicos del 80 %.
 - `docs/r08-instalacion-copia-restauracion.md`: instalacion limpia aislada, copia MySQL y restauracion local comprobada para R08F02.
+- `docs/revision-final-recorridos.md`: revision tecnica de recorridos principales y demo tras incorporar los tres mapas.
+- `docs/estado-hito-final.md`: matriz R01-R09 para preparar el cierre final sin declararlo entregado.
+- `docs/diagramas-final.md`: diagramas actualizados con `missions.map_theme`, seleccion docente de escenario y mapa ilustrado del alumno.
+- `docs/memoria-borrador-final.md`: borrador documental final pendiente de Word, capturas, horas y revision academica.
+- `docs/guia-demo-final.md`: guion de demo de 10-15 minutos con acciones que modifican datos.
+- `docs/capturas-final.md`: inventario de capturas finales existentes y pendientes.
 
 El trabajo debe limitarse siempre al hito autorizado en `AGENTS.md`.
