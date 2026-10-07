@@ -61,6 +61,13 @@ const props = defineProps<{
     last?: boolean;
 }>();
 
+const typeLabels: Record<NodeType, string> = {
+    explanation: 'Explicación',
+    video: 'Vídeo',
+    quiz: 'Cuestionario',
+    flashcards: 'Flashcards',
+};
+
 const blankOptions = (): QuizOption[] => [
     { text: '', is_correct: true },
     { text: '', is_correct: false },
@@ -165,9 +172,9 @@ const addFlashcard = () => {
     <section class="space-y-5 border-y py-6">
         <div class="flex flex-wrap items-center gap-2">
             <Badge v-if="node" variant="secondary"
-                >Node {{ node.position }}</Badge
+                >Etapa {{ node.position }}</Badge
             >
-            <Badge variant="outline">{{ form.type }}</Badge>
+            <Badge variant="outline">{{ typeLabels[form.type] }}</Badge>
             <div v-if="node" class="ml-auto flex items-center gap-1">
                 <Form
                     v-bind="
@@ -183,7 +190,7 @@ const addFlashcard = () => {
                         size="icon"
                         variant="ghost"
                         :disabled="first"
-                        title="Move node up"
+                        title="Subir etapa"
                     >
                         <ArrowUp />
                     </Button>
@@ -202,7 +209,7 @@ const addFlashcard = () => {
                         size="icon"
                         variant="ghost"
                         :disabled="last"
-                        title="Move node down"
+                        title="Bajar etapa"
                     >
                         <ArrowDown />
                     </Button>
@@ -219,7 +226,7 @@ const addFlashcard = () => {
                         type="submit"
                         size="icon"
                         variant="ghost"
-                        title="Delete node"
+                        title="Eliminar etapa"
                     >
                         <Trash2 />
                     </Button>
@@ -243,7 +250,7 @@ const addFlashcard = () => {
             <div class="grid gap-4 md:grid-cols-2">
                 <div class="grid gap-2">
                     <Label :for="`node-title-${node?.id ?? 'new'}`"
-                        >Title</Label
+                        >Título</Label
                     >
                     <Input
                         :id="`node-title-${node?.id ?? 'new'}`"
@@ -253,15 +260,15 @@ const addFlashcard = () => {
                     <InputError :message="fieldError('title')" />
                 </div>
                 <div class="grid gap-2">
-                    <Label :for="`node-type-${node?.id ?? 'new'}`">Type</Label>
+                    <Label :for="`node-type-${node?.id ?? 'new'}`">Tipo</Label>
                     <select
                         :id="`node-type-${node?.id ?? 'new'}`"
                         v-model="form.type"
                         class="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
                     >
-                        <option value="explanation">Explanation</option>
-                        <option value="video">Video</option>
-                        <option value="quiz">Quiz</option>
+                        <option value="explanation">Explicación</option>
+                        <option value="video">Vídeo</option>
+                        <option value="quiz">Cuestionario</option>
                         <option value="flashcards">Flashcards</option>
                     </select>
                     <InputError :message="fieldError('type')" />
@@ -288,7 +295,7 @@ const addFlashcard = () => {
 
             <div v-if="form.type === 'explanation'" class="grid gap-2">
                 <Label :for="`node-body-${node?.id ?? 'new'}`"
-                    >Explanation text</Label
+                    >Texto de explicación</Label
                 >
                 <textarea
                     :id="`node-body-${node?.id ?? 'new'}`"
@@ -303,7 +310,7 @@ const addFlashcard = () => {
             <div v-if="form.type === 'video'" class="grid gap-4 md:grid-cols-2">
                 <div class="grid gap-2">
                     <Label :for="`video-provider-${node?.id ?? 'new'}`"
-                        >Provider</Label
+                        >Proveedor</Label
                     >
                     <select
                         :id="`video-provider-${node?.id ?? 'new'}`"
@@ -317,7 +324,7 @@ const addFlashcard = () => {
                 </div>
                 <div class="grid gap-2">
                     <Label :for="`video-reference-${node?.id ?? 'new'}`"
-                        >URL or video ID</Label
+                        >URL o ID del vídeo</Label
                     >
                     <Input
                         :id="`video-reference-${node?.id ?? 'new'}`"
@@ -331,7 +338,7 @@ const addFlashcard = () => {
             <div v-if="form.type === 'quiz'" class="space-y-6">
                 <div class="grid max-w-xs gap-2">
                     <Label :for="`threshold-${node?.id ?? 'new'}`"
-                        >Pass threshold (%)</Label
+                        >Umbral de aprobado (%)</Label
                     >
                     <Input
                         :id="`threshold-${node?.id ?? 'new'}`"
@@ -351,14 +358,14 @@ const addFlashcard = () => {
                 >
                     <div class="flex items-center justify-between gap-3">
                         <p class="font-medium">
-                            Question {{ questionIndex + 1 }}
+                            Pregunta {{ questionIndex + 1 }}
                         </p>
                         <Button
                             v-if="form.questions.length > 1"
                             type="button"
                             size="icon"
                             variant="ghost"
-                            title="Remove question"
+                            title="Eliminar pregunta"
                             @click="form.questions.splice(questionIndex, 1)"
                         >
                             <X />
@@ -367,7 +374,7 @@ const addFlashcard = () => {
                     <div class="grid gap-2">
                         <Label
                             :for="`question-${node?.id ?? 'new'}-${questionIndex}`"
-                            >Statement</Label
+                            >Enunciado</Label
                         >
                         <Input
                             :id="`question-${node?.id ?? 'new'}-${questionIndex}`"
@@ -385,7 +392,7 @@ const addFlashcard = () => {
                     <div class="grid gap-2">
                         <Label
                             :for="`explanation-${node?.id ?? 'new'}-${questionIndex}`"
-                            >Feedback explanation</Label
+                            >Explicación del feedback</Label
                         >
                         <textarea
                             :id="`explanation-${node?.id ?? 'new'}-${questionIndex}`"
@@ -414,7 +421,7 @@ const addFlashcard = () => {
                                 :name="`correct-${node?.id ?? 'new'}-${questionIndex}`"
                                 :checked="option.is_correct"
                                 class="mt-3 size-4"
-                                :aria-label="`Mark option ${optionIndex + 1} as correct`"
+                                :aria-label="`Marcar la opción ${optionIndex + 1} como correcta`"
                                 @change="
                                     setCorrectOption(questionIndex, optionIndex)
                                 "
@@ -422,7 +429,7 @@ const addFlashcard = () => {
                             <div class="min-w-0 flex-1">
                                 <Input
                                     v-model="option.text"
-                                    :aria-label="`Option ${optionIndex + 1}`"
+                                    :aria-label="`Opción ${optionIndex + 1}`"
                                     required
                                 />
                                 <InputError
@@ -438,7 +445,7 @@ const addFlashcard = () => {
                                 size="icon"
                                 variant="ghost"
                                 :disabled="question.options.length <= 2"
-                                title="Remove option"
+                                title="Eliminar opción"
                                 @click="
                                     removeOption(questionIndex, optionIndex)
                                 "
@@ -459,7 +466,7 @@ const addFlashcard = () => {
                             @click="addOption(questionIndex)"
                         >
                             <Plus />
-                            Add option
+                            Añadir opción
                         </Button>
                     </div>
                 </div>
@@ -470,7 +477,7 @@ const addFlashcard = () => {
                     @click="addQuestion"
                 >
                     <Plus />
-                    Add question
+                    Añadir pregunta
                 </Button>
             </div>
 
@@ -482,7 +489,7 @@ const addFlashcard = () => {
                 >
                     <div class="grid gap-2">
                         <Label :for="`front-${node?.id ?? 'new'}-${cardIndex}`"
-                            >Front {{ cardIndex + 1 }}</Label
+                            >Anverso {{ cardIndex + 1 }}</Label
                         >
                         <Input
                             :id="`front-${node?.id ?? 'new'}-${cardIndex}`"
@@ -497,7 +504,7 @@ const addFlashcard = () => {
                     </div>
                     <div class="grid gap-2">
                         <Label :for="`back-${node?.id ?? 'new'}-${cardIndex}`"
-                            >Back {{ cardIndex + 1 }}</Label
+                            >Reverso {{ cardIndex + 1 }}</Label
                         >
                         <Input
                             :id="`back-${node?.id ?? 'new'}-${cardIndex}`"
@@ -516,7 +523,7 @@ const addFlashcard = () => {
                         variant="ghost"
                         class="self-end"
                         :disabled="form.flashcards.length <= 1"
-                        title="Remove flashcard"
+                        title="Eliminar flashcard"
                         @click="form.flashcards.splice(cardIndex, 1)"
                     >
                         <X />
@@ -529,13 +536,13 @@ const addFlashcard = () => {
                     @click="addFlashcard"
                 >
                     <Plus />
-                    Add flashcard
+                    Añadir flashcard
                 </Button>
             </div>
 
             <Button type="submit" :disabled="form.processing">
                 <Save />
-                {{ node ? 'Save node' : 'Add node' }}
+                {{ node ? 'Guardar etapa' : 'Añadir etapa' }}
             </Button>
         </form>
     </section>

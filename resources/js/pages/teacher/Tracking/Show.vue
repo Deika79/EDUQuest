@@ -53,13 +53,13 @@ defineOptions({
 </script>
 
 <template>
-    <Head :title="`${assignment.mission.title} tracking`" />
+    <Head :title="`Seguimiento de ${assignment.mission.title}`" />
 
     <main
         class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 p-4 md:p-8"
     >
         <Button as-child variant="ghost" class="w-fit">
-            <Link href="/teacher/tracking"><ArrowLeft /> Tracking</Link>
+            <Link href="/teacher/tracking"><ArrowLeft /> Seguimiento</Link>
         </Button>
 
         <section class="space-y-4">
@@ -71,12 +71,16 @@ defineOptions({
                         assignment.status === 'open' ? 'default' : 'secondary'
                     "
                 >
-                    {{ assignment.status }} assignment
+                    {{
+                        assignment.status === 'open'
+                            ? 'asignación abierta'
+                            : 'asignación cerrada'
+                    }}
                 </Badge>
             </div>
             <Heading
                 :title="assignment.mission.title"
-                description="Progress, points, attempts, and best quiz score are calculated from saved activity"
+                description="Progreso, puntos, intentos y mejor nota se calculan desde la actividad guardada"
             />
         </section>
 
@@ -84,19 +88,19 @@ defineOptions({
             <table class="w-full min-w-[64rem] text-left text-sm">
                 <thead class="border-b text-xs text-muted-foreground uppercase">
                     <tr>
-                        <th class="px-3 py-3 font-medium">Student</th>
-                        <th class="px-3 py-3 font-medium">Status</th>
-                        <th class="px-3 py-3 font-medium">Access</th>
-                        <th class="px-3 py-3 font-medium">Progress</th>
-                        <th class="px-3 py-3 text-right font-medium">Points</th>
+                        <th class="px-3 py-3 font-medium">Alumno</th>
+                        <th class="px-3 py-3 font-medium">Estado</th>
+                        <th class="px-3 py-3 font-medium">Acceso</th>
+                        <th class="px-3 py-3 font-medium">Progreso</th>
+                        <th class="px-3 py-3 text-right font-medium">Puntos</th>
                         <th class="px-3 py-3 text-right font-medium">
-                            Attempts
+                            Intentos
                         </th>
                         <th class="px-3 py-3 text-right font-medium">
-                            Best quiz
+                            Mejor quiz
                         </th>
                         <th class="px-3 py-3">
-                            <span class="sr-only">Details</span>
+                            <span class="sr-only">Detalle</span>
                         </th>
                     </tr>
                 </thead>
@@ -124,11 +128,11 @@ defineOptions({
                                             : 'secondary'
                                     "
                                 >
-                                    Membership
+                                    Matrícula
                                     {{
                                         enrollment.membership_active
-                                            ? 'active'
-                                            : 'inactive'
+                                            ? 'activa'
+                                            : 'inactiva'
                                     }}
                                 </Badge>
                                 <Badge
@@ -138,18 +142,18 @@ defineOptions({
                                             : 'secondary'
                                     "
                                 >
-                                    Enrollment
+                                    Inscripción
                                     {{
                                         enrollment.enrollment_active
-                                            ? 'active'
-                                            : 'inactive'
+                                            ? 'activa'
+                                            : 'inactiva'
                                     }}
                                 </Badge>
                                 <Badge
                                     v-if="!enrollment.account_active"
                                     variant="destructive"
                                 >
-                                    Account inactive
+                                    Cuenta inactiva
                                 </Badge>
                             </div>
                         </td>
@@ -190,7 +194,7 @@ defineOptions({
                                 <Link
                                     :href="`/teacher/tracking/classes/${classroom.id}/assignments/${assignment.id}/enrollments/${enrollment.id}`"
                                 >
-                                    Details <ArrowRight />
+                                    Detalle <ArrowRight />
                                 </Link>
                             </Button>
                         </td>
@@ -200,7 +204,7 @@ defineOptions({
         </section>
 
         <p v-else class="border-y py-6 text-sm text-muted-foreground">
-            This assignment has no current or historical enrollments.
+            Esta asignación no tiene inscripciones actuales ni históricas.
         </p>
     </main>
 </template>

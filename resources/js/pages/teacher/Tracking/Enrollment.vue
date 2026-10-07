@@ -64,6 +64,13 @@ const statusLabel = (status: Enrollment['status']): string =>
         completed: 'Completada',
     })[status];
 
+const typeLabels: Record<Node['type'], string> = {
+    explanation: 'Explicación',
+    video: 'Vídeo',
+    quiz: 'Cuestionario',
+    flashcards: 'Flashcards',
+};
+
 const formatDate = (value: string): string =>
     new Intl.DateTimeFormat(undefined, {
         dateStyle: 'medium',
@@ -76,7 +83,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head :title="`${enrollment.student.name} progress`" />
+    <Head :title="`Progreso de ${enrollment.student.name}`" />
 
     <main
         class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 p-4 md:p-8"
@@ -85,7 +92,7 @@ defineOptions({
             <Link
                 :href="`/teacher/tracking/classes/${classroom.id}/assignments/${assignment.id}`"
             >
-                <ArrowLeft /> Class progress
+                <ArrowLeft /> Progreso de la clase
             </Link>
         </Button>
 
@@ -105,48 +112,50 @@ defineOptions({
                         enrollment.membership_active ? 'outline' : 'secondary'
                     "
                 >
-                    Membership
-                    {{ enrollment.membership_active ? 'active' : 'inactive' }}
+                    Matrícula
+                    {{ enrollment.membership_active ? 'activa' : 'inactiva' }}
                 </Badge>
                 <Badge
                     :variant="
                         enrollment.enrollment_active ? 'outline' : 'secondary'
                     "
                 >
-                    Enrollment
-                    {{ enrollment.enrollment_active ? 'active' : 'inactive' }}
+                    Inscripción
+                    {{ enrollment.enrollment_active ? 'activa' : 'inactiva' }}
                 </Badge>
                 <Badge v-if="!enrollment.account_active" variant="destructive">
-                    Account inactive
+                    Cuenta inactiva
                 </Badge>
             </div>
         </section>
 
         <dl class="grid border-y sm:grid-cols-4 sm:divide-x">
             <div class="p-4">
-                <dt class="text-sm text-muted-foreground">Progress</dt>
+                <dt class="text-sm text-muted-foreground">Progreso</dt>
                 <dd class="mt-1 text-xl font-semibold">
                     {{ enrollment.progress_percent }}%
                 </dd>
                 <dd class="text-sm text-muted-foreground">
-                    {{ enrollment.completed_nodes }} of
-                    {{ enrollment.total_nodes }} nodes
+                    {{ enrollment.completed_nodes }} de
+                    {{ enrollment.total_nodes }} etapas
                 </dd>
             </div>
             <div class="p-4">
-                <dt class="text-sm text-muted-foreground">Points</dt>
+                <dt class="text-sm text-muted-foreground">Puntos</dt>
                 <dd class="mt-1 text-xl font-semibold">
                     {{ enrollment.points }}
                 </dd>
             </div>
             <div class="p-4">
-                <dt class="text-sm text-muted-foreground">Quiz attempts</dt>
+                <dt class="text-sm text-muted-foreground">Intentos de quiz</dt>
                 <dd class="mt-1 text-xl font-semibold">
                     {{ enrollment.attempt_count }}
                 </dd>
             </div>
             <div class="p-4">
-                <dt class="text-sm text-muted-foreground">Best quiz score</dt>
+                <dt class="text-sm text-muted-foreground">
+                    Mejor nota de quiz
+                </dt>
                 <dd class="mt-1 text-xl font-semibold">
                     {{
                         enrollment.best_score === null
@@ -160,8 +169,8 @@ defineOptions({
         <section class="space-y-5">
             <Heading
                 variant="small"
-                title="Mission stages"
-                description="Completed nodes and questionnaire history for this enrollment"
+                title="Etapas de la misión"
+                description="Nodos completados e historial de cuestionarios de esta inscripción"
             />
 
             <div class="divide-y border-y">
@@ -185,14 +194,18 @@ defineOptions({
                                 <span class="font-medium">
                                     {{ node.position }}. {{ node.title }}
                                 </span>
-                                <Badge variant="outline">{{ node.type }}</Badge>
+                                <Badge variant="outline">{{
+                                    typeLabels[node.type]
+                                }}</Badge>
                                 <Badge
                                     :variant="
                                         node.completed ? 'default' : 'secondary'
                                     "
                                 >
                                     {{
-                                        node.completed ? 'Completed' : 'Pending'
+                                        node.completed
+                                            ? 'Completada'
+                                            : 'Pendiente'
                                     }}
                                 </Badge>
                             </div>
@@ -200,7 +213,7 @@ defineOptions({
                                 v-if="node.completed_at"
                                 class="mt-1 text-sm text-muted-foreground"
                             >
-                                {{ node.points }} points · completed
+                                {{ node.points }} puntos · completada
                                 {{ formatDate(node.completed_at) }}
                             </p>
                         </div>
@@ -209,10 +222,10 @@ defineOptions({
                     <div v-if="node.quiz" class="space-y-3 pl-0 sm:pl-8">
                         <div class="flex flex-wrap gap-2 text-sm">
                             <Badge variant="outline">
-                                {{ node.quiz.attempt_count }} attempt(s)
+                                {{ node.quiz.attempt_count }} intento(s)
                             </Badge>
                             <Badge variant="outline">
-                                Best:
+                                Mejor:
                                 {{
                                     node.quiz.best_score === null
                                         ? '—'
@@ -228,8 +241,8 @@ defineOptions({
                             >
                                 {{
                                     node.quiz.ever_passed
-                                        ? 'Passed'
-                                        : 'Not passed'
+                                        ? 'Aprobado'
+                                        : 'No aprobado'
                                 }}
                             </Badge>
                         </div>
@@ -245,22 +258,22 @@ defineOptions({
                                 >
                                     <tr>
                                         <th class="px-3 py-2 font-medium">
-                                            Submitted
+                                            Enviado
                                         </th>
                                         <th
                                             class="px-3 py-2 text-right font-medium"
                                         >
-                                            Result
+                                            Resultado
                                         </th>
                                         <th
                                             class="px-3 py-2 text-right font-medium"
                                         >
-                                            Score
+                                            Nota
                                         </th>
                                         <th
                                             class="px-3 py-2 text-right font-medium"
                                         >
-                                            Answers
+                                            Respuestas
                                         </th>
                                     </tr>
                                 </thead>
@@ -284,8 +297,8 @@ defineOptions({
                                             >
                                                 {{
                                                     attempt.passed
-                                                        ? 'Passed'
-                                                        : 'Not passed'
+                                                        ? 'Aprobado'
+                                                        : 'No aprobado'
                                                 }}
                                             </Badge>
                                         </td>

@@ -49,20 +49,20 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Tracking" />
+    <Head title="Seguimiento" />
 
     <main
         class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 p-4 md:p-8"
     >
         <Heading
-            title="Student tracking"
-            description="Compare progress for a mission assigned to one of your classes"
+            title="Seguimiento del alumnado"
+            description="Compara el progreso de una misión asignada a una de tus clases"
         />
 
         <section v-if="classrooms.length" class="space-y-6 border-y py-6">
             <div class="grid gap-5 md:grid-cols-2">
                 <div class="space-y-2">
-                    <Label for="tracking-classroom">Class</Label>
+                    <Label for="tracking-classroom">Clase</Label>
                     <select
                         id="tracking-classroom"
                         v-model="classroomId"
@@ -80,7 +80,7 @@ defineOptions({
                 </div>
 
                 <div class="space-y-2">
-                    <Label for="tracking-assignment">Assigned mission</Label>
+                    <Label for="tracking-assignment">Misión asignada</Label>
                     <select
                         id="tracking-assignment"
                         v-model="assignmentId"
@@ -92,7 +92,8 @@ defineOptions({
                             :key="item.id"
                             :value="item.id"
                         >
-                            {{ item.mission.title }} · {{ item.status }}
+                            {{ item.mission.title }} ·
+                            {{ item.status === 'open' ? 'abierta' : 'cerrada' }}
                         </option>
                     </select>
                 </div>
@@ -114,28 +115,32 @@ defineOptions({
                                     : 'secondary'
                             "
                         >
-                            {{ assignment.status }}
+                            {{
+                                assignment.status === 'open'
+                                    ? 'abierta'
+                                    : 'cerrada'
+                            }}
                         </Badge>
                     </div>
                     <p class="mt-1 text-sm text-muted-foreground">
-                        {{ assignment.enrollments_count }} enrollment(s)
+                        {{ assignment.enrollments_count }} inscripción(es)
                     </p>
                 </div>
                 <Button as-child>
                     <Link
                         :href="`/teacher/tracking/classes/${classroom.id}/assignments/${assignment.id}`"
                     >
-                        <BarChart3 /> View progress <ArrowRight />
+                        <BarChart3 /> Ver progreso <ArrowRight />
                     </Link>
                 </Button>
             </div>
             <p v-else class="border-t pt-5 text-sm text-muted-foreground">
-                This class has no mission assignments to review.
+                Esta clase no tiene misiones asignadas para revisar.
             </p>
         </section>
 
         <p v-else class="border-y py-6 text-sm text-muted-foreground">
-            Create a class before opening student tracking.
+            Crea una clase antes de abrir el seguimiento del alumnado.
         </p>
     </main>
 </template>

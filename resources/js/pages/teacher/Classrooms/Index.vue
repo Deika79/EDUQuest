@@ -23,20 +23,20 @@ defineProps<{ classrooms: Classroom[] }>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Teacher', href: dashboard() },
-            { title: 'Classes', href: '/teacher/classes' },
+            { title: 'Docente', href: dashboard() },
+            { title: 'Clases', href: '/teacher/classes' },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Classes" />
+    <Head title="Clases" />
     <main
         class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 p-4 md:p-8"
     >
         <section class="space-y-6">
-            <Heading title="Classes" description="Your teaching groups" />
+            <Heading title="Clases" description="Tus grupos docentes" />
 
             <Form
                 v-bind="TeacherClassroomController.store.form()"
@@ -45,24 +45,24 @@ defineOptions({
                 class="grid gap-4 border-y py-6 md:grid-cols-3"
             >
                 <div class="grid gap-2">
-                    <Label for="name">Class name</Label>
+                    <Label for="name">Nombre de la clase</Label>
                     <Input id="name" name="name" required />
                     <InputError :message="errors.name" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="level">Level</Label>
+                    <Label for="level">Nivel</Label>
                     <Input id="level" name="level" required />
                     <InputError :message="errors.level" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="subject">Subject</Label>
+                    <Label for="subject">Asignatura</Label>
                     <Input id="subject" name="subject" required />
                     <InputError :message="errors.subject" />
                 </div>
                 <div class="md:col-span-3">
                     <Button type="submit" :disabled="processing">
                         <School />
-                        Create class
+                        Crear clase
                     </Button>
                 </div>
             </Form>
@@ -71,8 +71,8 @@ defineOptions({
         <section class="space-y-4">
             <Heading
                 variant="small"
-                title="Your classes"
-                description="Only groups owned by your account"
+                title="Tus clases"
+                description="Solo grupos propiedad de tu cuenta"
             />
             <div v-if="classrooms.length" class="divide-y border-y">
                 <div
@@ -84,7 +84,7 @@ defineOptions({
                         <div class="flex flex-wrap items-center gap-2">
                             <p class="font-medium">{{ classroom.name }}</p>
                             <Badge variant="secondary">
-                                {{ classroom.active_students_count }} active
+                                {{ classroom.active_students_count }} activos
                             </Badge>
                         </div>
                         <p class="mt-1 text-sm text-muted-foreground">
@@ -93,20 +93,20 @@ defineOptions({
                     </div>
                     <Button as-child variant="outline">
                         <Link :href="`/teacher/classes/${classroom.id}`">
-                            Manage
+                            Gestionar
                             <ArrowRight />
                         </Link>
                     </Button>
                 </div>
             </div>
             <p v-else class="border-y py-6 text-sm text-muted-foreground">
-                No classes created yet.
+                Todavía no hay clases creadas.
             </p>
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Mission assignments are managed from each published mission. Open
-            Tracking to compare saved student progress.
+            Las asignaciones se gestionan desde cada misión publicada. Abre
+            Seguimiento para comparar el progreso guardado del alumnado.
         </p>
     </main>
 </template>

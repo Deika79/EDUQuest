@@ -39,7 +39,7 @@ const props = defineProps<{
 const nextMission = computed(() => props.missions[0] ?? null);
 
 defineOptions({
-    layout: { breadcrumbs: [{ title: 'My missions', href: dashboard() }] },
+    layout: { breadcrumbs: [{ title: 'Mis misiones', href: dashboard() }] },
 });
 </script>
 

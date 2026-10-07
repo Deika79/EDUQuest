@@ -39,8 +39,8 @@ const props = defineProps<{
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Teacher', href: dashboard() },
-            { title: 'Classes', href: '/teacher/classes' },
+            { title: 'Docente', href: dashboard() },
+            { title: 'Clases', href: '/teacher/classes' },
         ],
     },
 });
@@ -55,7 +55,7 @@ defineOptions({
             <Button as-child variant="ghost" class="w-fit">
                 <Link href="/teacher/classes">
                     <ArrowLeft />
-                    Classes
+                    Clases
                 </Link>
             </Button>
             <Heading
@@ -69,7 +69,7 @@ defineOptions({
                 class="grid gap-4 border-y py-6 md:grid-cols-3"
             >
                 <div class="grid gap-2">
-                    <Label for="class-name">Class name</Label>
+                    <Label for="class-name">Nombre de la clase</Label>
                     <Input
                         id="class-name"
                         name="name"
@@ -79,7 +79,7 @@ defineOptions({
                     <InputError :message="errors.name" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="class-level">Level</Label>
+                    <Label for="class-level">Nivel</Label>
                     <Input
                         id="class-level"
                         name="level"
@@ -89,7 +89,7 @@ defineOptions({
                     <InputError :message="errors.level" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="class-subject">Subject</Label>
+                    <Label for="class-subject">Asignatura</Label>
                     <Input
                         id="class-subject"
                         name="subject"
@@ -104,7 +104,7 @@ defineOptions({
                         variant="outline"
                         :disabled="processing"
                     >
-                        Save class
+                        Guardar clase
                     </Button>
                 </div>
             </Form>
@@ -113,8 +113,8 @@ defineOptions({
         <section class="space-y-6">
             <Heading
                 variant="small"
-                title="Create student account"
-                description="New account with a temporary password"
+                title="Crear cuenta de alumno"
+                description="Cuenta nueva con contraseña temporal"
             />
             <Form
                 v-bind="StudentEnrollmentController.store.form(classroom.id)"
@@ -129,12 +129,12 @@ defineOptions({
                 class="grid gap-4 border-y py-6 md:grid-cols-2"
             >
                 <div class="grid gap-2">
-                    <Label for="student-name">Student name or alias</Label>
+                    <Label for="student-name">Nombre o alias del alumno</Label>
                     <Input id="student-name" name="name" required />
                     <InputError :message="errors.name" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="student-username">Username</Label>
+                    <Label for="student-username">Usuario</Label>
                     <Input
                         id="student-username"
                         name="username"
@@ -144,7 +144,7 @@ defineOptions({
                     <InputError :message="errors.username" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="student-email">Email address (optional)</Label>
+                    <Label for="student-email">Email (opcional)</Label>
                     <Input
                         id="student-email"
                         name="email"
@@ -154,7 +154,7 @@ defineOptions({
                     <InputError :message="errors.email" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="student-password">Temporary password</Label>
+                    <Label for="student-password">Contraseña temporal</Label>
                     <Input
                         id="student-password"
                         name="password"
@@ -166,7 +166,7 @@ defineOptions({
                 </div>
                 <div class="grid gap-2 md:col-start-2">
                     <Label for="student-password-confirmation">
-                        Confirm temporary password
+                        Confirmar contraseña temporal
                     </Label>
                     <Input
                         id="student-password-confirmation"
@@ -179,7 +179,7 @@ defineOptions({
                 <div class="md:col-span-2">
                     <Button type="submit" :disabled="processing">
                         <UserPlus />
-                        Create and enroll
+                        Crear y matricular
                     </Button>
                 </div>
             </Form>
@@ -188,8 +188,8 @@ defineOptions({
         <section class="space-y-6">
             <Heading
                 variant="small"
-                title="Enroll existing student"
-                description="Use the exact username provided by the student"
+                title="Matricular alumno existente"
+                description="Usa el usuario exacto facilitado por el alumno"
             />
             <Form
                 v-bind="
@@ -200,7 +200,7 @@ defineOptions({
                 class="flex flex-col gap-4 border-y py-6 sm:flex-row sm:items-end"
             >
                 <div class="grid min-w-0 flex-1 gap-2">
-                    <Label for="existing-username">Existing username</Label>
+                    <Label for="existing-username">Usuario existente</Label>
                     <Input
                         id="existing-username"
                         name="username"
@@ -210,7 +210,7 @@ defineOptions({
                     <InputError :message="errors.existing_username" />
                 </div>
                 <Button type="submit" variant="outline" :disabled="processing">
-                    Enroll
+                    Matricular
                 </Button>
             </Form>
         </section>
@@ -218,8 +218,8 @@ defineOptions({
         <section class="space-y-4">
             <Heading
                 variant="small"
-                title="Students"
-                description="Enrollment and account status are independent"
+                title="Alumnado"
+                description="La matrícula y el estado de la cuenta son independientes"
             />
             <div v-if="memberships.length" class="divide-y border-y">
                 <div
@@ -239,15 +239,15 @@ defineOptions({
                             >
                                 {{
                                     membership.active
-                                        ? 'Enrolled'
-                                        : 'Not enrolled'
+                                        ? 'Matriculado'
+                                        : 'Sin matrícula'
                                 }}
                             </Badge>
                             <Badge
                                 v-if="!membership.student.account_active"
                                 variant="destructive"
                             >
-                                Account inactive
+                                Cuenta inactiva
                             </Badge>
                             <Badge
                                 v-if="
@@ -256,7 +256,7 @@ defineOptions({
                                 "
                                 variant="outline"
                             >
-                                Shared account
+                                Cuenta compartida
                             </Badge>
                         </div>
                         <p class="mt-1 text-sm text-muted-foreground">
@@ -283,20 +283,24 @@ defineOptions({
                             type="submit"
                             :variant="membership.active ? 'outline' : 'default'"
                         >
-                            {{ membership.active ? 'Remove' : 'Reinstate' }}
+                            {{
+                                membership.active
+                                    ? 'Dar de baja'
+                                    : 'Reincorporar'
+                            }}
                         </Button>
                     </Form>
                 </div>
             </div>
             <p v-else class="border-y py-6 text-sm text-muted-foreground">
-                No students enrolled yet.
+                Todavía no hay alumnos matriculados.
             </p>
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Open mission assignments follow enrollment changes automatically.
-            Tracking keeps inactive enrollment history visible without changing
-            saved progress.
+            Las asignaciones abiertas siguen los cambios de matrícula
+            automáticamente. Seguimiento mantiene visible el historial inactivo
+            sin cambiar el progreso guardado.
         </p>
     </main>
 </template>

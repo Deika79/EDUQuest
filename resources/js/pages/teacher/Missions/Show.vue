@@ -70,8 +70,8 @@ const assignedClassroomIds = computed(
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Teacher', href: dashboard() },
-            { title: 'Missions', href: '/teacher/missions' },
+            { title: 'Docente', href: dashboard() },
+            { title: 'Misiones', href: '/teacher/missions' },
         ],
     },
 });
@@ -84,7 +84,7 @@ defineOptions({
     >
         <section class="space-y-6">
             <Button as-child variant="ghost" class="w-fit">
-                <Link href="/teacher/missions"><ArrowLeft /> Missions</Link>
+                <Link href="/teacher/missions"><ArrowLeft /> Misiones</Link>
             </Button>
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <Heading
@@ -100,7 +100,13 @@ defineOptions({
                               : 'outline'
                     "
                 >
-                    {{ mission.status }}
+                    {{
+                        mission.status === 'draft'
+                            ? 'borrador'
+                            : mission.status === 'published'
+                              ? 'publicada'
+                              : 'archivada'
+                    }}
                 </Badge>
                 <Badge v-if="mission.source === 'ai'" variant="outline">
                     Generada con IA · pendiente de revision humana
@@ -117,7 +123,7 @@ defineOptions({
                 class="grid gap-4 border-y py-6 md:grid-cols-2"
             >
                 <div class="grid gap-2 md:col-span-2">
-                    <Label for="edit-mission-title">Title</Label>
+                    <Label for="edit-mission-title">Título</Label>
                     <Input
                         id="edit-mission-title"
                         name="title"
@@ -128,7 +134,7 @@ defineOptions({
                 </div>
                 <div class="grid gap-2 md:col-span-2">
                     <Label for="edit-mission-description"
-                        >Description and narrative context</Label
+                        >Descripción y contexto narrativo</Label
                     >
                     <textarea
                         id="edit-mission-description"
@@ -141,7 +147,7 @@ defineOptions({
                     <InputError :message="errors.description" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="edit-mission-subject">Subject</Label>
+                    <Label for="edit-mission-subject">Asignatura</Label>
                     <Input
                         id="edit-mission-subject"
                         name="subject"
@@ -151,7 +157,7 @@ defineOptions({
                     <InputError :message="errors.subject" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="edit-mission-level">Level</Label>
+                    <Label for="edit-mission-level">Nivel</Label>
                     <Input
                         id="edit-mission-level"
                         name="level"
@@ -181,7 +187,7 @@ defineOptions({
                         type="submit"
                         variant="outline"
                         :disabled="processing"
-                        >Save mission details</Button
+                        >Guardar detalles</Button
                     >
                 </div>
             </Form>
@@ -193,20 +199,20 @@ defineOptions({
         <section v-if="mission.status === 'draft'" class="space-y-4">
             <Heading
                 variant="small"
-                title="Draft readiness"
-                description="Every item must pass validation before publishing"
+                title="Preparación del borrador"
+                description="Cada elemento debe validar antes de publicar"
             />
             <div
                 v-if="readiness.ready"
                 class="flex items-center gap-3 border-y py-5 text-sm"
             >
-                <CheckCircle2 class="size-5 text-green-600" /> This draft is
-                ready to publish.
+                <CheckCircle2 class="size-5 text-green-600" /> Este borrador
+                está listo para publicar.
             </div>
             <div v-else class="space-y-3 border-y py-5">
                 <div class="flex items-center gap-3 text-sm font-medium">
-                    <CircleAlert class="size-5 text-amber-600" /> Draft not
-                    ready
+                    <CircleAlert class="size-5 text-amber-600" /> Borrador no
+                    preparado
                 </div>
                 <ul
                     class="list-disc space-y-1 pl-6 text-sm text-muted-foreground"
@@ -232,7 +238,7 @@ defineOptions({
                 class="space-y-2"
             >
                 <Button type="submit" :disabled="processing || !readiness.ready"
-                    ><Rocket /> Publish mission</Button
+                    ><Rocket /> Publicar misión</Button
                 >
                 <InputError :message="errors.mission" />
             </Form>
@@ -241,11 +247,11 @@ defineOptions({
         <section class="space-y-6">
             <Heading
                 variant="small"
-                title="Mission path"
+                title="Recorrido de la misión"
                 :description="
                     mission.status === 'draft'
-                        ? 'Saved in the displayed order'
-                        : 'Published content is read-only'
+                        ? 'Guardado en el orden mostrado'
+                        : 'El contenido publicado es de solo lectura'
                 "
             />
             <template v-if="mission.status === 'draft'">
@@ -260,8 +266,8 @@ defineOptions({
                 <div class="pt-4">
                     <Heading
                         variant="small"
-                        title="Add node"
-                        description="Choose one of the four activity types"
+                        title="Añadir etapa"
+                        description="Elige uno de los cuatro tipos de actividad"
                     />
                     <MissionNodeEditor :mission-id="mission.id" />
                 </div>
@@ -291,7 +297,7 @@ defineOptions({
                     </p>
                     <div v-else-if="node.type === 'quiz'" class="space-y-3">
                         <p class="text-sm text-muted-foreground">
-                            Pass threshold: {{ node.pass_threshold }}%
+                            Umbral de aprobado: {{ node.pass_threshold }}%
                         </p>
                         <div
                             v-for="(question, questionIndex) in node.questions"
@@ -306,7 +312,9 @@ defineOptions({
                                 :key="option.id ?? optionIndex"
                                 class="text-muted-foreground"
                             >
-                                {{ option.is_correct ? 'Correct:' : 'Option:' }}
+                                {{
+                                    option.is_correct ? 'Correcta:' : 'Opción:'
+                                }}
                                 {{ option.text }}
                             </p>
                         </div>
@@ -330,8 +338,8 @@ defineOptions({
         <section v-if="mission.status === 'published'" class="space-y-5">
             <Heading
                 variant="small"
-                title="Assign to classes"
-                description="Active students receive an enrollment automatically"
+                title="Asignar a clases"
+                description="El alumnado activo recibe una inscripción automáticamente"
             />
             <Form
                 :action="`/teacher/missions/${mission.id}/assignments`"
@@ -363,20 +371,20 @@ defineOptions({
                                         assignedClassroomIds.has(classroom.id)
                                     "
                                 >
-                                    · Already assigned</template
+                                    · Ya asignada</template
                                 >
                             </span>
                         </span>
                     </label>
                 </div>
                 <p v-else class="text-sm text-muted-foreground">
-                    Create an active class before assigning this mission.
+                    Crea una clase activa antes de asignar esta misión.
                 </p>
                 <InputError :message="errors.classroom_ids" />
                 <Button
                     type="submit"
                     :disabled="processing || !classrooms.length"
-                    ><Send /> Assign selected classes</Button
+                    ><Send /> Asignar clases seleccionadas</Button
                 >
             </Form>
         </section>
@@ -384,8 +392,8 @@ defineOptions({
         <section v-if="assignments.length" class="space-y-4">
             <Heading
                 variant="small"
-                title="Assignments"
-                description="Current distribution and enrollment status"
+                title="Asignaciones"
+                description="Distribución actual y estado de inscripciones"
             />
             <div class="divide-y border-y">
                 <div
@@ -404,12 +412,17 @@ defineOptions({
                                         ? 'default'
                                         : 'secondary'
                                 "
-                                >{{ assignment.status }}</Badge
                             >
+                                {{
+                                    assignment.status === 'open'
+                                        ? 'abierta'
+                                        : 'cerrada'
+                                }}
+                            </Badge>
                         </div>
                         <p class="mt-1 text-sm text-muted-foreground">
-                            {{ assignment.active_enrollments_count }} active of
-                            {{ assignment.enrollments_count }} enrollments
+                            {{ assignment.active_enrollments_count }} activas de
+                            {{ assignment.enrollments_count }} inscripciones
                         </p>
                     </div>
                     <Form
@@ -418,7 +431,7 @@ defineOptions({
                         method="delete"
                     >
                         <Button type="submit" variant="outline"
-                            ><XCircle /> Withdraw or close</Button
+                            ><XCircle /> Retirar o cerrar</Button
                         >
                     </Form>
                 </div>
@@ -432,7 +445,7 @@ defineOptions({
                 method="post"
             >
                 <Button type="submit" variant="outline"
-                    ><Copy /> Duplicate as draft</Button
+                    ><Copy /> Duplicar como borrador</Button
                 >
             </Form>
             <Form
@@ -441,16 +454,16 @@ defineOptions({
                 method="post"
             >
                 <Button type="submit" variant="outline"
-                    ><Archive /> Archive mission</Button
+                    ><Archive /> Archivar misión</Button
                 >
             </Form>
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Student progress is available in Tracking. AI-assisted content is
-            always stored as a draft and uses the same publishing rules.
-            Existing open assignments remain recorded when a mission is
-            archived.
+            El progreso del alumnado está disponible en Seguimiento. El
+            contenido asistido por IA siempre se guarda como borrador y usa las
+            mismas reglas de publicación. Las asignaciones abiertas existentes
+            quedan registradas cuando se archiva una misión.
         </p>
     </main>
 </template>

@@ -21,7 +21,7 @@ const page = usePage();
 const mainNavItems = computed<NavItem[]>(() => {
     const items: NavItem[] = [
         {
-            title: 'My profile',
+            title: 'Mi perfil',
             href: dashboard(),
             icon: LayoutGrid,
         },
@@ -29,17 +29,17 @@ const mainNavItems = computed<NavItem[]>(() => {
 
     if (page.props.auth.user.role === 'teacher') {
         items.push({
-            title: 'Classes',
+            title: 'Clases',
             href: '/teacher/classes',
             icon: School,
         });
         items.push({
-            title: 'Missions',
+            title: 'Misiones',
             href: '/teacher/missions',
             icon: Map,
         });
         items.push({
-            title: 'Tracking',
+            title: 'Seguimiento',
             href: '/teacher/tracking',
             icon: BarChart3,
         });
@@ -47,7 +47,7 @@ const mainNavItems = computed<NavItem[]>(() => {
 
     if (page.props.auth.user.role === 'student') {
         items.push({
-            title: 'My missions',
+            title: 'Mis misiones',
             href: '/student/missions',
             icon: Map,
         });

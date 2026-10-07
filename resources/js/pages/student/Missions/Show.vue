@@ -120,6 +120,17 @@ type PositionedNode = MapNode & {
 };
 
 const mapTheme = computed(() => mapThemes[props.enrollment.mission.map_theme]);
+const typeLabels: Record<MapNode['type'], string> = {
+    explanation: 'Explicación',
+    video: 'Vídeo',
+    quiz: 'Cuestionario',
+    flashcards: 'Flashcards',
+};
+const statusLabels: Record<MapNode['status'], string> = {
+    completed: 'completada',
+    available: 'disponible',
+    locked: 'bloqueada',
+};
 
 const positionedNodes = computed<PositionedNode[]>(() => {
     const anchors = mapTheme.value.anchors;
@@ -166,7 +177,7 @@ const connectorPoints = computed(() =>
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'My missions', href: '/student/missions' }],
+        breadcrumbs: [{ title: 'Mis misiones', href: '/student/missions' }],
     },
 });
 </script>
@@ -177,7 +188,7 @@ defineOptions({
         class="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 p-4 md:p-8"
     >
         <Button as-child variant="ghost" class="w-fit">
-            <Link href="/student/missions"><ArrowLeft /> My missions</Link>
+            <Link href="/student/missions"><ArrowLeft /> Mis misiones</Link>
         </Button>
 
         <section class="space-y-4">
@@ -197,11 +208,11 @@ defineOptions({
             <div class="space-y-2 border-y py-4">
                 <div class="flex justify-between gap-4 text-sm">
                     <span
-                        >{{ enrollment.completed_nodes }} of
-                        {{ enrollment.total_nodes }} nodes</span
+                        >{{ enrollment.completed_nodes }} de
+                        {{ enrollment.total_nodes }} etapas</span
                     >
                     <span
-                        >{{ enrollment.points }} points ·
+                        >{{ enrollment.points }} puntos ·
                         {{ enrollment.progress_percent }}%</span
                     >
                 </div>
@@ -280,7 +291,7 @@ defineOptions({
                                 node.status === 'locked',
                         }"
                         :style="{ left: `${node.x}%`, top: `${node.y}%` }"
-                        :aria-label="`Etapa ${node.position}: ${node.title}. ${node.location}. Estado: ${node.status}`"
+                        :aria-label="`Etapa ${node.position}: ${node.title}. ${node.location}. Estado: ${statusLabels[node.status]}`"
                     >
                         <CheckCircle2
                             v-if="node.status === 'completed'"
@@ -307,7 +318,9 @@ defineOptions({
                         <div class="flex flex-wrap items-center gap-2">
                             <Badge variant="outline">{{ node.position }}</Badge>
                             <h2 class="font-medium">{{ node.title }}</h2>
-                            <Badge variant="secondary">{{ node.type }}</Badge>
+                            <Badge variant="secondary">{{
+                                typeLabels[node.type]
+                            }}</Badge>
                             <Badge
                                 :variant="
                                     node.status === 'completed'
@@ -315,7 +328,7 @@ defineOptions({
                                         : 'secondary'
                                 "
                             >
-                                {{ node.status }}
+                                {{ statusLabels[node.status] }}
                             </Badge>
                         </div>
                         <p class="mt-1 text-sm text-muted-foreground">
@@ -335,7 +348,9 @@ defineOptions({
                         >
                             <Play />
                             {{
-                                node.status === 'completed' ? 'Review' : 'Open'
+                                node.status === 'completed'
+                                    ? 'Repasar'
+                                    : 'Abrir'
                             }}
                         </Link>
                     </Button>
@@ -344,10 +359,10 @@ defineOptions({
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Confirming reading, reviewing a video, or going through cards
-            records your action. It does not prove comprehension or that a video
-            was watched in full. Questionnaires are graded on the server and
-            only unlock the next stage when passed.
+            Confirmar una lectura, revisar un vídeo o repasar tarjetas registra
+            tu acción. No demuestra comprensión ni que el vídeo se haya visto
+            completo. Los cuestionarios se corrigen en el servidor y solo
+            desbloquean la etapa siguiente al aprobarlos.
         </p>
     </main>
 </template>

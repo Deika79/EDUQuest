@@ -57,6 +57,8 @@ Accesos locales:
 
 El recorrido contiene `Exploradores del sistema solar`, `Guardianes del ciclo del agua`, `Detectives de los ecosistemas`, `Viaje al interior de la Tierra` y `Laboratorio de la materia`. Son 20 actividades distintas que permiten obtener 200 XP y 45 monedas como maximo. Cada nodo concede 10 XP y entre 2 y 3 monedas al completarse validamente por primera vez. Los puntos, XP y monedas se generan exclusivamente al completar las actividades desde el recorrido real; el comando no marca progreso ni concede saldos.
 
+Las cinco misiones demo cubren los tres mapas ilustrados versionados en `public/brand/maps/`: ciencia ficcion para `Exploradores del sistema solar` y `Viaje al interior de la Tierra`, fantasia para `Guardianes del ciclo del agua` y `Laboratorio de la materia`, y oeste para `Detectives de los ecosistemas`. Si las misiones ya existian con el escenario antiguo por defecto, repetir el comando ajusta solo el escenario del mapa y conserva contrasena, avatar, progreso, XP, monedas y compras.
+
 Al llegar a 100 XP (nivel 2), el alumno puede comprar la apariencia arcana por 6 monedas. Al llegar a 200 XP (nivel 3), puede comprar la espacial por 12. Comprar no equipa automaticamente: la accion `Equipar` esta en la tienda. La limitacion de cuestionarios permite cinco envios por minuto, por lo que una demostracion automatizada debe respetar ese ritmo.
 
 ## Landing y trailer

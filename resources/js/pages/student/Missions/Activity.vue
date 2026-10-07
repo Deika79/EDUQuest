@@ -101,6 +101,13 @@ const feedbackFor = (questionId: number) =>
         (answer) => answer.question_id === questionId,
     );
 
+const typeLabels: Record<Node['type'], string> = {
+    explanation: 'Explicación',
+    video: 'Vídeo',
+    quiz: 'Cuestionario',
+    flashcards: 'Flashcards',
+};
+
 const optionFeedbackClass = (questionId: number, optionId: number) => {
     const feedback = feedbackFor(questionId);
 
@@ -117,7 +124,7 @@ const optionFeedbackClass = (questionId: number, optionId: number) => {
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'My missions', href: '/student/missions' }],
+        breadcrumbs: [{ title: 'Mis misiones', href: '/student/missions' }],
     },
 });
 </script>
@@ -129,19 +136,19 @@ defineOptions({
     >
         <Button as-child variant="ghost" class="w-fit">
             <Link :href="`/student/missions/${enrollmentId}`"
-                ><ArrowLeft /> Mission map</Link
+                ><ArrowLeft /> Mapa de la misión</Link
             >
         </Button>
 
         <section class="space-y-4">
             <div class="flex flex-wrap items-center gap-2">
-                <Badge variant="outline">Stage {{ node.position }}</Badge>
-                <Badge variant="secondary">{{ node.type }}</Badge>
-                <Badge v-if="node.completed">Completed</Badge>
+                <Badge variant="outline">Etapa {{ node.position }}</Badge>
+                <Badge variant="secondary">{{ typeLabels[node.type] }}</Badge>
+                <Badge v-if="node.completed">Completada</Badge>
             </div>
             <Heading
                 :title="node.title"
-                description="Complete this stage when you have reviewed its content"
+                description="Completa esta etapa cuando hayas revisado su contenido"
             />
         </section>
 
@@ -173,14 +180,15 @@ defineOptions({
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <ExternalLink /> Open video in a new tab
+                    <ExternalLink /> Abrir vídeo en una pestaña nueva
                 </a>
             </Button>
         </section>
 
         <section v-else-if="node.type === 'flashcards'" class="space-y-5">
             <p class="text-sm text-muted-foreground">
-                Reveal the back of every card before confirming your review.
+                Muestra el reverso de todas las tarjetas antes de confirmar el
+                repaso.
             </p>
             <div class="grid gap-4 sm:grid-cols-2">
                 <button
@@ -191,7 +199,11 @@ defineOptions({
                     @click="revealCard(card.id)"
                 >
                     <span class="text-xs font-medium text-muted-foreground">
-                        {{ revealedCards.includes(card.id) ? 'Back' : 'Front' }}
+                        {{
+                            revealedCards.includes(card.id)
+                                ? 'Reverso'
+                                : 'Anverso'
+                        }}
                     </span>
                     <span class="font-medium">
                         {{
@@ -210,8 +222,8 @@ defineOptions({
                         <RotateCcw v-else class="size-4" />
                         {{
                             revealedCards.includes(card.id)
-                                ? 'Reviewed'
-                                : 'Reveal'
+                                ? 'Revisada'
+                                : 'Mostrar'
                         }}
                     </span>
                 </button>
@@ -222,13 +234,13 @@ defineOptions({
         <section v-else-if="node.quiz" class="space-y-6">
             <div class="border-y py-4 text-sm text-muted-foreground">
                 <p>
-                    Answer every question, then submit the whole attempt. Your
-                    answers are saved only when you submit; unfinished drafts
-                    are not retained.
+                    Responde todas las preguntas y envía el intento completo.
+                    Las respuestas se guardan solo al enviar; los borradores sin
+                    terminar no se conservan.
                 </p>
                 <p class="mt-2">
-                    Pass mark: {{ node.quiz.pass_threshold }}%. Attempts:
-                    {{ node.quiz.attempt_count }}. Best score:
+                    Nota mínima: {{ node.quiz.pass_threshold }}%. Intentos:
+                    {{ node.quiz.attempt_count }}. Mejor nota:
                     {{ node.quiz.best_score.toFixed(2) }}%.
                 </p>
             </div>
@@ -244,7 +256,7 @@ defineOptions({
                     />
                     <XCircle v-else class="size-5 text-destructive" />
                     <strong>
-                        Latest attempt:
+                        Último intento:
                         {{ node.quiz.latest_feedback.score.toFixed(2) }}%
                     </strong>
                     <Badge
@@ -256,15 +268,15 @@ defineOptions({
                     >
                         {{
                             node.quiz.latest_feedback.passed
-                                ? 'Passed'
-                                : 'Not passed'
+                                ? 'Aprobado'
+                                : 'No aprobado'
                         }}
                     </Badge>
                 </div>
                 <p class="text-sm text-muted-foreground">
-                    {{ node.quiz.latest_feedback.correct_answers }} of
-                    {{ node.quiz.latest_feedback.total_questions }} correct.
-                    Review the explanations below before trying again.
+                    {{ node.quiz.latest_feedback.correct_answers }} de
+                    {{ node.quiz.latest_feedback.total_questions }} correctas.
+                    Revisa las explicaciones antes de intentarlo de nuevo.
                 </p>
             </div>
 
@@ -304,8 +316,8 @@ defineOptions({
                         <p class="font-medium">
                             {{
                                 feedbackFor(question.id)?.correct
-                                    ? 'Correct answer.'
-                                    : 'Review this answer.'
+                                    ? 'Respuesta correcta.'
+                                    : 'Revisa esta respuesta.'
                             }}
                         </p>
                         <p>{{ feedbackFor(question.id)?.explanation }}</p>
@@ -313,7 +325,7 @@ defineOptions({
                             v-if="!feedbackFor(question.id)?.correct"
                             class="text-muted-foreground"
                         >
-                            Correct option:
+                            Opción correcta:
                             {{
                                 question.options.findIndex(
                                     (option) =>
@@ -330,7 +342,7 @@ defineOptions({
                     type="submit"
                     :disabled="quizForm.processing || !allQuestionsAnswered"
                 >
-                    <Check /> Submit answers
+                    <Check /> Enviar respuestas
                 </Button>
             </form>
         </section>
@@ -347,9 +359,9 @@ defineOptions({
                     class="mt-1 size-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 />
                 <span>
-                    I confirm that I reviewed this resource. This records my
-                    action but does not prove comprehension or, for video,
-                    complete viewing.
+                    Confirmo que he revisado este recurso. Esto registra mi
+                    acción, pero no demuestra comprensión ni, en el caso de un
+                    vídeo, que lo haya visto completo.
                 </span>
             </label>
             <InputError :message="form.errors.confirmed" />
@@ -359,15 +371,15 @@ defineOptions({
                     form.processing || !form.confirmed || !allCardsReviewed
                 "
             >
-                <Check /> Complete stage
+                <Check /> Completar etapa
             </Button>
         </form>
         <p
             v-else-if="node.type !== 'quiz'"
             class="flex items-center gap-2 border-y py-5 text-sm text-green-700"
         >
-            <Check class="size-5" /> This stage is already complete. Reviewing
-            it again does not add points.
+            <Check class="size-5" /> Esta etapa ya está completada. Revisarla
+            otra vez no añade puntos.
         </p>
     </main>
 </template>

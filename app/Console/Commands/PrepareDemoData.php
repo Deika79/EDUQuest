@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\MissionAssignmentStatus;
+use App\Enums\MissionMapTheme;
 use App\Enums\MissionNodeType;
 use App\Enums\MissionSource;
 use App\Enums\MissionStatus;
@@ -47,6 +48,15 @@ class PrepareDemoData extends Command
         'Detectives de los ecosistemas',
         'Viaje al interior de la Tierra',
         'Laboratorio de la materia',
+    ];
+
+    /** @var array<string, MissionMapTheme> */
+    private const MISSION_MAP_THEMES = [
+        self::MISSION_TITLE => MissionMapTheme::Science,
+        'Guardianes del ciclo del agua' => MissionMapTheme::Fantasy,
+        'Detectives de los ecosistemas' => MissionMapTheme::OldWest,
+        'Viaje al interior de la Tierra' => MissionMapTheme::Science,
+        'Laboratorio de la materia' => MissionMapTheme::Fantasy,
     ];
 
     protected $signature = 'eduquest:prepare-demo
@@ -174,6 +184,7 @@ class PrepareDemoData extends Command
 
             if ($mission !== null) {
                 $this->assertAdditionalMission($mission);
+                $this->ensureDemoMapTheme($mission);
 
                 return $mission;
             }
@@ -183,6 +194,7 @@ class PrepareDemoData extends Command
                 'description' => $this->additionalMissionDescription($title),
                 'subject' => 'Ciencias Naturales',
                 'level' => '5.º de Primaria',
+                'map_theme' => self::MISSION_MAP_THEMES[$title],
             ]);
             $mission->status = MissionStatus::Draft;
             $mission->source = MissionSource::Manual;
@@ -416,6 +428,7 @@ class PrepareDemoData extends Command
                 'description' => 'Una expedicion guiada para conocer el sistema solar y reconocer sus principales cuerpos celestes.',
                 'subject' => 'Ciencias Naturales',
                 'level' => '5.º de Primaria',
+                'map_theme' => self::MISSION_MAP_THEMES[self::MISSION_TITLE],
             ]);
             $mission->status = MissionStatus::Draft;
             $mission->source = MissionSource::Manual;
@@ -424,6 +437,7 @@ class PrepareDemoData extends Command
             $this->createMissionNodes($mission);
         } else {
             $this->assertDemoMission($mission);
+            $this->ensureDemoMapTheme($mission);
         }
 
         return [$classroom, $student, $membership, $mission];
@@ -520,6 +534,15 @@ class PrepareDemoData extends Command
             throw ValidationException::withMessages([
                 'mission' => 'Ya existe una mision con el titulo demo, pero no coincide con la estructura esperada.',
             ]);
+        }
+    }
+
+    private function ensureDemoMapTheme(Mission $mission): void
+    {
+        $theme = self::MISSION_MAP_THEMES[$mission->title] ?? null;
+
+        if ($theme !== null && $mission->map_theme !== $theme) {
+            $mission->forceFill(['map_theme' => $theme])->save();
         }
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\MissionAssignmentStatus;
+use App\Enums\MissionMapTheme;
 use App\Enums\MissionStatus;
 use App\Enums\UserRole;
 use App\Models\Classroom;
@@ -54,6 +55,7 @@ test('the local demo command creates a ready journey without fabricated progress
         ->and($student->cosmeticItems()->where('acquisition_type', 'purchase')->count())->toBe(0)
         ->and($mission->teacher_id)->toBe($teacher->id)
         ->and($mission->status)->toBe(MissionStatus::Published)
+        ->and($mission->map_theme)->toBe(MissionMapTheme::Science)
         ->and($mission->nodes()->get()->map(fn ($node) => $node->type->value)->all())
         ->toBe(['explanation', 'video', 'quiz', 'flashcards'])
         ->and((int) $mission->nodes()->sum('coin_reward'))->toBe(9)
@@ -71,6 +73,18 @@ test('the local demo command creates a ready journey without fabricated progress
         ->and($student->missionEnrollments()->count())->toBe(5)
         ->and((int) MissionAssignment::query()->withSum('nodeRewards', 'experience_reward')->get()->sum('node_rewards_sum_experience_reward'))->toBe(200)
         ->and((int) MissionAssignment::query()->withSum('nodeRewards', 'coin_reward')->get()->sum('node_rewards_sum_coin_reward'))->toBe(45);
+
+    expect(Mission::query()
+        ->where('teacher_id', $teacher->id)
+        ->pluck('map_theme', 'title')
+        ->map(fn (MissionMapTheme $theme): string => $theme->value)
+        ->all())->toBe([
+            'Exploradores del sistema solar' => 'science',
+            'Guardianes del ciclo del agua' => 'fantasy',
+            'Detectives de los ecosistemas' => 'old_west',
+            'Viaje al interior de la Tierra' => 'science',
+            'Laboratorio de la materia' => 'fantasy',
+        ]);
 
     $this->post('/login', [
         'username' => 'alumno_demo',
@@ -109,6 +123,7 @@ test('running the demo command again preserves all journeys progress and passwor
     ]);
 
     $this->artisan('eduquest:prepare-demo')->assertSuccessful();
+    Mission::query()->update(['map_theme' => MissionMapTheme::Fantasy]);
     $student = User::query()->where('username', 'alumno_demo')->sole();
     $originalHash = $student->password;
     $enrollment = $student->missionEnrollments()->oldest('id')->firstOrFail();
@@ -139,6 +154,24 @@ test('running the demo command again preserves all journeys progress and passwor
         ->and(NodeProgress::query()->where('enrollment_id', $enrollment->id)->count())->toBe(1)
         ->and(app(StudentRewardService::class)->summary($student))->toBe($summaryBefore)
         ->and($student->avatarProfile()->value('equipped_cosmetic_item_id'))->toBe($equippedBefore);
+
+    expect(Mission::query()
+        ->whereIn('title', [
+            'Exploradores del sistema solar',
+            'Guardianes del ciclo del agua',
+            'Detectives de los ecosistemas',
+            'Viaje al interior de la Tierra',
+            'Laboratorio de la materia',
+        ])
+        ->pluck('map_theme', 'title')
+        ->map(fn (MissionMapTheme $theme): string => $theme->value)
+        ->all())->toBe([
+            'Exploradores del sistema solar' => 'science',
+            'Guardianes del ciclo del agua' => 'fantasy',
+            'Detectives de los ecosistemas' => 'old_west',
+            'Viaje al interior de la Tierra' => 'science',
+            'Laboratorio de la materia' => 'fantasy',
+        ]);
 });
 
 test('an isolated demo student reaches level three and equips both earned appearances through real routes', function () {

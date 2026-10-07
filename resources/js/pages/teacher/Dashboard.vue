@@ -6,29 +6,29 @@ import { Button } from '@/components/ui/button';
 import { dashboard } from '@/routes';
 
 defineOptions({
-    layout: { breadcrumbs: [{ title: 'Teacher', href: dashboard() }] },
+    layout: { breadcrumbs: [{ title: 'Docente', href: dashboard() }] },
 });
 </script>
 
 <template>
-    <Head title="Teacher" />
+    <Head title="Docente" />
     <main class="mx-auto w-full max-w-5xl p-4 md:p-8">
         <Heading
-            title="Teacher profile"
-            description="Your workspace is ready."
+            title="Perfil docente"
+            description="Tu espacio de trabajo está preparado."
         />
         <div
             class="mt-6 flex flex-col gap-4 border-y py-6 sm:flex-row sm:items-center"
         >
             <div class="min-w-0 flex-1">
-                <p class="font-medium">Classes and students</p>
+                <p class="font-medium">Clases y alumnado</p>
                 <p class="text-sm text-muted-foreground">
-                    Manage your own teaching groups and active enrollments.
+                    Gestiona tus grupos docentes y sus matrículas activas.
                 </p>
             </div>
             <Button as-child>
                 <Link href="/teacher/classes">
-                    Open classes
+                    Abrir clases
                     <ArrowRight />
                 </Link>
             </Button>
@@ -37,14 +37,14 @@ defineOptions({
             class="mt-6 flex flex-col gap-4 border-y py-6 sm:flex-row sm:items-center"
         >
             <div class="min-w-0 flex-1">
-                <p class="font-medium">Mission drafts</p>
+                <p class="font-medium">Misiones</p>
                 <p class="text-sm text-muted-foreground">
-                    Build and validate manual mission content.
+                    Crea, revisa y valida el contenido de las misiones.
                 </p>
             </div>
             <Button as-child>
                 <Link href="/teacher/missions">
-                    Open drafts
+                    Abrir misiones
                     <ArrowRight />
                 </Link>
             </Button>
@@ -53,19 +53,20 @@ defineOptions({
             class="mt-6 flex flex-col gap-4 border-y py-6 sm:flex-row sm:items-center"
         >
             <div class="min-w-0 flex-1">
-                <p class="font-medium">Student tracking</p>
+                <p class="font-medium">Seguimiento del alumnado</p>
                 <p class="text-sm text-muted-foreground">
-                    Review progress, points, attempts, and best quiz scores.
+                    Revisa progreso, puntos, intentos y mejores notas.
                 </p>
             </div>
             <Button as-child>
                 <Link href="/teacher/tracking">
-                    <BarChart3 /> Open tracking <ArrowRight />
+                    <BarChart3 /> Abrir seguimiento <ArrowRight />
                 </Link>
             </Button>
         </div>
         <p class="mt-6 text-sm text-muted-foreground">
-            AI-assisted authoring is planned for a later milestone.
+            La generación asistida crea borradores revisables y nunca publica
+            automáticamente.
         </p>
     </main>
 </template>

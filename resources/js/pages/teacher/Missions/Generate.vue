@@ -46,8 +46,8 @@ const submit = () => {
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Teacher', href: dashboard() },
-            { title: 'Missions', href: '/teacher/missions' },
+            { title: 'Docente', href: dashboard() },
+            { title: 'Misiones', href: '/teacher/missions' },
             { title: 'Generar con IA', href: '/teacher/missions/generate' },
         ],
     },

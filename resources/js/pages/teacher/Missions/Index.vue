@@ -37,22 +37,22 @@ const mapThemes: Record<MapTheme, string> = {
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Teacher', href: dashboard() },
-            { title: 'Missions', href: '/teacher/missions' },
+            { title: 'Docente', href: dashboard() },
+            { title: 'Misiones', href: '/teacher/missions' },
         ],
     },
 });
 </script>
 
 <template>
-    <Head title="Missions" />
+    <Head title="Misiones" />
     <main
         class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 p-4 md:p-8"
     >
         <section class="space-y-6">
             <Heading
-                title="Missions"
-                description="Create, publish and distribute your own content"
+                title="Misiones"
+                description="Crea, publica y distribuye tus propios contenidos"
             />
             <div class="flex flex-wrap gap-3 border-y py-5">
                 <Button as-child>
@@ -61,7 +61,7 @@ defineOptions({
                     </Link>
                 </Button>
                 <p class="self-center text-sm text-muted-foreground">
-                    La creacion manual sigue disponible. La IA nunca publica ni
+                    La creación manual sigue disponible. La IA nunca publica ni
                     asigna contenido.
                 </p>
             </div>
@@ -72,13 +72,13 @@ defineOptions({
                 class="grid gap-4 border-y py-6 md:grid-cols-2"
             >
                 <div class="grid gap-2 md:col-span-2">
-                    <Label for="mission-title">Title</Label>
+                    <Label for="mission-title">Título</Label>
                     <Input id="mission-title" name="title" required />
                     <InputError :message="errors.title" />
                 </div>
                 <div class="grid gap-2 md:col-span-2">
                     <Label for="mission-description"
-                        >Description and narrative context</Label
+                        >Descripción y contexto narrativo</Label
                     >
                     <textarea
                         id="mission-description"
@@ -90,12 +90,12 @@ defineOptions({
                     <InputError :message="errors.description" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="mission-subject">Subject</Label>
+                    <Label for="mission-subject">Asignatura</Label>
                     <Input id="mission-subject" name="subject" required />
                     <InputError :message="errors.subject" />
                 </div>
                 <div class="grid gap-2">
-                    <Label for="mission-level">Level</Label>
+                    <Label for="mission-level">Nivel</Label>
                     <Input id="mission-level" name="level" required />
                     <InputError :message="errors.level" />
                 </div>
@@ -115,7 +115,7 @@ defineOptions({
                 <div class="md:col-span-2">
                     <Button type="submit" :disabled="processing">
                         <Map />
-                        Create draft
+                        Crear borrador
                     </Button>
                 </div>
             </Form>
@@ -124,8 +124,8 @@ defineOptions({
         <section class="space-y-4">
             <Heading
                 variant="small"
-                title="Your missions"
-                description="Draft, published and archived content"
+                title="Tus misiones"
+                description="Borradores, publicaciones y contenido archivado"
             />
             <div v-if="missions.length" class="divide-y border-y">
                 <div
@@ -145,10 +145,16 @@ defineOptions({
                                           : 'outline'
                                 "
                             >
-                                {{ mission.status }}
+                                {{
+                                    mission.status === 'draft'
+                                        ? 'borrador'
+                                        : mission.status === 'published'
+                                          ? 'publicada'
+                                          : 'archivada'
+                                }}
                             </Badge>
                             <Badge variant="secondary"
-                                >{{ mission.nodes_count }} nodes</Badge
+                                >{{ mission.nodes_count }} etapas</Badge
                             >
                             <Badge variant="outline">
                                 {{ mapThemes[mission.map_theme] }}
@@ -160,7 +166,7 @@ defineOptions({
                                 Borrador IA
                             </Badge>
                             <Badge variant="outline">
-                                {{ mission.assignments_count }} assignments
+                                {{ mission.assignments_count }} asignaciones
                             </Badge>
                         </div>
                         <p class="mt-1 text-sm text-muted-foreground">
@@ -169,20 +175,23 @@ defineOptions({
                     </div>
                     <Button as-child variant="outline">
                         <Link :href="`/teacher/missions/${mission.id}`">
-                            {{ mission.status === 'draft' ? 'Edit' : 'Open' }}
+                            {{
+                                mission.status === 'draft' ? 'Editar' : 'Abrir'
+                            }}
                             <ArrowRight />
                         </Link>
                     </Button>
                 </div>
             </div>
             <p v-else class="border-y py-6 text-sm text-muted-foreground">
-                No missions yet.
+                Todavía no hay misiones.
             </p>
         </section>
 
         <p class="border-y py-5 text-sm text-muted-foreground">
-            Student progress is available in Tracking. AI-assisted drafts must
-            always be reviewed before publishing.
+            El progreso del alumnado está disponible en Seguimiento. Los
+            borradores asistidos por IA siempre deben revisarse antes de
+            publicarse.
         </p>
     </main>
 </template>
