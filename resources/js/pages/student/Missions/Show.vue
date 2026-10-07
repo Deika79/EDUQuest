@@ -119,6 +119,11 @@ type PositionedNode = MapNode & {
     location: string;
 };
 
+type RoutePoint = {
+    x: number;
+    y: number;
+};
+
 const mapTheme = computed(() => mapThemes[props.enrollment.mission.map_theme]);
 const typeLabels: Record<MapNode['type'], string> = {
     explanation: 'Explicación',
@@ -171,8 +176,109 @@ const positionedNodes = computed<PositionedNode[]>(() => {
     });
 });
 
-const connectorPoints = computed(() =>
-    positionedNodes.value.map((node) => `${node.x},${node.y}`).join(' '),
+const clamp = (value: number, min = 3, max = 97): number =>
+    Math.min(max, Math.max(min, value));
+
+const routeStartPoint = (nodes: PositionedNode[]): RoutePoint | null => {
+    if (nodes.length === 0) {
+        return null;
+    }
+
+    const first = nodes[0];
+
+    if (nodes.length === 1) {
+        return {
+            x: clamp(first.x),
+            y: clamp(first.y + 8),
+        };
+    }
+
+    const second = nodes[1];
+    const dx = first.x - second.x;
+    const dy = first.y - second.y;
+    const distance = Math.hypot(dx, dy) || 1;
+    const offset = Math.min(9, distance * 0.55);
+
+    return {
+        x: clamp(first.x + (dx / distance) * offset),
+        y: clamp(first.y + (dy / distance) * offset),
+    };
+};
+
+const routePoints = computed<RoutePoint[]>(() => {
+    const nodes = positionedNodes.value;
+    const start = routeStartPoint(nodes);
+
+    if (start === null) {
+        return [];
+    }
+
+    return [
+        start,
+        ...nodes.map((node): RoutePoint => ({ x: node.x, y: node.y })),
+    ];
+});
+
+const completedNodeCount = computed(
+    () =>
+        positionedNodes.value.filter((node) => node.status === 'completed')
+            .length,
+);
+
+const completedRoutePoints = computed<RoutePoint[]>(() => {
+    const completed = completedNodeCount.value;
+
+    if (completed === 0) {
+        return [];
+    }
+
+    return routePoints.value.slice(
+        0,
+        Math.min(completed + 1, routePoints.value.length),
+    );
+});
+
+const pathFromPoints = (points: RoutePoint[]): string => {
+    if (points.length === 0) {
+        return '';
+    }
+
+    if (points.length === 1) {
+        return `M ${points[0].x} ${points[0].y}`;
+    }
+
+    if (points.length === 2) {
+        return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
+    }
+
+    const commands = [`M ${points[0].x} ${points[0].y}`];
+
+    for (let index = 0; index < points.length - 1; index += 1) {
+        const previous = points[Math.max(0, index - 1)];
+        const current = points[index];
+        const next = points[index + 1];
+        const afterNext = points[Math.min(points.length - 1, index + 2)];
+        const tension = 0.18;
+        const controlStart = {
+            x: current.x + (next.x - previous.x) * tension,
+            y: current.y + (next.y - previous.y) * tension,
+        };
+        const controlEnd = {
+            x: next.x - (afterNext.x - current.x) * tension,
+            y: next.y - (afterNext.y - current.y) * tension,
+        };
+
+        commands.push(
+            `C ${controlStart.x} ${controlStart.y}, ${controlEnd.x} ${controlEnd.y}, ${next.x} ${next.y}`,
+        );
+    }
+
+    return commands.join(' ');
+};
+
+const routePath = computed(() => pathFromPoints(routePoints.value));
+const completedRoutePath = computed(() =>
+    pathFromPoints(completedRoutePoints.value),
 );
 
 defineOptions({
@@ -249,27 +355,84 @@ defineOptions({
                         viewBox="0 0 100 100"
                         preserveAspectRatio="none"
                         aria-hidden="true"
+                        focusable="false"
                     >
-                        <polyline
-                            v-if="positionedNodes.length > 1"
-                            :points="connectorPoints"
+                        <defs>
+                            <filter
+                                id="route-completed-glow"
+                                x="-20%"
+                                y="-20%"
+                                width="140%"
+                                height="140%"
+                            >
+                                <feGaussianBlur
+                                    stdDeviation="1.1"
+                                    result="blur"
+                                />
+                                <feColorMatrix
+                                    in="blur"
+                                    type="matrix"
+                                    values="1 0 0 0 1 0 0.64 0 0 0.55 0 0 0.22 0 0.08 0 0 0 0.9 0"
+                                    result="gold"
+                                />
+                                <feMerge>
+                                    <feMergeNode in="gold" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <path
+                            v-if="routePath"
+                            :d="routePath"
                             fill="none"
-                            stroke="rgba(15,23,42,0.72)"
-                            stroke-width="1.8"
+                            stroke="rgba(35,45,61,0.72)"
+                            stroke-width="6.2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             vector-effect="non-scaling-stroke"
                         />
-                        <polyline
-                            v-if="positionedNodes.length > 1"
-                            :points="connectorPoints"
+                        <path
+                            v-if="routePath"
+                            :d="routePath"
                             fill="none"
-                            stroke="rgba(255,255,255,0.92)"
-                            stroke-width="0.8"
+                            stroke="rgba(255,226,150,0.42)"
+                            stroke-dasharray="1.5 6"
+                            stroke-width="2.2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             vector-effect="non-scaling-stroke"
                         />
+                        <g v-if="completedRoutePath">
+                            <path
+                                :d="completedRoutePath"
+                                class="motion-safe:animate-[route-glow_900ms_ease-out]"
+                                fill="none"
+                                stroke="rgba(255,190,56,0.34)"
+                                stroke-width="10"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                vector-effect="non-scaling-stroke"
+                                filter="url(#route-completed-glow)"
+                            />
+                            <path
+                                :d="completedRoutePath"
+                                fill="none"
+                                stroke="rgba(255,217,105,0.98)"
+                                stroke-width="3.2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                vector-effect="non-scaling-stroke"
+                            />
+                            <path
+                                :d="completedRoutePath"
+                                fill="none"
+                                stroke="rgba(255,255,220,0.9)"
+                                stroke-width="1.1"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                vector-effect="non-scaling-stroke"
+                            />
+                        </g>
                     </svg>
                     <component
                         :is="node.status === 'locked' ? 'button' : Link"
@@ -283,11 +446,11 @@ defineOptions({
                         :disabled="node.status === 'locked'"
                         class="absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 text-sm font-bold shadow-lg transition focus-visible:ring-4 focus-visible:ring-white/90 focus-visible:outline-none"
                         :class="{
-                            'border-white bg-emerald-600 text-white':
+                            'border-emerald-100 bg-emerald-600 text-white ring-2 ring-emerald-100/70':
                                 node.status === 'completed',
-                            'border-white bg-amber-300 text-slate-950 hover:bg-amber-200':
+                            'border-[#ffe8a3] bg-amber-300 text-slate-950 ring-4 ring-amber-300/45 hover:bg-amber-200':
                                 node.status === 'available',
-                            'cursor-not-allowed border-white/70 bg-slate-800/85 text-white/80':
+                            'cursor-not-allowed border-white/60 bg-slate-800/88 text-white/80 ring-2 ring-slate-950/40':
                                 node.status === 'locked',
                         }"
                         :style="{ left: `${node.x}%`, top: `${node.y}%` }"
@@ -366,3 +529,17 @@ defineOptions({
         </p>
     </main>
 </template>
+
+<style scoped>
+@keyframes route-glow {
+    from {
+        opacity: 0.55;
+        stroke-dasharray: 1 120;
+    }
+
+    to {
+        opacity: 1;
+        stroke-dasharray: 120 0;
+    }
+}
+</style>
