@@ -160,10 +160,87 @@ La configuracion actual deja la app escuchando por defecto en `127.0.0.1:${APP_H
 
 Hasta completar esos pasos en una VM real, EDUQuest no debe describirse como desplegado externamente.
 
+## Prueba externa temporal con Cloudflare Quick Tunnel
+
+Fecha de prueba: 2026-10-07.
+
+Esta prueba sirve solo para revisar acceso externo temporal desde el ordenador de desarrollo. No sustituye una VM, no reserva dominio, no ofrece garantia de disponibilidad y deja de funcionar al cerrar `cloudflared`, apagar el equipo o perder conectividad. La URL temporal no se versiona porque cambia en cada ejecucion y no es alojamiento permanente.
+
+Auditoria previa realizada antes de abrir el tunel:
+
+- `.env.production` esta ignorado por Git mediante `.gitignore` y no aparece en `git ls-files`.
+- `.env.production.example` es la unica plantilla de entorno versionada y no contiene secretos.
+- `APP_ENV=production`, `APP_DEBUG=false`, `OPENAI_API_KEY=` y `AI_GENERATION_DAILY_LIMIT=0` en el entorno aislado.
+- `GET /register` en `127.0.0.1:18081` devuelve `404`.
+- La base aislada contiene solo usuarios ficticios: docente `carlinchis` con nombre `Docente Demo Externo` y alumno `alumno_demo` con nombre `Alumno Demo`.
+- `eduquest_prod_rehearsal-mysql-1` no publica puerto al host; solo queda visible en la red Compose.
+
+Herramienta usada:
+
+```powershell
+New-Item -ItemType Directory -Force -Path tmp\cloudflared | Out-Null
+curl.exe -L "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -o "tmp\cloudflared\cloudflared.exe"
+tmp\cloudflared\cloudflared.exe --version
+```
+
+Version comprobada: `cloudflared 2026.10.0`. El binario se dejo en `tmp/` y no se instalo globalmente ni se modifico configuracion personal.
+
+Comando de arranque temporal:
+
+```powershell
+tmp\cloudflared\cloudflared.exe tunnel --no-autoupdate --url http://127.0.0.1:18081 --loglevel info
+```
+
+Para repetir la prueba en PowerShell manteniendo logs:
+
+```powershell
+$log = Join-Path (Get-Location) "tmp\cloudflared\quick-tunnel.log"
+$err = Join-Path (Get-Location) "tmp\cloudflared\quick-tunnel.err.log"
+$exe = Join-Path (Get-Location) "tmp\cloudflared\cloudflared.exe"
+Start-Process -FilePath $exe -ArgumentList @("tunnel","--no-autoupdate","--url","http://127.0.0.1:18081","--loglevel","info") -RedirectStandardOutput $log -RedirectStandardError $err -WindowStyle Hidden
+Get-Content $err -Wait
+```
+
+Ajuste necesario detectado:
+
+- Sin proxy confiable, Laravel generaba enlaces de CSS/JS con `http://...trycloudflare.com`, lo que produciria contenido mixto en navegador.
+- Se anadio `config/trustedproxy.php` para leer `TRUSTED_PROXIES` desde entorno.
+- En el ensayo aislado, `.env.production` usa `TRUSTED_PROXIES=*` solo para el tunel temporal. La plantilla recomienda `REMOTE_ADDR` para un proxy local unico, CIDR conocidos en produccion real o `*` solo en pruebas controladas.
+
+Resultados por HTTPS temporal:
+
+| Comprobacion | Resultado |
+| --- | --- |
+| Landing `/` | HTTP 200, 7220 bytes tras confiar proxy. |
+| Login `/login` | HTTP 200, 8234 bytes tras confiar proxy. |
+| CSS principal | HTTP 200, 125350 bytes. |
+| JS principal | HTTP 200, 145416 bytes. |
+| Ilustracion `aventura-entre-mundos.png` | HTTP 200, 3040466 bytes. |
+| Trailer `eduquest-trailer.mp4` | HTTP 206 con rango 0-1023, 1024 bytes. |
+| Mapa fantasia | Cabecera HTTP 200, `Content-Length: 3447955`. |
+| Mapa ciencia ficcion | Cabecera HTTP 200, `Content-Length: 3622025`. |
+| Mapa oeste | Cabecera HTTP 200, `Content-Length: 3653787`. |
+| Ruta protegida sin sesion `/student/missions` | Redirige a `/login` por HTTPS con 1 redireccion. |
+| Cookies de login GET | `XSRF-TOKEN` y `eduquest-session` se emiten con `Secure` y `SameSite=Lax`; la sesion es `HttpOnly`. |
+
+Limitaciones observadas:
+
+- La descarga simultanea de los tres mapas completos por Quick Tunnel produjo timeouts de QUIC alrededor de 1 MiB, pero el tunel se reconecto y las cabeceras de cada imagen confirmaron HTTP 200 y longitud correcta. Para demo visual, probar los mapas de uno en uno.
+- La comprobacion automatica de POST de login externo no se ejecuto: el entorno bloqueo el envio de la contrasena de la cuenta ficticia por el tunel publico. Queda pendiente que David valide graficamente el inicio de sesion en navegador con la URL activa.
+
+Como detenerlo:
+
+```powershell
+Get-Process cloudflared | Stop-Process
+```
+
+Al detener `cloudflared`, la URL temporal deja de responder. Los contenedores y el volumen MySQL aislado no se borran; solo se corta el acceso externo.
+
+Resultado comprobado en esta sesion: tras detener el proceso, la URL temporal anterior devolvio `530` de Cloudflare y la base aislada conservo `users=2`, `missions=5`, `enrollments=5` y `progress=0`.
+
 ## Comprobaciones complementarias
 
 - `npm run types:check`: correcto en host.
 - `npm run check`: fallo en host antes de analizar codigo por ausencia del binding opcional nativo `@voidzero-dev/vite-plus-win32-x64-msvc` en `node_modules`.
 - `docker run --rm eduquest/frontend-check:local npm run types:check`: correcto.
 - `docker run --rm eduquest/frontend-check:local npm run check`: no es una senal valida de aplicacion porque el stage de produccion incluye `vendor/` y `public/build`; `vp check` intento formatear artefactos de dependencias y build, y fallo sobre plantillas/archivos externos.
-
