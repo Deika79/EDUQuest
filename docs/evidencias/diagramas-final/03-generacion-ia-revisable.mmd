@@ -1,0 +1,14 @@
+sequenceDiagram
+    actor T as Docente
+    participant UI as Formulario IA
+    participant G as MissionDraftGenerator
+    participant P as MissionDraftProvider
+    participant M as Mission
+
+    T->>UI: Solicita borrador
+    UI->>G: Payload validado
+    G->>P: Peticion controlada al proveedor
+    P-->>G: JSON estructurado
+    G->>M: Crea mision source=ai status=draft
+    M-->>UI: Abre editor normal
+    Note over UI,M: No publica ni asigna automaticamente

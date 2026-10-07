@@ -31,9 +31,9 @@ La base tecnica usa Laravel 13, PHP 8.4 en Sail, MySQL 8.4, Vue 3, TypeScript, I
 
 Las reglas de dominio se concentran en Policies, Form Requests y servicios como `MissionLifecycle`, `MissionAssignmentManager`, `StudentMissionAccess`, `StudentProgressService`, `StudentRewardService` y `MissionDraftGenerator`. Las misiones guardan el escenario visual en `missions.map_theme`, validado por el enum `MissionMapTheme` con los valores `fantasy`, `science` y `old_west`.
 
-Los diagramas actualizados estan en [diagramas-final.md](diagramas-final.md).
+Los diagramas actualizados estan en [diagramas-final.md](diagramas-final.md). Sus exportaciones validadas para insertar en Word estan en `docs/evidencias/diagramas-final/` como PNG y SVG.
 
-Comprobacion documental realizada el 2026-10-07: los enlaces desde esta memoria hacia documentos locales existen y `npm run check` paso con 109 archivos formateados y 77 archivos sin avisos de lint. No se pudo renderizar Mermaid en esta sesion porque no hay `mmdc` ni paquete `mermaid` instalado localmente o dentro del contenedor; la verificacion grafica de los diagramas queda pendiente o debe hacerse con el visor Markdown que use David para el Word final.
+Comprobacion documental realizada el 2026-10-07: los enlaces desde esta memoria hacia documentos locales existen y `npm run check` paso con 110 archivos formateados y 77 archivos sin avisos de lint. Los seis bloques Mermaid de `docs/diagramas-final.md` renderizaron con Mermaid CLI `10.9.2` mediante `npx --package @mermaid-js/mermaid-cli` y Chrome local configurado para Puppeteer, sin anadir dependencias permanentes al proyecto.
 
 ## 4. Implementacion
 
@@ -73,7 +73,7 @@ Comprobaciones automatizadas registradas el 2026-10-07:
 | Cadena general `composer ci:check` | Frontend check, `vue-tsc`, Pint, PHPStan y Pest correctos         |
 | Pest en cadena general             | `144 passed`, `1249 assertions`, `9 skipped`                      |
 | Build produccion                   | `3407 modules transformed`                                        |
-| Documentacion final                | `npm run check`: 109 archivos formateados y 77 sin avisos de lint |
+| Documentacion final                | `npm run check`: 110 archivos formateados y 77 sin avisos de lint |
 
 La revision final de recorridos esta documentada en [revision-final-recorridos.md](revision-final-recorridos.md). Se contrastaron acceso, permisos, borradores, asignacion, IA como borrador, recorrido de alumno, seguimiento docente, recompensas y tienda. Tambien se corrigieron textos visibles mezclados en ingles/espanol y la preparacion de demo para cubrir los tres mapas.
 

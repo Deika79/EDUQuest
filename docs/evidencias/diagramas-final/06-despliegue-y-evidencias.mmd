@@ -1,0 +1,10 @@
+flowchart LR
+    Repo["Repositorio Git"] --> Docker["Docker Compose local"]
+    Docker --> Laravel["Laravel Sail PHP 8.4"]
+    Docker --> MySQL["MySQL 8.4"]
+    Laravel --> Vite["Vite/Vue build"]
+    Laravel --> Tests["Composer ci:check"]
+    Tests --> Local["Localhost verificado"]
+    Repo -. pendiente .-> Hosting["Alojamiento definitivo"]
+    Hosting -. pendiente .-> Backups["Copias programadas"]
+    Hosting -. pendiente .-> Dominio["Dominio/SSL"]

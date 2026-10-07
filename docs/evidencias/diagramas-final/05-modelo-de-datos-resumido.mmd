@@ -1,0 +1,40 @@
+erDiagram
+    USERS ||--o{ CLASSROOMS : owns
+    USERS ||--o{ CLASSROOM_MEMBERSHIPS : student
+    CLASSROOMS ||--o{ CLASSROOM_MEMBERSHIPS : contains
+    USERS ||--o{ MISSIONS : creates
+    MISSIONS ||--o{ MISSION_NODES : contains
+    MISSIONS ||--o{ MISSION_ASSIGNMENTS : assigned
+    CLASSROOMS ||--o{ MISSION_ASSIGNMENTS : receives
+    MISSION_ASSIGNMENTS ||--o{ MISSION_ENROLLMENTS : opens
+    USERS ||--o{ MISSION_ENROLLMENTS : follows
+    MISSION_ENROLLMENTS ||--o{ NODE_PROGRESS : records
+    MISSION_NODES ||--o{ NODE_PROGRESS : completed
+    MISSION_NODES ||--o{ QUIZ_QUESTIONS : has
+    QUIZ_QUESTIONS ||--o{ QUIZ_OPTIONS : has
+    MISSION_ENROLLMENTS ||--o{ QUIZ_ATTEMPTS : stores
+    MISSION_NODES ||--o{ QUIZ_ATTEMPTS : grades
+    QUIZ_ATTEMPTS ||--o{ QUIZ_ANSWERS : includes
+    QUIZ_QUESTIONS ||--o{ QUIZ_ANSWERS : answered
+    QUIZ_OPTIONS ||--o{ QUIZ_ANSWERS : selected
+    MISSION_NODES ||--o{ FLASHCARDS : has
+    USERS ||--|| AVATAR_PROFILES : owns
+    MISSION_ASSIGNMENTS ||--o{ MISSION_ASSIGNMENT_NODE_REWARDS : snapshots
+    MISSION_NODES ||--o{ MISSION_ASSIGNMENT_NODE_REWARDS : rewarded
+    USERS ||--o{ STUDENT_REWARD_GRANTS : earns
+    MISSION_NODES ||--o{ STUDENT_REWARD_GRANTS : grants
+    NODE_PROGRESS ||--|| STUDENT_REWARD_GRANTS : first_completion
+    USERS ||--o{ COIN_LEDGER_ENTRIES : moves
+    STUDENT_REWARD_GRANTS ||--o| COIN_LEDGER_ENTRIES : credits
+    COSMETIC_ITEMS ||--o{ STUDENT_COSMETIC_ITEMS : purchased
+    USERS ||--o{ STUDENT_COSMETIC_ITEMS : owns
+    COSMETIC_ITEMS ||--o{ COIN_LEDGER_ENTRIES : debits
+    COSMETIC_ITEMS ||--o{ AVATAR_PROFILES : equipped
+
+    MISSIONS {
+        bigint id
+        bigint teacher_id
+        string status
+        string source
+        string map_theme
+    }

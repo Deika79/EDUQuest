@@ -72,20 +72,20 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-    A[Alumno autenticado] --> B[Listado /student/missions]
-    B --> C[Inscripcion activa y asignacion abierta]
-    C --> D[Mapa /student/missions/{enrollment}]
-    D --> E{missions.map_theme}
-    E --> F[fantasy_map.png]
-    E --> G[science_map.png]
-    E --> H[old_west_map.png]
-    D --> I[Nodos ordenados por position]
-    I --> J[Disponible]
-    I --> K[Bloqueado]
-    I --> L[Completado]
-    J --> M[Actividad]
-    M --> N[Progreso academico]
-    M --> O[XP y monedas si procede]
+    A["Alumno autenticado"] --> B["Listado /student/missions"]
+    B --> C["Inscripcion activa y asignacion abierta"]
+    C --> D["Mapa /student/missions/{enrollment}"]
+    D --> E{"missions.map_theme"}
+    E --> F["fantasy_map.png"]
+    E --> G["science_map.png"]
+    E --> H["old_west_map.png"]
+    D --> I["Nodos ordenados por position"]
+    I --> J["Disponible"]
+    I --> K["Bloqueado"]
+    I --> L["Completado"]
+    J --> M["Actividad"]
+    M --> N["Progreso academico"]
+    M --> O["XP y monedas si procede"]
 ```
 
 ## Modelo de datos resumido
@@ -104,11 +104,25 @@ erDiagram
     MISSION_ENROLLMENTS ||--o{ NODE_PROGRESS : records
     MISSION_NODES ||--o{ NODE_PROGRESS : completed
     MISSION_NODES ||--o{ QUIZ_QUESTIONS : has
+    QUIZ_QUESTIONS ||--o{ QUIZ_OPTIONS : has
+    MISSION_ENROLLMENTS ||--o{ QUIZ_ATTEMPTS : stores
+    MISSION_NODES ||--o{ QUIZ_ATTEMPTS : grades
+    QUIZ_ATTEMPTS ||--o{ QUIZ_ANSWERS : includes
+    QUIZ_QUESTIONS ||--o{ QUIZ_ANSWERS : answered
+    QUIZ_OPTIONS ||--o{ QUIZ_ANSWERS : selected
     MISSION_NODES ||--o{ FLASHCARDS : has
     USERS ||--|| AVATAR_PROFILES : owns
+    MISSION_ASSIGNMENTS ||--o{ MISSION_ASSIGNMENT_NODE_REWARDS : snapshots
+    MISSION_NODES ||--o{ MISSION_ASSIGNMENT_NODE_REWARDS : rewarded
     USERS ||--o{ STUDENT_REWARD_GRANTS : earns
+    MISSION_NODES ||--o{ STUDENT_REWARD_GRANTS : grants
+    NODE_PROGRESS ||--|| STUDENT_REWARD_GRANTS : first_completion
     USERS ||--o{ COIN_LEDGER_ENTRIES : moves
+    STUDENT_REWARD_GRANTS ||--o| COIN_LEDGER_ENTRIES : credits
+    COSMETIC_ITEMS ||--o{ STUDENT_COSMETIC_ITEMS : purchased
     USERS ||--o{ STUDENT_COSMETIC_ITEMS : owns
+    COSMETIC_ITEMS ||--o{ COIN_LEDGER_ENTRIES : debits
+    COSMETIC_ITEMS ||--o{ AVATAR_PROFILES : equipped
 
     MISSIONS {
         bigint id
@@ -123,16 +137,20 @@ erDiagram
 
 ```mermaid
 flowchart LR
-    Repo[Repositorio Git] --> Docker[Docker Compose local]
-    Docker --> Laravel[Laravel Sail PHP 8.4]
-    Docker --> MySQL[MySQL 8.4]
-    Laravel --> Vite[Vite/Vue build]
-    Laravel --> Tests[Composer ci:check]
-    Tests --> Local[Localhost verificado]
-    Repo -.pendiente.-> Hosting[Alojamiento definitivo]
-    Hosting -.pendiente.-> Backups[Copias programadas]
-    Hosting -.pendiente.-> Dominio[Dominio/SSL]
+    Repo["Repositorio Git"] --> Docker["Docker Compose local"]
+    Docker --> Laravel["Laravel Sail PHP 8.4"]
+    Docker --> MySQL["MySQL 8.4"]
+    Laravel --> Vite["Vite/Vue build"]
+    Laravel --> Tests["Composer ci:check"]
+    Tests --> Local["Localhost verificado"]
+    Repo -. pendiente .-> Hosting["Alojamiento definitivo"]
+    Hosting -. pendiente .-> Backups["Copias programadas"]
+    Hosting -. pendiente .-> Dominio["Dominio/SSL"]
 ```
+
+## Exportaciones validadas
+
+Los bloques Mermaid de este documento se renderizaron el 2026-10-07 con Mermaid CLI `10.9.2` mediante `npx --package @mermaid-js/mermaid-cli` y Chrome local configurado para Puppeteer. Los PNG y SVG generados estan en `docs/evidencias/diagramas-final/`.
 
 ## Enlaces relacionados
 

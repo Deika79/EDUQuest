@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor T as Docente
+    participant UI as Vue/Inertia
+    participant C as TeacherMissionController
+    participant M as Mission
+    participant L as MissionLifecycle
+    participant A as MissionAssignmentManager
+
+    T->>UI: Crea o edita borrador
+    UI->>C: POST/PATCH titulo, nivel, nodos y map_theme
+    C->>M: Guarda draft con map_theme cerrado
+    T->>UI: Revisa nodos y confirma revision
+    UI->>L: Publicar borrador preparado
+    L->>M: status=published, published_at
+    T->>UI: Asigna a clase propia
+    UI->>A: Crear asignacion e inscripciones
+    A-->>UI: Asignacion abierta

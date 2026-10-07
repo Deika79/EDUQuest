@@ -1,0 +1,15 @@
+flowchart TD
+    A["Alumno autenticado"] --> B["Listado /student/missions"]
+    B --> C["Inscripcion activa y asignacion abierta"]
+    C --> D["Mapa /student/missions/{enrollment}"]
+    D --> E{"missions.map_theme"}
+    E --> F["fantasy_map.png"]
+    E --> G["science_map.png"]
+    E --> H["old_west_map.png"]
+    D --> I["Nodos ordenados por position"]
+    I --> J["Disponible"]
+    I --> K["Bloqueado"]
+    I --> L["Completado"]
+    J --> M["Actividad"]
+    M --> N["Progreso academico"]
+    M --> O["XP y monedas si procede"]

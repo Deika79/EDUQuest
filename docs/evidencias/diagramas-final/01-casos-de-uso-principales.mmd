@@ -1,0 +1,18 @@
+flowchart LR
+    Admin[Administrador] --> CU01[Gestionar docentes]
+    Docente[Docente] --> CU02[Gestionar clases y alumnos]
+    Docente --> CU03[Crear y revisar borradores]
+    Docente --> CU04[Elegir escenario ilustrado]
+    Docente --> CU05[Publicar y asignar misiones]
+    Docente --> CU06[Generar borrador con IA]
+    Docente --> CU07[Consultar seguimiento]
+    Alumno[Alumno] --> CU08[Recorrer mapa ilustrado]
+    Alumno --> CU09[Completar actividades]
+    Alumno --> CU10[Consultar avatar y tienda]
+    CU06 --> CU03
+    CU03 --> CU04
+    CU04 --> CU05
+    CU05 --> CU08
+    CU08 --> CU09
+    CU09 --> CU07
+    CU09 --> CU10
