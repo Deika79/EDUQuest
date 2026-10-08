@@ -13,14 +13,14 @@ Este documento recoge una configuracion reproducible de produccion ensayada en l
 
 ## Diferencias con Sail
 
-| Area | Sail local | Produccion preparada |
-| --- | --- | --- |
-| Imagen PHP | `vendor/laravel/sail/runtimes/8.4`, orientada a desarrollo. | `Dockerfile.prod` con `php:8.4-apache-bookworm`, extensiones necesarias y Apache sirviendo `public/`. |
-| Codigo | Montaje caliente `.:/var/www/html`. | Codigo copiado dentro de la imagen; sin montaje del arbol de trabajo. |
-| Frontend | Vite en desarrollo y puerto `5173`. | `npm run build` dentro de la imagen; no se ejecuta servidor Vite. |
-| MySQL | `mysql:8.4` con puerto opcional publicado por `FORWARD_DB_PORT`. | `mysql:8.4` solo en red interna Compose; `3306/tcp` no se publica al host. |
-| Variables | `.env` local. | `.env.production` privado a partir de `.env.production.example`; se invoca con `--env-file`. |
-| HTTPS | No aplica en local. | Preparado para poner un proxy HTTPS delante; no se simula dominio ni certificado. |
+| Area       | Sail local                                                       | Produccion preparada                                                                                  |
+| ---------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Imagen PHP | `vendor/laravel/sail/runtimes/8.4`, orientada a desarrollo.      | `Dockerfile.prod` con `php:8.4-apache-bookworm`, extensiones necesarias y Apache sirviendo `public/`. |
+| Codigo     | Montaje caliente `.:/var/www/html`.                              | Codigo copiado dentro de la imagen; sin montaje del arbol de trabajo.                                 |
+| Frontend   | Vite en desarrollo y puerto `5173`.                              | `npm run build` dentro de la imagen; no se ejecuta servidor Vite.                                     |
+| MySQL      | `mysql:8.4` con puerto opcional publicado por `FORWARD_DB_PORT`. | `mysql:8.4` solo en red interna Compose; `3306/tcp` no se publica al host.                            |
+| Variables  | `.env` local.                                                    | `.env.production` privado a partir de `.env.production.example`; se invoca con `--env-file`.          |
+| HTTPS      | No aplica en local.                                              | Preparado para poner un proxy HTTPS delante; no se simula dominio ni certificado.                     |
 
 ## Archivos creados
 
@@ -72,22 +72,22 @@ Incidencias corregidas durante el ensayo:
 
 Resultados comprobados:
 
-| Comprobacion | Resultado |
-| --- | --- |
-| Build imagen app | Correcto. Imagen local `eduquest/app:prod-local`. |
-| Arranque Compose | Correcto con app y MySQL saludables. |
-| Puerto app | `127.0.0.1:18081->80/tcp`. |
-| Puerto MySQL | No publicado al host; solo `3306/tcp` y `33060/tcp` internos. |
-| Migraciones | 17 migraciones ejecutadas correctamente, incluida `2026_10_06_120000_add_map_theme_to_missions_table`. |
-| Catalogo cosmetico | `CosmeticCatalogSeeder`: correcto tras ejecutar en orden. |
-| Datos demo ficticios | 2 usuarios, 5 misiones, 5 inscripciones, 6 cosmeticos y 0 progresos en la base aislada. |
-| Landing | `GET /`: HTTP 200, 6452 bytes. |
-| Login | `GET /login`: HTTP 200, 7242 bytes. |
-| Sesion alumno | Login HTTP con `alumno_demo` aislado y `GET /student/missions`: HTTP 200, 8631 bytes. |
-| Paginas de mapa | `/student/missions/1`, `/2` y `/3`: HTTP 200 autenticado. |
-| Assets mapa | `fantasy_map.png` 200 / 3447955 bytes; `science_map.png` 200 / 3622025 bytes; `old_west_map.png` 200 / 3653787 bytes. |
-| Frontend compilado | `GET /build/manifest.json`: HTTP 200, 22308 bytes. |
-| Persistencia | Antes y despues de reiniciar: `{"users":2,"missions":5,"enrollments":5,"cosmetics":6,"progress":0}`. |
+| Comprobacion         | Resultado                                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Build imagen app     | Correcto. Imagen local `eduquest/app:prod-local`.                                                                     |
+| Arranque Compose     | Correcto con app y MySQL saludables.                                                                                  |
+| Puerto app           | `127.0.0.1:18081->80/tcp`.                                                                                            |
+| Puerto MySQL         | No publicado al host; solo `3306/tcp` y `33060/tcp` internos.                                                         |
+| Migraciones          | 17 migraciones ejecutadas correctamente, incluida `2026_10_06_120000_add_map_theme_to_missions_table`.                |
+| Catalogo cosmetico   | `CosmeticCatalogSeeder`: correcto tras ejecutar en orden.                                                             |
+| Datos demo ficticios | 2 usuarios, 5 misiones, 5 inscripciones, 6 cosmeticos y 0 progresos en la base aislada.                               |
+| Landing              | `GET /`: HTTP 200, 6452 bytes.                                                                                        |
+| Login                | `GET /login`: HTTP 200, 7242 bytes.                                                                                   |
+| Sesion alumno        | Login HTTP con `alumno_demo` aislado y `GET /student/missions`: HTTP 200, 8631 bytes.                                 |
+| Paginas de mapa      | `/student/missions/1`, `/2` y `/3`: HTTP 200 autenticado.                                                             |
+| Assets mapa          | `fantasy_map.png` 200 / 3447955 bytes; `science_map.png` 200 / 3622025 bytes; `old_west_map.png` 200 / 3653787 bytes. |
+| Frontend compilado   | `GET /build/manifest.json`: HTTP 200, 22308 bytes.                                                                    |
+| Persistencia         | Antes y despues de reiniciar: `{"users":2,"missions":5,"enrollments":5,"cosmetics":6,"progress":0}`.                  |
 
 Los datos demo se prepararon en la base aislada. El comando `eduquest:prepare-demo` esta protegido para `local`/`testing`; para este ensayo se ejecuto con `APP_ENV=local` solo en ese proceso y despues se regeneraron caches de produccion. No se recomienda usar ese atajo como operacion ordinaria en una produccion real.
 
@@ -209,19 +209,19 @@ Ajuste necesario detectado:
 
 Resultados por HTTPS temporal:
 
-| Comprobacion | Resultado |
-| --- | --- |
-| Landing `/` | HTTP 200, 7220 bytes tras confiar proxy. |
-| Login `/login` | HTTP 200, 8234 bytes tras confiar proxy. |
-| CSS principal | HTTP 200, 125350 bytes. |
-| JS principal | HTTP 200, 145416 bytes. |
-| Ilustracion `aventura-entre-mundos.png` | HTTP 200, 3040466 bytes. |
-| Trailer `eduquest-trailer.mp4` | HTTP 206 con rango 0-1023, 1024 bytes. |
-| Mapa fantasia | Cabecera HTTP 200, `Content-Length: 3447955`. |
-| Mapa ciencia ficcion | Cabecera HTTP 200, `Content-Length: 3622025`. |
-| Mapa oeste | Cabecera HTTP 200, `Content-Length: 3653787`. |
-| Ruta protegida sin sesion `/student/missions` | Redirige a `/login` por HTTPS con 1 redireccion. |
-| Cookies de login GET | `XSRF-TOKEN` y `eduquest-session` se emiten con `Secure` y `SameSite=Lax`; la sesion es `HttpOnly`. |
+| Comprobacion                                  | Resultado                                                                                           |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Landing `/`                                   | HTTP 200, 7220 bytes tras confiar proxy.                                                            |
+| Login `/login`                                | HTTP 200, 8234 bytes tras confiar proxy.                                                            |
+| CSS principal                                 | HTTP 200, 125350 bytes.                                                                             |
+| JS principal                                  | HTTP 200, 145416 bytes.                                                                             |
+| Ilustracion `aventura-entre-mundos.png`       | HTTP 200, 3040466 bytes.                                                                            |
+| Trailer `eduquest-trailer.mp4`                | HTTP 206 con rango 0-1023, 1024 bytes.                                                              |
+| Mapa fantasia                                 | Cabecera HTTP 200, `Content-Length: 3447955`.                                                       |
+| Mapa ciencia ficcion                          | Cabecera HTTP 200, `Content-Length: 3622025`.                                                       |
+| Mapa oeste                                    | Cabecera HTTP 200, `Content-Length: 3653787`.                                                       |
+| Ruta protegida sin sesion `/student/missions` | Redirige a `/login` por HTTPS con 1 redireccion.                                                    |
+| Cookies de login GET                          | `XSRF-TOKEN` y `eduquest-session` se emiten con `Secure` y `SameSite=Lax`; la sesion es `HttpOnly`. |
 
 Limitaciones observadas:
 
