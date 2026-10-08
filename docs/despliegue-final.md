@@ -226,7 +226,9 @@ Resultados por HTTPS temporal:
 Limitaciones observadas:
 
 - La descarga simultanea de los tres mapas completos por Quick Tunnel produjo timeouts de QUIC alrededor de 1 MiB, pero el tunel se reconecto y las cabeceras de cada imagen confirmaron HTTP 200 y longitud correcta. Para demo visual, probar los mapas de uno en uno.
-- La comprobacion automatica de POST de login externo no se ejecuto: el entorno bloqueo el envio de la contrasena de la cuenta ficticia por el tunel publico. Queda pendiente que David valide graficamente el inicio de sesion en navegador con la URL activa.
+- El 2026-10-08 se diagnostico una incidencia real de demo: la URL temporal anterior dejo de responder desde el exterior aunque el proceso local de `cloudflared` seguia activo. Se cerro el tunel anterior, se abrio uno nuevo contra `http://127.0.0.1:18081` y se repitio la prueba. La landing respondio `200`, `/login` respondio `200` sin redirecciones, Chrome headless confirmo que los botones `Acceder` y `Entrar en EDUQuest` hidratan con `href="/login"`, y los logs no mostraron peticiones graficas a `/login` en la visita anterior. La causa demostrada fue la caducidad/desconexion operativa de la URL temporal, no un enlace roto de la landing.
+- En la misma prueba del 2026-10-08 se verifico el flujo HTTPS completo con una cuenta ficticia efimera creada y eliminada en `eduquest_prod_rehearsal`: `GET /login` `200`, cookies `XSRF-TOKEN` y `eduquest-session` para el dominio `trycloudflare.com` con `Secure`, `POST /login` `302` a `/dashboard`, `/student/missions` autenticado `200`, mapa de alumno `200`, `POST /logout` `302` y `/student/missions` sin sesion redirigiendo a `/login`. No se observaron errores `419`, `500`, credenciales invalidas ni bucles de redireccion.
+- `alumno_demo` permanece activo en la base ficticia, con rol `student`, cambio obligatorio de contrasena desactivado, avatar configurado y cinco inscripciones activas. La contrasena no se documenta ni se guarda en archivos.
 
 Como detenerlo:
 
