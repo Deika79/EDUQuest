@@ -1,6 +1,7 @@
 # Sistema y editores
 .DS_Store
 Thumbs.db
+~$*
 .idea/
 .vscode/
 

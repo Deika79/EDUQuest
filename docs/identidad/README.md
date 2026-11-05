@@ -28,3 +28,7 @@ En el paquete disponible durante la integracion no estaban presentes la guia de 
 Las dos imagenes WebP se generaron desde los raster originales con FFmpeg. La portada web esta recortada para dejar el texto como contenido HTML accesible y pesa aproximadamente 49 KB frente a los 1,89 MB del PNG original; la imagen de mundos pesa aproximadamente 166 KB frente a los 2,43 MB originales.
 
 El trailer web se genero con FFmpeg desde el original HEVC de 26,73 MB. La variante publicada usa H.264, `yuv420p`, 1600 x 900 a 30 fps, inicio rapido y audio AAC estereo a 44,1 kHz. Dura 24,29 segundos y ocupa 5.513.692 bytes. El original se conserva localmente en `docs/identidad/originales-locales/eduquest-trailer-hevc.mp4` y esta excluido de Git por su peso.
+
+## Recursos adicionales conservados
+
+En el cierre documental del 2026-11-05 se incorporan los archivos visuales locales pendientes autorizados por David: `public/brand/Aventura EDUQuest entre mundos.png` y las variantes de avatar `personaje-a/b-nivel-2-espacial` y `personaje-a/b-nivel-3-arcano` disponibles en PNG y, donde existe, WebP. Son recursos adicionales aportados al proyecto; incorporarlos a Git no cambia el catálogo activo ni implica haber implementado nuevas compras o niveles. El catálogo actual sigue definido por `CosmeticCatalogSeeder`.
