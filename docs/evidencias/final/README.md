@@ -30,4 +30,4 @@ Desde la raíz del proyecto, con PowerShell y Microsoft Word instalados:
 pwsh -File scripts/build-memoria-final-ooxml.ps1 -ReviewInWord
 ```
 
-La misma vía genera el DOCX, actualiza su índice y renderiza las páginas en `tmp/` para revisión visual. El documento sigue siendo una memoria de trabajo con campos académicos y propuestas del anexo A pendientes de validación.
+El DOCX versionado es la fuente editorial desde la incorporación de la portada y la dedicatoria por los autores. Si existe, la misma vía lo actualiza en Word conservando esas aportaciones, actualiza el índice y renderiza las páginas en `tmp/` para revisión visual; solo construye un documento inicial cuando no existe el archivo de salida. No borrar el DOCX para regenerarlo, ya que la construcción inicial no contiene las aportaciones manuales. El documento sigue siendo una memoria de trabajo con campos académicos y propuestas del anexo A pendientes de validación.

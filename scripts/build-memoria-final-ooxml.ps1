@@ -119,6 +119,9 @@ function AddImageXml([string]$path, [string]$caption, [ref]$rels, [ref]$mediaCop
 }
 
 $outFull = if ([System.IO.Path]::IsPathRooted($OutputPath)) { $OutputPath } else { Join-Path (Get-Location) $OutputPath }
+# El DOCX versionado es la fuente editorial: conservar las aportaciones hechas en Word.
+# La construcción OOXML inicial solo se usa cuando todavía no existe el documento.
+if (-not (Test-Path -LiteralPath $outFull)) {
 $tmp = Join-Path (Get-Location) "tmp\memoria-ooxml"
 if (Test-Path -LiteralPath $tmp) {
     $resolvedTmp = (Resolve-Path -LiteralPath $tmp).Path
@@ -381,20 +384,67 @@ finally {
     $archive.Dispose()
     $fs.Dispose()
 }
+}
 Write-Output "DOCX=$outFull"
 if ($ReviewInWord) {
     Add-Type -AssemblyName System.Drawing
-    $reviewPath = Join-Path (Get-Location) 'tmp\memoria-review-20261105'
+    $reviewPath = Join-Path (Get-Location) 'tmp\memoria-review-20261106'
     New-Item -ItemType Directory -Force -Path $reviewPath | Out-Null
     Get-ChildItem -LiteralPath $reviewPath -Filter 'page-*.png' -File | ForEach-Object { Remove-Item -LiteralPath $_.FullName -Force }
-    $word = New-Object -ComObject Word.Application
-    $word.Visible = $false
+    Add-Type -AssemblyName Microsoft.VisualBasic
+    $ownWord = $false
+    try { $word = [Microsoft.VisualBasic.Interaction]::GetObject('', 'Word.Application') }
+    catch { $word = New-Object -ComObject Word.Application; $ownWord = $true; $word.Visible = $false }
+    $previousAlerts = $word.DisplayAlerts
     $word.DisplayAlerts = 0
     $doc = $null
+    $ownDocument = $false
     try {
-        $doc = $word.Documents.Open($outFull, $false, $false)
+        foreach ($openDocument in $word.Documents) {
+            if ($openDocument.FullName -eq $outFull) { $doc = $openDocument; break }
+        }
+        if ($null -eq $doc) { $doc = $word.Documents.Open($outFull, $false, $false); $ownDocument = $true }
+        if ($doc.ReadOnly) { throw 'El documento está abierto en modo de solo lectura; no se puede guardar la revisión.' }
+        $doc.Save()
+        $backup = Join-Path $reviewPath 'antes-revision.docx'
+        $inputStream = [IO.File]::Open($outFull, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+        $outputStream = [IO.File]::Create($backup)
+        try { $inputStream.CopyTo($outputStream) } finally { $inputStream.Dispose(); $outputStream.Dispose() }
+        $replacements = [ordered]@{
+            'A.4. Declaración propuesta sobre uso de IA' = 'A.4. Declaración de uso de inteligencia artificial'
+            'BORRADOR PARA REVISIÓN DE LOS AUTORES Y LA TUTORA.' = 'DECLARACIÓN REDACTADA PARA VALIDACIÓN DE AMBOS AUTORES. En la elaboración de EduQuest se ha utilizado Codex como asistencia para proponer y revisar código, analizar incidencias, preparar documentación y comprobar la coherencia entre la memoria y los archivos del proyecto. En esta revisión también se ha empleado para redactar una propuesta de declaración de IA y de conclusiones conjuntas. La documentación recoge generación asistida de recursos visuales; no se atribuye a todos los recursos la misma herramienta ni se presupone que todas las imágenes sean generadas. La dedicatoria y la imagen de portada de esta versión han sido incorporadas por los autores al Word.'
+            'El producto incorpora además una función distinta:' = 'Debe distinguirse esa asistencia durante el desarrollo de la funcionalidad R07 de la aplicación: EduQuest integra un proveedor OpenAI desde el servidor para generar borradores educativos con salida estructurada. El sistema valida su estructura y exige revisión docente antes de publicar; no publica ni asigna automáticamente. Las pruebas automatizadas de esta integración utilizan respuestas simuladas. La documentación registra una llamada real controlada anterior; redactar esta declaración no ha requerido nuevas llamadas al proveedor.'
+            'NORMA DEL CENTRO PENDIENTE DE CONFIRMACIÓN:' = 'La asistencia de IA no acredita por sí misma la corrección del código, la calidad pedagógica ni la veracidad de una afirmación. La revisión se apoya en el código, las pruebas, la documentación y las evidencias disponibles. No se presentan como hechos las horas estimadas, las contribuciones individuales sin confirmar ni resultados de aprendizaje no evaluados. Las credenciales y los datos de sesión se mantienen fuera de Git. Corresponde a los autores revisar y asumir el texto que finalmente presenten. NORMA DEL CENTRO PENDIENTE DE CONFIRMACIÓN: no consta una formulación oficial de The Power en la documentación consultada; esta declaración deberá adaptarse si la tutora Susana Roldán indica un formato, inventario o requisito adicional. No constituye una autorización académica.'
+            'A.5. Reflexión personal conjunta propuesta' = 'A.5. Conclusiones personales conjuntas propuestas'
+            'BORRADOR EN PRIMERA PERSONA PLURAL,' = 'PROPUESTA EN PRIMERA PERSONA PLURAL, PENDIENTE DE VALIDACIÓN DE GONZALO ARRANZ Y DAVID GARCÍA. Con EduQuest hemos reunido análisis de requisitos, diseño de datos, desarrollo de servidor e interfaz, pruebas y documentación en un recorrido completo: un docente prepara y asigna una misión y un alumno avanza por sus actividades. Nuestra reflexión principal es que la coherencia entre estas partes importa tanto como cada pantalla por separado. Una interfaz debe reflejar las reglas que el servidor comprueba y los datos que realmente se conservan.'
+            'El proyecto nos permite reflexionar' = 'Consideramos que las decisiones de alcance han sido esenciales. La progresión secuencial permite explicar y comprobar el recorrido; los mapas de fantasía, ciencia ficción y oeste aportan una presentación distinta sin cambiar sus reglas. La personalización de R09 amplía la experiencia y se mantiene separada de la evaluación académica. Esta evolución también muestra que cada ampliación exige revisar permisos, persistencia, pruebas y presentación en varios tamaños de pantalla.'
+            'Como continuidad, priorizaríamos' = 'El uso de IA nos lleva a distinguir entre obtener una propuesta y contar con un resultado revisado. El contenido generado necesita validación y criterio docente, y el código y los textos asistidos también requieren contraste. Las capturas y las pruebas documentan comportamientos concretos, pero no demuestran por sí solas una mejora del aprendizaje. Como continuidad, priorizaríamos evaluar la aplicación con usuarios, ampliar la comprobación en dispositivos físicos y concretar un alojamiento permanente. Estas conclusiones conjuntas no atribuyen tareas, horas ni experiencias individuales no confirmadas; ambos autores deben validar que expresan su valoración antes de presentarlas.'
+            'Inventario de uso IA y norma académica de The Power: A.4.' = 'Declaración de IA: validar el inventario descrito y confirmar la norma académica de The Power en A.4.'
+            'Reflexión personal conjunta: validar A.5 con ambos autores.' = 'Conclusiones personales conjuntas: validar el texto de A.5 con ambos autores.'
+            'README, R08F02, revision-final; faltan' = 'README, R08F02 y revisión final: capturas incorporadas; pendientes fecha de entrega, horas reales por autor, reparto validado y cierre académico.'
+            'Como balance técnico, el proyecto integra' = 'Como balance técnico, el proyecto integra desarrollo web, diseño de datos, pruebas y documentación en un flujo educativo demostrable. Las conclusiones personales propuestas en A.5 requieren validación de ambos autores. Quedan pendientes fecha de entrega, horas reales, contribuciones y cierre académico. Las capturas de mapas solicitadas están incorporadas.'
+        }
+        for ($i = $doc.Paragraphs.Count; $i -ge 1; $i--) {
+            $paragraph = $doc.Paragraphs.Item($i)
+            $text = $paragraph.Range.Text.Trim()
+            if ($text -eq 'ANEXO B. EVIDENCIAS VISUALES FINALES') { $paragraph.Format.PageBreakBefore = -1 }
+            if ($text -eq 'Dedicatoria opcional: completar o retirar la página correspondiente.') { $paragraph.Range.Delete() | Out-Null; continue }
+            foreach ($prefix in $replacements.Keys) {
+                if ($text.StartsWith($prefix, [StringComparison]::Ordinal)) {
+                    $range = $paragraph.Range.Duplicate
+                    $range.End -= 1
+                    $range.Text = $replacements[$prefix]
+                    break
+                }
+            }
+        }
+        $search = $doc.Content.Duplicate
+        $search.Find.ClearFormatting()
+        if ($search.Find.Execute('README, R08F02, revision-final; faltan fecha de entrega, horas por autor, reparto de tareas, capturas finales y cierre')) {
+            $search.Text = 'README, R08F02 y revisión final: capturas incorporadas; pendientes fecha de entrega, horas reales, reparto validado y cierre académico.'
+        }
         foreach ($section in $doc.Sections) {
-            $section.Footers.Item(1).PageNumbers.Add(2, $true) | Out-Null
+            if ($section.Footers.Item(1).PageNumbers.Count -eq 0) { $section.Footers.Item(1).PageNumbers.Add(2, $true) | Out-Null }
         }
         $doc.Fields.Update() | Out-Null
         $doc.Repaginate()
@@ -428,7 +478,10 @@ if ($ReviewInWord) {
         Write-Output "WORD_PAGES=$pageCount TOC=$($doc.TablesOfContents.Count) IMAGES=$($doc.InlineShapes.Count)"
         Write-Output "REVIEW=$reviewPath"
     } finally {
-        if ($null -ne $doc) { $doc.Close($false) }
-        $word.Quit()
+        try {
+            if ($null -ne $doc -and $ownDocument) { $doc.Close($false) }
+            $word.DisplayAlerts = $previousAlerts
+            if ($ownWord) { $word.Quit() }
+        } catch { Write-Warning "No se pudo cerrar la sesión COM de Word: $($_.Exception.Message)" }
     }
 }
